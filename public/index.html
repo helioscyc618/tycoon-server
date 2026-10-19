@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>競賽大亨 - 伺服器同步版</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.min.js"></script>
+    <!-- Google Fonts: Noto Serif TC -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .font-ming { font-family: 'Noto Serif TC', serif; }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-full flex flex-col antialiased selection:bg-amber-500 selection:text-white"
+      x-data="tycoonApp()" x-init="initApp()">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-slate-900 text-white shadow-md relative z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-500 text-slate-900 p-2 rounded-xl shadow-lg flex items-center justify-center">
+                    <i class="fa-solid fa-dice text-xl animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-ming font-bold tracking-wider bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 bg-clip-text text-transparent">
+                        競賽大亨
+                    </h1>
+                    <p class="text-[10px] text-slate-400 uppercase tracking-widest">Server Synchronized Edition</p>
+                </div>
+            </div>
+
+            <!-- User Status & Admin Button -->
+            <div class="flex items-center space-x-3">
+                <template x-if="currentUser">
+                    <div class="flex items-center space-x-3 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center font-bold text-slate-900 text-sm shadow">
+                            <span x-text="currentUser.name ? currentUser.name.charAt(0) : '用'"></span>
+                        </div>
+                        <div class="hidden sm:block text-left text-xs">
+                            <p class="font-bold text-white" x-text="currentUser.name"></p>
+                            <p class="text-[10px] text-amber-400" x-text="(currentUser.rank || '') + ' · ' + (currentUser.groupName || '')"></p>
+                        </div>
+                        <button @click="currentTab = 'profile'" class="bg-slate-700 hover:bg-slate-600 text-amber-300 px-2.5 py-1 rounded-lg text-xs font-bold transition">
+                            <i class="fa-solid fa-id-card"></i> 個人資訊
+                        </button>
+                        <button @click="logout()" class="text-slate-400 hover:text-white p-1 text-xs ml-1" title="登出">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </button>
+                    </div>
+                </template>
+                <button @click="openAdminModal = true" class="bg-slate-800 hover:bg-slate-700 text-amber-400 px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-700 transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span class="hidden sm:inline">指揮中心</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 overflow-y-auto">
+
+        <!-- 1. AUTH / LOGIN & REGISTER & FORGOT VIEW -->
+        <template x-if="!currentUser">
+            <div class="max-w-md mx-auto bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden my-auto">
+                <div class="bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-white text-center">
+                    <div class="w-16 h-16 bg-amber-500 rounded-2xl mx-auto flex items-center justify-center text-slate-900 text-3xl shadow-lg mb-3">
+                        <i class="fa-solid fa-dice"></i>
+                    </div>
+                    <h2 class="text-2xl font-ming font-bold">競賽大亨伺服器入口</h2>
+                    <p class="text-slate-400 text-xs mt-1">跨裝置即時同步・專屬帳號密碼</p>
+                </div>
+
+                <!-- Tab switcher -->
+                <div class="flex border-b text-xs font-bold text-center">
+                    <button @click="authMode = 'login'" :class="authMode === 'login' ? 'border-b-2 border-amber-500 text-slate-900 bg-slate-50' : 'text-slate-400'" class="flex-1 py-3 transition">登入帳號</button>
+                    <button @click="authMode = 'register'" :class="authMode === 'register' ? 'border-b-2 border-amber-500 text-slate-900 bg-slate-50' : 'text-slate-400'" class="flex-1 py-3 transition">註冊新帳號</button>
+                    <button @click="authMode = 'forgot'" :class="authMode === 'forgot' ? 'border-b-2 border-amber-500 text-slate-900 bg-slate-50' : 'text-slate-400'" class="flex-1 py-3 transition">忘記密碼</button>
+                </div>
+
+                <!-- Login Form -->
+                <template x-if="authMode === 'login'">
+                    <form @submit.prevent="loginUser()" class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">帳號 (手機號碼或信箱)</label>
+                            <input type="text" x-model="loginForm.account" required placeholder="請輸入您的帳號"
+                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none bg-slate-50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">密碼</label>
+                            <input type="password" x-model="loginForm.password" required placeholder="請輸入密碼"
+                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none bg-slate-50">
+                        </div>
+                        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3 rounded-xl shadow-md transition text-sm">
+                            登入戰情室 <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </form>
+                </template>
+
+                <!-- Register Form -->
+                <template x-if="authMode === 'register'">
+                    <form @submit.prevent="registerUser()" class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">設定帳號</label>
+                            <input type="text" x-model="regForm.account" required placeholder="例如：0912345678"
+                                   class="w-full px-4 py-2 rounded-xl border border-slate-200 text-xs bg-slate-50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">電子郵件 (用於接收密碼)</label>
+                            <input type="email" x-model="regForm.email" required placeholder="name@example.com"
+                                   class="w-full px-4 py-2 rounded-xl border border-slate-200 text-xs bg-slate-50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">設定密碼</label>
+                            <input type="password" x-model="regForm.password" required placeholder="請設定安全密碼"
+                                   class="w-full px-4 py-2 rounded-xl border border-slate-200 text-xs bg-slate-50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">真實姓名</label>
+                            <input type="text" x-model="regForm.name" required placeholder="例如：王大明"
+                                   class="w-full px-4 py-2 rounded-xl border border-slate-200 text-xs bg-slate-50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">職級</label>
+                            <select x-model="regForm.rank" required class="w-full px-4 py-2 rounded-xl border border-slate-200 text-xs bg-slate-50">
+                                <option value="業務專員">業務專員</option>
+                                <option value="業務主任">業務主任</option>
+                                <option value="業務襄理">業務襄理</option>
+                                <option value="業務經理">業務經理</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">隸屬組別 / 團隊</label>
+                            <input type="text" x-model="regForm.groupName" required placeholder="例如：大亨第一團隊"
+                                   class="w-full px-4 py-2 rounded-xl border border-slate-200 text-xs bg-slate-50">
+                        </div>
+                        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">
+                            完成註冊並登入 <i class="fa-solid fa-check ml-1"></i>
+                        </button>
+                    </form>
+                </template>
+
+                <!-- Forgot Password Form -->
+                <template x-if="authMode === 'forgot'">
+                    <form @submit.prevent="forgotPassword()" class="p-6 space-y-4">
+                        <p class="text-xs text-slate-500">請輸入您當初註冊時的「帳號」與「電子郵件」，系統將透過伺服器將密碼寄至您的信箱。</p>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">註冊帳號</label>
+                            <input type="text" x-model="forgotForm.account" required placeholder="請輸入帳號"
+                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-slate-50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">電子郵件</label>
+                            <input type="email" x-model="forgotForm.email" required placeholder="請輸入信箱"
+                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-slate-50">
+                        </div>
+                        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3 rounded-xl shadow-md transition text-sm">
+                            寄送密碼至信箱 <i class="fa-solid fa-paper-plane ml-1"></i>
+                        </button>
+                    </form>
+                </template>
+            </div>
+        </template>
+
+        <!-- 2. DASHBOARD VIEW (Partner Room) -->
+        <template x-if="currentUser">
+            <div class="space-y-6">
+
+                <!-- Profile Tab View -->
+                <template x-if="currentTab === 'profile'">
+                    <div class="max-w-2xl mx-auto bg-white p-8 rounded-3xl shadow-sm border border-slate-100 space-y-6">
+                        <div class="flex items-center justify-between border-b pb-4">
+                            <h3 class="text-lg font-bold font-ming text-slate-900"><i class="fa-solid fa-id-card text-amber-500 mr-2"></i> 個人資訊與帳號設定</h3>
+                            <button @click="currentTab = 'dashboard'" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold">返回戰情室</button>
+                        </div>
+                        <form @submit.prevent="updateMyProfile()" class="space-y-4 text-xs">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-bold text-slate-600 mb-1">姓名</label>
+                                    <input type="text" x-model="profileForm.name" class="w-full p-2.5 border rounded-xl bg-slate-50">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-600 mb-1">職級</label>
+                                    <input type="text" x-model="currentUser.rank" disabled class="w-full p-2.5 border rounded-xl bg-slate-200 text-slate-500">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-bold text-slate-600 mb-1">帳號</label>
+                                    <input type="text" x-model="currentUser.account" disabled class="w-full p-2.5 border rounded-xl bg-slate-200 text-slate-500">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-600 mb-1">隸屬組別</label>
+                                    <input type="text" x-model="profileForm.groupName" class="w-full p-2.5 border rounded-xl bg-slate-50">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-600 mb-1">電子郵件</label>
+                                <input type="email" x-model="profileForm.email" class="w-full p-2.5 border rounded-xl bg-slate-50">
+                            </div>
+                            <div class="border-t pt-4">
+                                <label class="block font-bold text-slate-600 mb-1">更改新密碼 (若不更改請保持空白)</label>
+                                <input type="password" x-model="profileForm.newPassword" placeholder="輸入新密碼" class="w-full p-2.5 border rounded-xl bg-slate-50">
+                            </div>
+                            <button type="submit" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-sm shadow">儲存個人變更</button>
+                        </form>
+                    </div>
+                </template>
+
+                <!-- Standard Dashboard View -->
+                <template x-if="currentTab === 'dashboard'">
+                    <div class="space-y-6">
+                        <!-- Stats Overview Cards -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs font-medium text-slate-400">個人 FYC 業績</p>
+                                    <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mt-1" x-text="(currentUser.fyc || 0).toLocaleString()"></h3>
+                                    <p class="text-[10px] text-amber-600 font-semibold mt-0.5">換算點數: <span x-text="Math.floor((currentUser.fyc || 0) / 1000)"></span> P</p>
+                                </div>
+                                <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center text-xl shadow-inner"><i class="fa-solid fa-chart-line"></i></div>
+                            </div>
+                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs font-medium text-slate-400">可用遊戲點數</p>
+                                    <h3 class="text-xl sm:text-2xl font-bold text-amber-600 mt-1" x-text="currentUser.points || 0"></h3>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">擲一次消耗 10 點</p>
+                                </div>
+                                <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center text-xl shadow-inner"><i class="fa-solid fa-coins"></i></div>
+                            </div>
+                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs font-medium text-slate-400">剩餘骰子次數</p>
+                                    <h3 class="text-xl sm:text-2xl font-bold text-indigo-600 mt-1" x-text="currentUser.diceCount || 0"></h3>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">可透過申報獲得</p>
+                                </div>
+                                <div class="w-12 h-12 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center text-xl shadow-inner"><i class="fa-solid fa-dice-five"></i></div>
+                            </div>
+                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs font-medium text-slate-400">目前棋盤位置</p>
+                                    <h3 class="text-xl sm:text-2xl font-bold text-purple-600 mt-1">第 <span x-text="currentUser.boardPosition || 1"></span> 格</h3>
+                                    <p class="text-[10px] text-slate-400 mt-0.5" x-text="getBoardCell(currentUser.boardPosition || 1).name"></p>
+                                </div>
+                                <div class="w-12 h-12 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center text-xl shadow-inner"><i class="fa-solid fa-location-dot"></i></div>
+                            </div>
+                        </div>
+
+                        <!-- Main Grid Layout -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="lg:col-span-2 space-y-6">
+                                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
+                                            <i class="fa-solid fa-file-pen text-amber-500"></i> 成績與 Tag 點數申報
+                                        </h3>
+                                        <form @submit.prevent="submitDeclaration()" class="space-y-3">
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 mb-1">申報標籤 (Tag)</label>
+                                                <select x-model="claimForm.tag" class="w-full px-3 py-2 rounded-xl border text-xs bg-slate-50">
+                                                    <template x-for="t in tagSettings" :key="t.name">
+                                                        <option :value="t.name" x-text="t.name"></option>
+                                                    </template>
+                                                </select>
+                                            </div>
+                                            <template x-if="claimForm.tag === 'FYC'">
+                                                <div>
+                                                    <label class="block text-xs font-bold text-slate-600 mb-1">FYC 金額</label>
+                                                    <input type="number" x-model.number="claimForm.amount" min="1000" step="100" class="w-full px-3 py-2 rounded-xl border text-xs bg-slate-50">
+                                                </div>
+                                            </template>
+                                            <button type="submit" class="w-full bg-slate-900 text-white font-bold py-2.5 rounded-xl text-xs shadow">送出審核</button>
+                                        </form>
+                                    </div>
+                                    <div class="flex flex-col justify-between bg-slate-50 p-5 rounded-2xl border text-center">
+                                        <div>
+                                            <h3 class="text-base font-bold text-slate-800 mb-1"><i class="fa-solid fa-dice text-indigo-600"></i> 大富翁擲骰</h3>
+                                            <p class="text-xs text-slate-500 mb-4">每次移動消耗 10 點遊戲點數</p>
+                                        </div>
+                                        <button @click="rollDice()" :disabled="(currentUser.points || 0) < 10"
+                                                class="w-full bg-gradient-to-r from-amber-500 to-amber-600 disabled:opacity-50 text-slate-900 font-bold py-3 rounded-xl text-sm shadow">
+                                            🎲 擲骰子 (消耗 10 點)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                                    <h3 class="text-base font-bold text-slate-800 mb-3"><i class="fa-solid fa-users text-indigo-600"></i> 伺服器同步團隊動態</h3>
+                                    <div class="space-y-3 max-h-[350px] overflow-y-auto">
+                                        <template x-for="sub in partners" :key="sub.id">
+                                            <div class="p-3 bg-slate-50 rounded-2xl border flex items-center justify-between text-xs">
+                                                <div>
+                                                    <span class="font-bold text-slate-800" x-text="sub.name"></span>
+                                                    <p class="text-[10px] text-slate-500" x-text="(sub.rank || '') + ' · ' + (sub.groupName || '')"></p>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="font-bold text-amber-600">FYC: <span x-text="(sub.fyc || 0).toLocaleString()"></span></p>
+                                                    <p class="text-[10px] text-slate-400">點數: <span x-text="sub.points || 0"></span> P</p>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+            </div>
+        </template>
+
+    </main>
+
+    <!-- ADMIN CENTER MODAL -->
+    <div x-show="openAdminModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 p-4 overflow-y-auto" x-cloak>
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between shrink-0">
+                <h3 class="text-lg font-bold font-ming"><i class="fa-solid fa-shield-halved text-amber-500"></i> 指揮中心 (管理員後台)</h3>
+                <button @click="openAdminModal = false" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <template x-if="!adminAuthenticated">
+                <div class="p-8 max-w-md mx-auto my-auto space-y-4 text-center w-full">
+                    <h4 class="text-lg font-bold text-slate-800">請輸入管理者密碼</h4>
+                    <form @submit.prevent="adminAuthenticated = (adminPasswordInput === 'admin')" class="space-y-3">
+                        <input type="password" x-model="adminPasswordInput" placeholder="預設 admin" required class="w-full px-4 py-2 border text-sm text-center rounded-xl bg-slate-50">
+                        <button type="submit" class="w-full bg-amber-500 text-slate-900 font-bold py-2.5 rounded-xl text-xs">進入後台</button>
+                    </form>
+                </div>
+            </template>
+            <template x-if="adminAuthenticated">
+                <div class="flex-1 p-6 overflow-y-auto space-y-6">
+                    <h4 class="text-sm font-bold">團隊夥伴管理與編輯 (含點數發放/調整)</h4>
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th class="p-3">姓名</th>
+                                <th class="p-3">帳號</th>
+                                <th class="p-3">組別</th>
+                                <th class="p-3">FYC</th>
+                                <th class="p-3">遊戲點數 (P)</th>
+                                <th class="p-3 text-right">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <template x-for="p in partners" :key="p.id">
+                                <tr>
+                                    <td class="p-3 font-bold"><input type="text" x-model="p.name" @change="savePartnerEdit(p)" class="w-24 p-1 border rounded bg-white"></td>
+                                    <td class="p-3 font-mono text-slate-500" x-text="p.account"></td>
+                                    <td class="p-3"><input type="text" x-model="p.groupName" @change="savePartnerEdit(p)" class="w-24 p-1 border rounded bg-white"></td>
+                                    <td class="p-3 font-bold text-amber-600"><input type="number" x-model.number="p.fyc" @change="savePartnerEdit(p)" class="w-24 p-1 border rounded bg-white"></td>
+                                    <td class="p-3 font-bold text-emerald-600"><input type="number" x-model.number="p.points" @change="savePartnerEdit(p)" class="w-20 p-1 border rounded bg-white font-bold text-emerald-600"></td>
+                                    <td class="p-3 text-right"><button @click="deletePartner(p.id)" class="text-rose-600 font-bold hover:underline">刪除</button></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- Alpine.js Application Logic -->
+    <script>
+        function tycoonApp() {
+            return {
+                isOnline: navigator.onLine,
+                currentUser: null,
+                currentTab: 'dashboard',
+                authMode: 'login',
+                adminAuthenticated: false,
+                adminPasswordInput: '',
+                openAdminModal: false,
+
+                loginForm: { account: '', password: '' },
+                regForm: { account: '', email: '', password: '', name: '', rank: '業務專員', groupName: '' },
+                forgotForm: { account: '', email: '' },
+                profileForm: { name: '', groupName: '', email: '', newPassword: '' },
+                claimForm: { tag: 'FYC', amount: 1000 },
+
+                tagSettings: [{ name: 'FYC' }, { name: '開發新名單' }, { name: '活動邀約' }],
+                boardCells: Array.from({ length: 30 }, (_, i) => ({ id: i + 1, name: `第 ${i + 1} 格` })),
+
+                partners: [],
+                claims: [],
+                rewardLogs: [],
+
+                initApp() {
+                    this.fetchData();
+                    setInterval(() => this.fetchData(), 3000);
+
+                    const savedUserId = localStorage.getItem('tycoon_server_userid');
+                    if (savedUserId) {
+                        setTimeout(() => {
+                            const found = this.partners.find(p => p.id === savedUserId);
+                            if (found) {
+                                this.currentUser = found;
+                                this.initProfileForm();
+                            }
+                        }, 600);
+                    }
+                },
+
+                async fetchData() {
+                    try {
+                        const res = await fetch('/api/data');
+                        const data = await res.json();
+                        this.partners = data.partners || [];
+                        this.claims = data.claims || [];
+                        this.rewardLogs = data.rewards || [];
+
+                        if (this.currentUser) {
+                            const updated = this.partners.find(p => p.id === this.currentUser.id);
+                            if (updated) this.currentUser = updated;
+                        }
+                    } catch (e) {
+                        console.log('伺服器連線中...');
+                    }
+                },
+
+                async registerUser() {
+                    const newId = 'p_' + Date.now();
+                    const newUser = {
+                        id: newId,
+                        account: this.regForm.account.trim(),
+                        password: this.regForm.password,
+                        name: this.regForm.name.trim(),
+                        rank: this.regForm.rank,
+                        groupName: this.regForm.groupName.trim(),
+                        email: this.regForm.email.trim(),
+                        fyc: 0, points: 20, diceCount: 3, boardPosition: 1
+                    };
+
+                    const res = await fetch('/api/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newUser)
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        alert('註冊成功！');
+                        this.currentUser = newUser;
+                        localStorage.setItem('tycoon_server_userid', newId);
+                        this.initProfileForm();
+                        this.fetchData();
+                    } else {
+                        alert('註冊失敗：帳號可能已被使用。');
+                    }
+                },
+
+                loginUser() {
+                    const found = this.partners.find(p => p.account === this.loginForm.account && p.password === this.loginForm.password);
+                    if (found) {
+                        this.currentUser = found;
+                        localStorage.setItem('tycoon_server_userid', found.id);
+                        this.initProfileForm();
+                    } else {
+                        alert('帳號或密碼錯誤！');
+                    }
+                },
+
+                logout() {
+                    this.currentUser = null;
+                    localStorage.removeItem('tycoon_server_userid');
+                },
+
+                initProfileForm() {
+                    if (this.currentUser) {
+                        this.profileForm.name = this.currentUser.name;
+                        this.profileForm.groupName = this.currentUser.groupName;
+                        this.profileForm.email = this.currentUser.email || '';
+                        this.profileForm.newPassword = '';
+                    }
+                },
+
+                async updateMyProfile() {
+                    let updateData = {
+                        name: this.profileForm.name,
+                        groupName: this.profileForm.groupName,
+                        email: this.profileForm.email
+                    };
+                    if (this.profileForm.newPassword) {
+                        updateData.password = this.profileForm.newPassword;
+                    }
+
+                    const res = await fetch(`/api/partners/${this.currentUser.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(updateData)
+                    });
+                    if ((await res.json()).success) {
+                        alert('個人資訊已成功更新！');
+                        this.fetchData();
+                        this.currentTab = 'dashboard';
+                    }
+                },
+
+                async forgotPassword() {
+                    const res = await fetch('/api/forgot-password', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(this.forgotForm)
+                    });
+                    const result = await res.json();
+                    alert(result.message || '處理完成');
+                },
+
+                async savePartnerEdit(p) {
+                    await fetch(`/api/partners/${p.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: p.name, groupName: p.groupName, fyc: p.fyc, points: p.points })
+                    });
+                },
+
+                async deletePartner(id) {
+                    if (confirm('確定刪除此夥伴？')) {
+                        await fetch(`/api/partners/${id}`, { method: 'DELETE' });
+                        this.fetchData();
+                    }
+                },
+
+                getBoardCell(id) { return this.boardCells.find(c => c.id === id) || this.boardCells[0]; },
+                getPartnersAtCell(cellId) { return this.partners.filter(p => (p.boardPosition || 1) === cellId); },
+                get myClaims() { return this.claims.filter(c => c.partnerId === this.currentUser.id); }
+            }
+        }
+    </script>
+</body>
+</html>
