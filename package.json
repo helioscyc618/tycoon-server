@@ -1,9 +1,13 @@
 {
+  "name": "tycoon-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
-    "body-parser": "^2.3.0",
-    "cors": "^2.8.6",
     "express": "^5.3.0",
-    "nodemailer": "^10.1.7",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "5.1.7"
   }
 }
