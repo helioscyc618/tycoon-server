@@ -3,10 +3,10 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 設定靜態檔案資料夾
+// 設定靜態檔案資料階層
 app.use(express.static(path.join(__dirname)));
 
-// 明確指定根目錄回傳 index.html
+// 路由設定：根目錄指向 index.html
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });

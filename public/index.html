@@ -560,8 +560,7 @@
                                         <div class="flex justify-between items-center p-2.5 bg-stone-50 rounded-xl text-xs border border-stone-100">
                                             <div>
                                                 <span class="font-bold text-stone-900">${m.name}</span>
-                                                <span class="text-stone-400 ml-1">(${m.role})</span>
-                                                ${m.upline ? `<span class="text-[10px] bg-stone-200 text-stone-600 px-1.5 py-0.5 rounded ml-1">上線: ${m.upline}</span>` : ''}
+                                                <span class="text-stone-400 ml-1">(${m.role})</span>${m.upline ? `<span class="text-[10px] bg-stone-200 text-stone-600 px-1.5 py-0.5 rounded ml-1">上線: ${m.upline}</span>` : ''}
                                             </div>
                                             <div class="text-right">
                                                 <span class="text-brand-600 font-bold">FYC: ${m.fyc || 0}</span>
@@ -876,9 +875,9 @@
                                 ${db.users.map(u => `
                                     <tr>
                                         <td class="p-4 font-bold">${u.name} <span class="text-xs text-stone-400 font-normal">(${u.username})</span></td>
-                                        <td class="p-4">${u.role} <span class="text-xs bg-stone-100 px-2 py-0.5 rounded ml-1">${u.group}</span> ${u.upline ? '<span class="text-[10px] text-stone-500">上線:'+u.upline+'</span>' : ''}</td>
+                                        <td class="p-4">${u.role} <span class="text-xs bg-stone-100 px-2 py-0.5 rounded ml-1">${u.group}</span>${u.upline ? '<span class="text-[10px] text-stone-500">上線:'+u.upline+'</span>' : ''}</td>
                                         <td class="p-4 font-serif text-brand-600 font-bold">${u.fyc || 0}</td>
-                                        <td class="p-4">${u.points || 0} P / ${u.diceCount || 0} 骰</td>
+                                        <td class="p-4">${u.points \vert{}\vert{} 0} P / ${u.diceCount || 0} 骰</td>
                                         <td class="p-4 text-right space-x-2">
                                             <button onclick="editUser('${u.username}')" class="bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1 rounded-lg text-xs font-medium">編輯/調分</button>
                                             ${u.username !== 'admin' ? `<button onclick="deleteUser('${u.username}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1 rounded-lg text-xs font-medium">刪除</button>` : ''}
