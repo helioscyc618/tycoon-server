@@ -40,7 +40,7 @@
         ::-webkit-scrollbar-thumb { background: #f97316; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #c2410c; }
         @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        .animate-marquee { display: inline-block; animation: marquee 30s linear infinite; }
+        .animate-marquee { display: inline-block; animation: marquee 35s linear infinite; }
         .dice-container { perspective: 600px; }
         .dice-cube { width: 60px; height: 60px; position: relative; transform-style: preserve-3d; transition: transform 1s ease-out; }
     </style>
@@ -70,7 +70,7 @@
             </template>
             <button @click="openAdminModal = true" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-3.5 py-1.5 rounded-lg shadow text-xs transition flex items-center space-x-1.5">
                 <i class="fas fa-shield-halved"></i>
-                <span>指揮中心後台</span>
+                <span>指揮中心</span>
             </button>
         </div>
     </header>
@@ -81,16 +81,18 @@
         <span>【警告】目前偵測無網路連線！請檢查您的網路狀態。</span>
     </div>
 
-    <!-- RUNNING TICKER -->
+    <!-- RUNNING TICKER (多重欄位跑馬燈) -->
     <div class="bg-slate-800 text-orange-400 py-2.5 px-3 overflow-hidden whitespace-nowrap border-b border-orange-500/30 relative flex items-center shadow-inner">
         <div class="bg-orange-500 text-white font-bold px-2.5 py-0.5 rounded text-xs mr-3 z-10 flex items-center shadow">
             <i class="fas fa-bullhorn mr-1"></i> 戰報
         </div>
         <div class="overflow-hidden w-full relative">
             <div class="animate-marquee inline-block text-xs sm:text-sm font-medium tracking-wide text-slate-200">
-                <span x-text="settings.tickerText"></span>
+                <span x-text="settings.ticker1"></span>
                 <span class="mx-6 text-orange-400">♦</span>
-                <span>🔥 團隊夥伴熱血衝刺中，半年期雙軌業績與增員成長競賽火熱進行中！</span>
+                <span x-text="settings.ticker2"></span>
+                <span class="mx-6 text-orange-400">♦</span>
+                <span x-text="settings.ticker3"></span>
             </div>
         </div>
     </div>
@@ -206,7 +208,7 @@
             </div>
         </template>
 
-        <!-- WAR ROOM VIEW -->
+        <!-- WAR ROOM VIEW (戰情室) -->
         <template x-if="currentUser">
             <div class="space-y-6">
                 <!-- User Overview Banner -->
@@ -219,7 +221,7 @@
                                 <span class="px-2.5 py-0.5 bg-orange-500 text-white text-xs rounded-full font-semibold" x-text="currentUser.rank"></span>
                                 <span class="px-2.5 py-0.5 bg-slate-800 text-white text-xs rounded-full font-semibold" x-text="currentUser.group"></span>
                             </div>
-                            <p class="text-xs text-slate-500 mt-1">歡迎來到競賽大亨戰情室！多裝置資料已自動雲端同步。</p>
+                            <p class="text-xs text-slate-500 mt-1">歡迎來到【戰情室】！多裝置資料已自動雲端同步。</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-4 gap-3 text-center w-full md:w-auto">
@@ -294,7 +296,7 @@
                             </template>
                         </div>
 
-                        <!-- 2. 成績申報 -->
+                        <!-- 2. 成績申報 (允許輸入原始FYC，後台保留準確報表) -->
                         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
                             <h3 class="text-base font-bold text-slate-900 ming-title mb-3 flex items-center">
                                 <i class="fas fa-file-invoice-dollar text-orange-500 mr-2"></i> 成績申報與 Tag 任務提交
@@ -304,15 +306,15 @@
                                     <label class="block text-xs font-bold text-slate-700 mb-1">選擇任務 / Tag 類型</label>
                                     <select x-model="declForm.tag" @change="onTagChange()" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm bg-white">
                                         <template x-for="t in settings.tags" :key="t.name">
-                                            <option :value="t.name" x-text="t.name + (t.isFYC ? ' (FYC無條件進位千位換算)' : ' (固定點數: ' + t.points + '點)')"></option>
+                                            <option :value="t.name" x-text="t.name + (t.isFYC ? ' (FYC原始輸入與千位進位換算)' : ' (固定點數: ' + t.points + '點)')"></option>
                                         </template>
                                     </select>
                                 </div>
                                 <template x-if="isFYCTag">
                                     <div>
-                                        <label class="block text-xs font-bold text-slate-700 mb-1">輸入 FYC 金額 (無條件進位千位數換算點數)</label>
-                                        <input type="number" x-model.number="declForm.fycAmount" min="0" step="100" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm" placeholder="例如：10200">
-                                        <p class="text-xs text-orange-600 mt-1 font-semibold" x-text="'預計可獲得點數：' + Math.ceil((declForm.fycAmount || 0) / 1000) + ' 點'"></p>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1">輸入原始 FYC 金額 (後台紀錄精確數字，點數自動無條件進位千位換算)</label>
+                                        <input type="number" x-model.number="declForm.fycAmount" min="0" step="1" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm" placeholder="例如：10250">
+                                        <p class="text-xs text-orange-600 mt-1 font-semibold" x-text="'預計換算獲得點數：' + Math.ceil((declForm.fycAmount || 0) / 1000) + ' 點'"></p>
                                     </div>
                                 </template>
                                 <div>
@@ -433,10 +435,10 @@
                             </div>
                         </div>
 
-                        <!-- Monopoly Board -->
+                        <!-- 機會命運大富翁棋盤 -->
                         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
                             <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-base font-bold text-slate-900 ming-title"><i class="fas fa-map text-orange-500 mr-2"></i> 30格大富翁棋盤</h3>
+                                <h3 class="text-base font-bold text-slate-900 ming-title"><i class="fas fa-map text-orange-500 mr-2"></i> 機會命運大富翁棋盤</h3>
                                 <span class="text-xs text-slate-400 font-medium">點擊格子可檢視詳細獎勵與目前停留成員</span>
                             </div>
                             <div class="grid grid-cols-6 sm:grid-cols-10 gap-2">
@@ -465,7 +467,7 @@
 
     </main>
 
-    <!-- MODALS (層級嚴格由大到小排序: 後台z-50，通知彈窗z-[100]確保在最上層) -->
+    <!-- MODALS -->
     <div x-show="showNewsModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition>
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative">
             <div class="w-12 h-12 bg-orange-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 shadow text-xl">
@@ -532,7 +534,7 @@
         </div>
     </div>
 
-    <!-- 最高層級通知視窗 z-[100] 確保永遠在最上層 -->
+    <!-- 最高層級通知視窗 z-[100] -->
     <div x-show="showNotificationModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4" x-transition>
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border-2 border-orange-500 text-center space-y-3">
             <div class="w-14 h-14 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center mx-auto shadow text-2xl">
@@ -553,7 +555,7 @@
             <div class="bg-slate-900 p-4 text-white flex justify-between items-center border-b-2 border-orange-500">
                 <div class="flex items-center space-x-2">
                     <i class="fas fa-shield-halved text-orange-400 text-xl"></i>
-                    <h2 class="text-xl font-bold ming-title text-orange-400">指揮中心後台管理</h2>
+                    <h2 class="text-xl font-bold ming-title text-orange-400">指揮中心</h2>
                 </div>
                 <button @click="openAdminModal = false" class="text-slate-300 hover:text-white text-lg"><i class="fas fa-times"></i></button>
             </div>
@@ -568,7 +570,7 @@
                     <p class="text-xs text-slate-400">預設密碼為 <code class="bg-slate-100 px-1.5 py-0.5 rounded font-mono font-bold text-orange-600">admin</code></p>
                     <input type="password" x-model="adminPassInput" @keyup.enter="verifyAdmin()" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm text-center" placeholder="請輸入管理密碼">
                     <button @click="verifyAdmin()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 rounded-xl shadow transition text-sm">
-                        解鎖後台
+                        解鎖指揮中心
                     </button>
                 </div>
             </template>
@@ -687,7 +689,7 @@
                             </div>
                         </template>
 
-                        <!-- TAB 3: 遊戲與 Tag 設定 (加入防閃退輸入綁定) -->
+                        <!-- TAB 3: 遊戲與 Tag 設定 (防閃退與跑馬燈三欄位) -->
                         <template x-if="adminTab === 'settings'">
                             <div class="space-y-6">
                                 <h3 class="text-lg font-bold text-slate-900 ming-title">遊戲設定與 Tag 點數規則</h3>
@@ -714,7 +716,7 @@
                                 </div>
 
                                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-                                    <h4 class="font-bold text-slate-900 text-sm"><i class="fas fa-bullhorn mr-1 text-orange-500"></i> 最新消息公告與跑馬燈自訂</h4>
+                                    <h4 class="font-bold text-slate-900 text-sm"><i class="fas fa-bullhorn mr-1 text-orange-500"></i> 最新消息公告與跑馬燈自訂 (三欄位)</h4>
                                     <div>
                                         <label class="block text-xs font-bold text-slate-700 mb-1">公告標題</label>
                                         <input type="text" x-model="settings.newsTitle" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white">
@@ -723,18 +725,28 @@
                                         <label class="block text-xs font-bold text-slate-700 mb-1">公告內容</label>
                                         <textarea x-model="settings.newsContent" @focus="isEditingSettings = true" @blur="isEditingSettings = false" rows="3" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white"></textarea>
                                     </div>
-                                    <div>
-                                        <label class="block text-xs font-bold text-slate-700 mb-1">戰報跑馬燈文字</label>
-                                        <input type="text" x-model="settings.tickerText" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white">
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-700 mb-1">跑馬燈訊息 1</label>
+                                            <input type="text" x-model="settings.ticker1" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-700 mb-1">跑馬燈訊息 2</label>
+                                            <input type="text" x-model="settings.ticker2" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-700 mb-1">跑馬燈訊息 3</label>
+                                            <input type="text" x-model="settings.ticker3" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white">
+                                        </div>
                                     </div>
-                                    <button @click="saveSettings()" class="bg-slate-900 text-white font-bold py-2.5 px-5 rounded-xl text-xs shadow hover:bg-slate-800">
+                                    <button @click="saveSettings()" class="bg-slate-900 text-white font-bold py-2.5 px-5 rounded-xl text-xs shadow hover:bg-slate-800 mt-2">
                                         儲存設定更新
                                     </button>
                                 </div>
                             </div>
                         </template>
 
-                        <!-- TAB 4: 30格獎勵設定 -->
+                        <!-- TAB 4: 30格獎勵設定 (防閃退綁定) -->
                         <template x-if="adminTab === 'boardSettings'">
                             <div class="space-y-4">
                                 <div class="flex justify-between items-center">
@@ -750,20 +762,20 @@
                                                 <span x-text="'#' + (cIdx + 1)"></span>
                                             </div>
                                             <div class="sm:col-span-2">
-                                                <input type="text" x-model="cell.icon" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white text-center">
+                                                <input type="text" x-model="cell.icon" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white text-center">
                                             </div>
                                             <div class="sm:col-span-3">
-                                                <input type="text" x-model="cell.title" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white" placeholder="格子名稱">
+                                                <input type="text" x-model="cell.title" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white" placeholder="格子名稱">
                                             </div>
                                             <div class="sm:col-span-2">
-                                                <select x-model="cell.type" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white">
+                                                <select x-model="cell.type" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white">
                                                     <option value="普通">普通</option>
                                                     <option value="獎勵">獎勵 (記入獎勵統整)</option>
                                                     <option value="傳送">傳送 (隨機移動)</option>
                                                 </select>
                                             </div>
                                             <div class="sm:col-span-4">
-                                                <input type="text" x-model="cell.reward" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white" placeholder="獎勵內容描述...">
+                                                <input type="text" x-model="cell.reward" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white" placeholder="獎勵內容描述...">
                                             </div>
                                         </div>
                                     </template>
@@ -966,7 +978,7 @@
                 isRolling: false,
                 rollingDiceNumber: 1,
 
-                declForm: { tag: 'FYC', fycAmount: 10000, desc: '' },
+                declForm: { tag: 'FYC', fycAmount: 10250, desc: '' },
                 isFYCTag: true,
                 declarations: [],
 
@@ -995,7 +1007,9 @@
                 settings: {
                     newsTitle: '🏆 2026/12/14 ~ 2027/06/02 競賽大亨正式開跑！',
                     newsContent: '歡迎各位頂尖業務菁英加入競賽大亨！請透過每日拜訪、增員與 FYC 申報賺取點數，解鎖 30 格大富翁棋盤豐富獎勵！',
-                    tickerText: '🎉 賀！競賽大亨雙軌競賽熱血啟動！所有申報請確實填寫任務說明！',
+                    ticker1: '🎉 賀！競賽大亨雙軌競賽熱血啟動！所有申報請確實填寫任務說明！',
+                    ticker2: '🔥 團隊夥伴衝刺中，每日拜訪與增員點數即時同步雲端！',
+                    ticker3: '⭐ 恭喜各組菁英挑戰機會命運大富翁棋盤豐富大獎！',
                     tags: [
                         { name: 'FYC', isFYC: true, points: 0 },
                         { name: '活動邀約', isFYC: false, points: 10 },
@@ -1093,7 +1107,6 @@
                             this.messages = newMessages;
                             this.rewardsList = data.rewardsList || [];
                             
-                            // 防閃退機制：如果管理員正在編輯設定，暫時不覆蓋 settings
                             if (data.settings) {
                                 if (data.settings.adminPassword) {
                                     this.adminPassword = data.settings.adminPassword;
@@ -1242,8 +1255,9 @@
                     }
                     let pts = 0;
                     let dCount = 0;
+                    let rawFYC = 0;
                     if (this.isFYCTag) {
-                        const rawFYC = this.declForm.fycAmount || 0;
+                        rawFYC = this.declForm.fycAmount || 0;
                         const roundedFYC = Math.ceil(rawFYC / 1000) * 1000;
                         pts = Math.floor(roundedFYC / 1000);
                         dCount = Math.floor(pts / 10) || 1;
@@ -1255,7 +1269,8 @@
                         userName: this.currentUser.name,
                         userEmail: this.currentUser.email,
                         tag: this.declForm.tag,
-                        details: this.declForm.desc + (this.isFYCTag ? ` (FYC 金額: $${this.declForm.fycAmount})` : ''),
+                        details: this.declForm.desc + (this.isFYCTag ? ` (原始 FYC 金額: $${rawFYC})` : ''),
+                        rawFYC: rawFYC,
                         points: pts,
                         dice: dCount,
                         time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
@@ -1274,18 +1289,26 @@
                         this.partners[pIdx].points = (this.partners[pIdx].points || 0) + req.points;
                         this.partners[pIdx].totalPoints = (this.partners[pIdx].totalPoints || 0) + req.points;
                         this.partners[pIdx].diceCount = (this.partners[pIdx].diceCount || 0) + req.dice;
+                        
                         if (req.tag === 'FYC') {
-                            const match = req.details.match(/\$(\d+)/);
-                            if (match) {
-                                this.partners[pIdx].fyc = (this.partners[pIdx].fyc || 0) + parseInt(match[1]);
-                            }
+                            const addFYC = req.rawFYC || 0;
+                            this.partners[pIdx].fyc = (this.partners[pIdx].fyc || 0) + addFYC;
+
+                            // 增員者連動獲點機制：若有人將此人設為 Buff 增員夥伴，增員者也同步獲得對應點數與骰子
+                            this.partners.forEach(u => {
+                                if (u.buffs && u.buffs.includes(this.partners[pIdx].name)) {
+                                    u.points = (u.points || 0) + req.points;
+                                    u.totalPoints = (u.totalPoints || 0) + req.points;
+                                    u.diceCount = (u.diceCount || 0) + req.dice;
+                                }
+                            });
                         }
                     }
                     this.declarations.splice(index, 1);
                     await this.syncToServer();
                     try { confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } }); } catch(e) {}
                     playBeep('success');
-                    this.showAlert('審核通過', `已成功撥發 ${req.points} 點與 ${req.dice} 顆骰子給 ${req.userName}！`);
+                    this.showAlert('審核通過', `已成功撥發 ${req.points} 點與 ${req.dice} 顆骰子給 ${req.userName}（直屬增員者已同步獲點）！`);
                 },
 
                 async rejectDecl(index) {
@@ -1338,7 +1361,7 @@
                                     status: '未發放'
                                 };
                                 this.rewardsList.push(newReward);
-                                this.settings.tickerText = `🎉 捷報！恭喜夥伴【${this.currentUser.name}】在大富翁踩中【${landed.title}】獲得豐富獎勵！`;
+                                this.settings.ticker1 = `🎉 捷報！恭喜夥伴【${this.currentUser.name}】在大富翁踩中【${landed.title}】獲得豐富獎勵！`;
                             }
 
                             await this.syncToServer();
@@ -1434,7 +1457,7 @@
                         this.adminAuth = true;
                         playBeep('success');
                     } else {
-                        this.showAlert('密碼錯誤', '管理者密碼不正確！');
+                        this.showAlert('密碼錯誤', '指揮中心密碼不正確！');
                     }
                 },
 
@@ -1508,7 +1531,7 @@
                 async saveSettings() {
                     this.isEditingSettings = false;
                     await this.syncToServer();
-                    this.showAlert('儲存成功', '遊戲與棋盤設定已即時更新！');
+                    this.showAlert('儲存成功', '指揮中心與棋盤設定已即時更新！');
                 },
 
                 async toggleRewardStatus(index) {
@@ -1535,7 +1558,7 @@
                     this.settings.adminPassword = this.newAdminPassword;
                     this.newAdminPassword = '';
                     await this.syncToServer();
-                    this.showAlert('修改成功', '指揮中心管理者密碼已成功更新並同步至雲端！');
+                    this.showAlert('修改成功', '指揮中心密碼已成功更新並同步至雲端！');
                 },
 
                 autoBackupData() {
