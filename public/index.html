@@ -1,638 +1,1261 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>競賽大亨 - Competition Tycoon</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <title>競賽大亨 - 2026/12/14 ~ 2027/06/02 業務成長雙軌競賽</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.6.0/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background-color: #f4f4f5;
-            color: #18181b;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            background-color: #fbf8f5;
+            color: #2b2b2b;
         }
-        header {
-            background: #ffffff;
-            border-bottom: 1px solid #e4e4e7;
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 20;
-        }
-        .logo-title {
+        .ming-font {
             font-family: 'Noto Serif TC', serif;
-            font-weight: 900;
-            font-size: 24px;
-            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+        }
+        .bg-royal-gradient {
+            background: linear-gradient(135deg, #8B0000 0%, #5C0000 100%);
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 24px;
-            max-width: 1280px;
-            width: 100%;
-            margin: 0 auto;
-            gap: 20px;
+        .gold-border {
+            border-color: #D4AF37;
         }
-        .card {
-            background: #ffffff;
-            border: 1px solid #e4e4e7;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        .gold-bg {
+            background-color: #D4AF37;
         }
-        .btn-orange {
-            background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
-            color: #fff;
-            font-weight: 700;
-            padding: 12px 20px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            transition: opacity 0.2s;
+        .gold-hover:hover {
+            background-color: #C5A028;
         }
-        .btn-orange:hover { opacity: 0.9; }
-        .input-box {
-            width: 100%;
-            padding: 10px 14px;
-            background: #fafafa;
-            border: 1px solid #d4d4d8;
-            border-radius: 10px;
-            color: #18181b;
-            font-size: 14px;
-            margin-top: 4px;
-            margin-bottom: 12px;
-            outline: none;
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-        .input-box:focus { border-color: #f97316; background: #fff; }
-        label { font-size: 12px; color: #71717a; font-weight: 600; display: block; }
-        .tabs { display: flex; background: #f4f4f5; padding: 4px; border-radius: 12px; margin-bottom: 16px; border: 1px solid #e4e4e7; }
-        .tab-btn { flex: 1; padding: 8px; background: transparent; border: none; color: #71717a; font-weight: 600; cursor: pointer; border-radius: 8px; font-size: 13px; }
-        .tab-btn.active { background: #f97316; color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .hidden { display: none !important; }
-        
-        .marquee-container { overflow: hidden; white-space: nowrap; background: #18181b; border-bottom: 1px solid #3f3f46; padding: 10px; font-size: 13px; color: #fed7aa; display: flex; align-items: center; }
-        .marquee-text { display: inline-block; padding-left: 100%; animation: marquee 30s linear infinite; }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 4px;
+        }
+        /* Marquee animation */
         @keyframes marquee {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-100%, 0); }
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
         }
-        #network-banner { background: #9a3412; color: #ffedd5; text-align: center; font-size: 12px; padding: 6px; font-weight: bold; display: none; }
+        .animate-marquee {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 25s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+        /* 3D Dice styling */
+        .dice-scene {
+            width: 100px;
+            height: 100px;
+            perspective: 600px;
+        }
+        .dice {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .dice-face {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px solid #b91c1c;
+            border-radius: 16px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
+        }
+        .dice-face-1 { transform: rotateY(0deg) translateZ(50px); }
+        .dice-face-2 { transform: rotateY(90deg) translateZ(50px); }
+        .dice-face-3 { transform: rotateY(180deg) translateZ(50px); }
+        .dice-face-4 { transform: rotateY(-90deg) translateZ(50px); }
+        .dice-face-5 { transform: rotateX(90deg) translateZ(50px); }
+        .dice-face-6 { transform: rotateX(-90deg) translateZ(50px); }
     </style>
 </head>
-<body>
+<body class="h-full flex flex-col antialiased selection:bg-red-200 selection:text-red-900" x-data="competitionApp()">
 
-    <!-- Network Banner -->
-    <div id="network-banner">⚠️ 目前處於離線狀態，系統將於恢復連線時自動同步數據。</div>
-
-    <!-- Header -->
-    <header>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 28px; background: #f97316; padding: 6px 10px; border-radius: 14px; color: #fff;">🎲</span>
-            <div>
-                <h1 class="logo-title">競賽大亨</h1>
-                <p style="font-size: 11px; color: #71717a; font-family: monospace;">COMPETITION TYCOON | 2026.12.14 - 2027.06.02 <span id="live-clock" style="margin-left: 10px; color: #ea580c;"></span></p>
-            </div>
+    <!-- Network status & time top bar -->
+    <header class="bg-royal-gradient text-white text-xs py-1.5 px-4 flex flex-wrap justify-between items-center shadow-md z-50 border-b border-amber-500/30">
+        <div class="flex items-center space-x-3">
+            <span class="flex items-center space-x-1.5 font-medium">
+                <span class="w-2.5 h-2.5 rounded-full inline-block" :class="isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500 animate-ping'"></span>
+                <span x-text="isOnline ? '連線正常 (Online)' : '網路斷線警告 (Offline Mode)'"></span>
+            </span>
+            <span class="text-amber-300 hidden sm:inline">|</span>
+            <span class="hidden sm:inline text-amber-200">競賽期間：2026/12/14 ~ 2027/06/02</span>
         </div>
-        <div id="header-user-info" class="hidden" style="display: flex; align-items: center; gap: 12px;">
-            <div style="text-align: right;">
-                <div id="nav-username" style="font-weight: bold; font-size: 13px; color: #18181b;">--</div>
-                <div id="nav-role-group" style="font-size: 11px; color: #71717a;">--</div>
-            </div>
-            <button onclick="logout()" style="background: #f4f4f5; color: #18181b; border: 1px solid #d4d4d8; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">登出</button>
+        <div class="flex items-center space-x-4">
+            <span class="font-mono bg-black/30 px-2 py-0.5 rounded text-amber-300 border border-amber-500/20" x-text="'網路時間: ' + networkTime"></span>
+            <template x-if="currentUser">
+                <button @click="logout()" class="text-xs bg-red-800 hover:bg-red-700 text-amber-200 px-2.5 py-0.5 rounded border border-amber-500/40 transition">登出</button>
+            </template>
         </div>
     </header>
 
-    <!-- Marquee -->
-    <div id="marquee-bar" class="marquee-container hidden">
-        <span style="background: #f97316; color: #fff; padding: 2px 8px; border-radius: 6px; font-weight: bold; margin-right: 15px; flex-shrink: 0;">戰報</span>
-        <div class="marquee-text" id="marquee-content">👑 歡迎登入競賽大亨灰白橘戰情室！</div>
+    <!-- Marquee Banner (戰報) -->
+    <div class="bg-amber-50 text-red-900 border-b border-amber-200 py-2 px-4 overflow-hidden shadow-inner flex items-center relative z-40">
+        <div class="flex items-center space-x-2 bg-red-700 text-amber-200 text-xs font-bold px-3 py-1 rounded shadow shrink-0 z-10 ming-font">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+            <span>戰報廣播</span>
+        </div>
+        <div class="overflow-hidden whitespace-nowrap ml-4 flex-1">
+            <div class="animate-marquee text-sm font-medium text-red-900" x-text="marqueeText"></div>
+        </div>
     </div>
 
-    <!-- Main Container -->
-    <div class="container">
-        
-        <!-- 1. Auth View -->
-        <div id="view-auth" style="max-width: 420px; width: 100%; margin: 40px auto;" class="card">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <span style="font-size: 42px;">👑</span>
-                <h2 style="font-family: 'Noto Serif TC', serif; font-size: 24px; color: #18181b; margin-top: 6px;">競賽大亨</h2>
-                <p style="font-size: 11px; color: #71717a;">Competition Tycoon 灰白橘商戰雙軌競賽</p>
-            </div>
+    <!-- Main Content Container -->
+    <main class="flex-1 overflow-y-auto">
 
-            <div class="tabs">
-                <button onclick="switchAuthTab('login')" id="tab-btn-login" class="tab-btn active">登入系統</button>
-                <button onclick="switchAuthTab('register')" id="tab-btn-reg" class="tab-btn">立即註冊</button>
-            </div>
-
-            <!-- Login Form -->
-            <div id="form-login">
-                <div>
-                    <label>帳號 / 姓名</label>
-                    <input type="text" id="login-user" class="input-box" placeholder="請輸入帳號或姓名 (管理員請輸入 admin)">
-                </div>
-                <div>
-                    <label>密碼</label>
-                    <input type="password" id="login-pass" class="input-box" placeholder="請輸入密碼 (管理員預設 admin)">
-                </div>
-                <button onclick="handleLogin()" class="btn-orange" style="width: 100%; margin-top: 8px;">進入戰情室</button>
-            </div>
-
-            <!-- Register Form -->
-            <div id="form-register" class="hidden">
-                <div>
-                    <label>真實姓名</label>
-                    <input type="text" id="reg-name" class="input-box" placeholder="例如：王大明">
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <div>
-                        <label>職級</label>
-                        <select id="reg-role" class="input-box">
-                            <option value="業務專員">業務專員</option>
-                            <option value="業務主任">業務主任</option>
-                            <option value="業務襄理">業務襄理</option>
-                            <option value="業務經理">業務經理</option>
-                        </select>
+        <!-- VIEW 1: Auth / Guest Landing (Login, Register, Forgot Password) -->
+        <template x-if="!currentUser">
+            <div class="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+                <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden border border-amber-200/60 p-8 space-y-6">
+                    <div class="text-center space-y-2">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-50 text-red-700 border-2 gold-border shadow-md mb-1">
+                            <!-- Dice Icon -->
+                            <svg class="w-8 h-8 text-red-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        </div>
+                        <h1 class="text-3xl font-black ming-font gold-gradient-text tracking-wider">競賽大亨</h1>
+                        <p class="text-xs text-stone-500 font-medium">Competition Tycoon · 保險業務團隊雙軌爭霸</p>
                     </div>
-                    <div>
-                        <label>隸屬組別 (同名自動整併)</label>
-                        <input type="text" id="reg-group" class="input-box" placeholder="例如：A組">
+
+                    <!-- Auth Mode Tabs -->
+                    <div class="flex rounded-xl bg-stone-100 p-1 border border-stone-200 text-sm font-medium">
+                        <button @click="authMode = 'login'" :class="authMode === 'login' ? 'bg-red-700 text-amber-200 shadow' : 'text-stone-600 hover:text-stone-900'" class="flex-1 py-2 rounded-lg transition">登入</button>
+                        <button @click="authMode = 'register'" :class="authMode === 'register' ? 'bg-red-700 text-amber-200 shadow' : 'text-stone-600 hover:text-stone-900'" class="flex-1 py-2 rounded-lg transition">註冊新帳號</button>
+                        <button @click="authMode = 'forgot'" :class="authMode === 'forgot' ? 'bg-red-700 text-amber-200 shadow' : 'text-stone-600 hover:text-stone-900'" class="flex-1 py-2 rounded-lg transition">忘記密碼</button>
+                    </div>
+
+                    <!-- LOGIN FORM -->
+                    <template x-if="authMode === 'login'">
+                        <form @submit.prevent="handleLogin" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-stone-700 uppercase tracking-wide mb-1">帳號 (姓名 或 管理員)</label>
+                                <input type="text" x-model="loginForm.account" required class="w-full px-4 py-2.5 rounded-lg border border-stone-300 focus:ring-2 focus:ring-red-600 focus:border-red-600 text-sm outline-none transition" placeholder="請輸入姓名或 admin">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-stone-700 uppercase tracking-wide mb-1">密碼</label>
+                                <input type="password" x-model="loginForm.password" required class="w-full px-4 py-2.5 rounded-lg border border-stone-300 focus:ring-2 focus:ring-red-600 focus:border-red-600 text-sm outline-none transition" placeholder="請輸入密碼">
+                            </div>
+                            <div class="pt-2">
+                                <button type="submit" class="w-full py-3 bg-royal-gradient text-amber-200 font-bold rounded-xl shadow-lg gold-hover transition flex items-center justify-center space-x-2">
+                                    <span>進入競賽戰情室 / 指揮中心</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                </button>
+                            </div>
+                            <p class="text-xs text-center text-stone-400 mt-2">提示：管理員預設帳號為 admin / 密碼 admin</p>
+                        </form>
+                    </template>
+
+                    <!-- REGISTER FORM -->
+                    <template x-if="authMode === 'register'">
+                        <form @submit.prevent="handleRegister" class="space-y-3.5">
+                            <div>
+                                <label class="block text-xs font-bold text-stone-700 uppercase tracking-wide mb-1">姓名</label>
+                                <input type="text" x-model="regForm.name" required class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-red-600" placeholder="請輸入您的真實姓名">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-stone-700 uppercase tracking-wide mb-1">電子信箱</label>
+                                <input type="email" x-model="regForm.email" required class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-red-600" placeholder="name@example.com">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-stone-700 uppercase tracking-wide mb-1">設定密碼</label>
+                                <input type="password" x-model="regForm.password" required class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-red-600" placeholder="設定登入密碼">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-stone-700 uppercase tracking-wide mb-1">職級</label>
+                                <select x-model="regForm.rank" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-red-600 bg-white">
+                                    <option value="業務專員">業務專員</option>
+                                    <option value="業務主任">業務主任</option>
+                                    <option value="業務襄理">業務襄理</option>
+                                    <option value="業務經理">業務經理</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-stone-700 uppercase tracking-wide mb-1">隸屬組別</label>
+                                <input type="text" x-model="regForm.group" required class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-red-600" placeholder="例如：金牌第一組 / 威龍團隊">
+                            </div>
+                            <div class="pt-2">
+                                <button type="submit" class="w-full py-3 bg-royal-gradient text-amber-200 font-bold rounded-xl shadow-lg gold-hover transition">
+                                    立即註冊並進入戰情室 (起始數為0)
+                                </button>
+                            </div>
+                        </form>
+                    </template>
+
+                    <!-- FORGOT PASSWORD FORM -->
+                    <template x-if="authMode === 'forgot'">
+                        <form @submit.prevent="handleForgot" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-stone-700 uppercase tracking-wide mb-1">註冊姓名</label>
+                                <input type="text" x-model="forgotForm.name" required class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-red-600" placeholder="輸入註冊時的姓名">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-stone-700 uppercase tracking-wide mb-1">註冊電子信箱</label>
+                                <input type="email" x-model="forgotForm.email" required class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-red-600" placeholder="輸入註冊時的電子信箱">
+                            </div>
+                            <div>
+                                <button type="submit" class="w-full py-2.5 bg-red-700 text-white font-bold rounded-lg shadow hover:bg-red-800 transition text-sm">
+                                    查詢密碼
+                                </button>
+                            </div>
+                            <template x-if="forgotResult">
+                                <div class="p-3 bg-amber-50 border border-amber-300 rounded-lg text-center text-sm">
+                                    <p class="text-stone-600 text-xs">查詢結果：</p>
+                                    <p class="font-bold text-red-700 text-base mt-1" x-text="forgotResult"></p>
+                                </div>
+                            </template>
+                        </form>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+        <!-- VIEW 2: Admin Command Center (指揮中心) -->
+        <template x-if="currentUser && currentUser.isAdmin">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+                <!-- Admin Header Card -->
+                <div class="bg-royal-gradient text-white rounded-2xl shadow-xl p-6 flex flex-col md:flex-row justify-between items-center border border-amber-400/40 gap-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-amber-400/20 rounded-xl border border-amber-400">
+                            <svg class="w-8 h-8 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-black ming-font gold-gradient-text">指揮中心管理後台</h2>
+                            <p class="text-xs text-amber-200/80">歡迎回來，管理員 <span x-text="currentUser.name"></span> | 掌握全團隊雙軌競賽脈動</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button @click="currentUser = null" class="px-4 py-2 bg-red-800 hover:bg-red-700 text-amber-200 rounded-xl text-xs font-bold border border-amber-500/40 transition shadow">
+                            切換至夥伴戰情室預覽
+                        </button>
                     </div>
                 </div>
-                <div>
-                    <label>註冊帳號</label>
-                    <input type="text" id="reg-username" class="input-box" placeholder="設定登入帳號">
+
+                <!-- Admin Navigation Tabs -->
+                <div class="flex flex-wrap gap-2 border-b border-stone-200 pb-2">
+                    <button @click="adminTab = 'audit'" :class="adminTab === 'audit' ? 'bg-red-700 text-amber-200 shadow' : 'bg-white text-stone-700 hover:bg-stone-100'" class="px-4 py-2 rounded-xl text-sm font-bold border border-stone-200 transition">
+                        點數審核 (<span x-text="pendingAudits.length"></span>)
+                    </button>
+                    <button @click="adminTab = 'partners'" :class="adminTab === 'partners' ? 'bg-red-700 text-amber-200 shadow' : 'bg-white text-stone-700 hover:bg-stone-100'" class="px-4 py-2 rounded-xl text-sm font-bold border border-stone-200 transition">
+                        夥伴管理 (<span x-text="partners.length"></span>)
+                    </button>
+                    <button @click="adminTab = 'gameSettings'" :class="adminTab === 'gameSettings' ? 'bg-red-700 text-amber-200 shadow' : 'bg-white text-stone-700 hover:bg-stone-100'" class="px-4 py-2 rounded-xl text-sm font-bold border border-stone-200 transition">
+                        遊戲與Tag設定
+                    </button>
+                    <button @click="adminTab = 'rewards'" :class="adminTab === 'rewards' ? 'bg-red-700 text-amber-200 shadow' : 'bg-white text-stone-700 hover:bg-stone-100'" class="px-4 py-2 rounded-xl text-sm font-bold border border-stone-200 transition">
+                        使用者獎勵統整
+                    </button>
+                    <button @click="adminTab = 'security'" :class="adminTab === 'security' ? 'bg-red-700 text-amber-200 shadow' : 'bg-white text-stone-700 hover:bg-stone-100'" class="px-4 py-2 rounded-xl text-sm font-bold border border-stone-200 transition">
+                        密碼更改
+                    </button>
+                    <button @click="adminTab = 'update'" :class="adminTab === 'update' ? 'bg-red-700 text-amber-200 shadow' : 'bg-white text-stone-700 hover:bg-stone-100'" class="px-4 py-2 rounded-xl text-sm font-bold border border-stone-200 transition">
+                        版本熱更新與Sandbox
+                    </button>
                 </div>
-                <div>
-                    <label>電子信箱</label>
-                    <input type="email" id="reg-email" class="input-box" placeholder="your@email.com">
+
+                <!-- TAB 1: 點數審核 -->
+                <template x-if="adminTab === 'audit'">
+                    <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-6 space-y-4">
+                        <h3 class="text-lg font-bold ming-font text-red-900 border-b pb-2">待審核申報案件列表</h3>
+                        <template x-if="pendingAudits.length === 0">
+                            <p class="text-stone-400 text-sm py-8 text-center">目前沒有等待審核的申報案件。</p>
+                        </template>
+                        <div class="space-y-3">
+                            <template x-for="(audit, idx) in pendingAudits" :key="audit.id">
+                                <div class="bg-stone-50 border border-stone-200 rounded-xl p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                    <div class="space-y-1">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="px-2.5 py-0.5 bg-red-100 text-red-800 rounded text-xs font-bold" x-text="audit.tag"></span>
+                                            <span class="font-bold text-stone-800" x-text="audit.userName"></span>
+                                            <span class="text-xs text-stone-400" x-text="'(' + audit.groupName + ')'"></span>
+                                        </div>
+                                        <p class="text-sm text-stone-600 font-medium" x-text="audit.detail"></p>
+                                        <p class="text-xs text-stone-400" x-text="'申報時間: ' + audit.time"></p>
+                                    </div>
+                                    <div class="flex items-center space-x-3 shrink-0">
+                                        <div class="text-right">
+                                            <span class="text-xs text-stone-500">預計獲得：</span>
+                                            <span class="font-bold text-red-700 text-base" x-text="'+' + audit.earnedPoints + ' 點 / +' + audit.earnedDice + ' 骰'"></span>
+                                        </div>
+                                        <button @click="approveAudit(audit.id)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow flex items-center space-x-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                            <span>通過並發放</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- TAB 2: 夥伴管理 -->
+                <template x-if="adminTab === 'partners'">
+                    <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-6 space-y-4">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <h3 class="text-lg font-bold ming-font text-red-900">團隊夥伴總覽與管理</h3>
+                            <span class="text-xs text-stone-500">提示：系統已自動依相同組別名稱整併業績。</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-stone-100 text-stone-700 uppercase text-xs">
+                                    <tr>
+                                        <th class="p-3 rounded-l-lg">姓名/職級</th>
+                                        <th class="p-3">組別</th>
+                                        <th class="p-3">本身FYC</th>
+                                        <th class="p-3">總FYC(含Buff)</th>
+                                        <th class="p-3">可用點數 / 骰子</th>
+                                        <th class="p-3">業績Buff (下線)</th>
+                                        <th class="p-3 text-center rounded-r-lg">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-stone-100">
+                                    <template x-for="p in partners" :key="p.id">
+                                        <tr class="hover:bg-stone-50">
+                                            <td class="p-3">
+                                                <div class="font-bold text-stone-800" x-text="p.name"></div>
+                                                <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-medium" x-text="p.rank"></span>
+                                            </td>
+                                            <td class="p-3 font-medium text-stone-600" x-text="p.group"></td>
+                                            <td class="p-3 font-mono" x-text="p.fyc.toLocaleString()"></td>
+                                            <td class="p-3 font-mono font-bold text-red-700" x-text="calculateTotalFYC(p).toLocaleString()"></td>
+                                            <td class="p-3 font-mono">
+                                                <span class="text-emerald-700 font-bold" x-text="p.points + ' 點'"></span> /
+                                                <span class="text-amber-700 font-bold" x-text="p.dice + ' 骰'"></span>
+                                            </td>
+                                            <td class="p-3">
+                                                <span class="text-xs bg-stone-100 text-stone-700 px-2 py-1 rounded" x-text="p.buffs && p.buffs.length > 0 ? p.buffs.join(', ') : '無下線Buff'"></span>
+                                            </td>
+                                            <td class="p-3 text-center space-x-2">
+                                                <button @click="openEditPartner(p)" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition shadow">編輯</button>
+                                                <button @click="deletePartner(p.id)" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold transition shadow">刪除</button>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- TAB 3: 遊戲與Tag設定 -->
+                <template x-if="adminTab === 'gameSettings'">
+                    <div class="space-y-6">
+                        <!-- Tag Settings -->
+                        <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-6 space-y-4">
+                            <h3 class="text-lg font-bold ming-font text-red-900 border-b pb-2">Tag 任務與點數換算設定</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <template x-for="(tag, index) in availableTags" :key="index">
+                                    <div class="bg-stone-50 border border-stone-200 rounded-xl p-4 flex items-center justify-between">
+                                        <div class="space-y-1 flex-1 mr-4">
+                                            <input type="text" x-model="tag.name" class="font-bold text-stone-800 bg-transparent border-b border-stone-300 focus:border-red-600 outline-none text-sm w-full">
+                                            <p class="text-xs text-stone-400" x-text="tag.isFYC ? '依比例金額換算' : '固定點數換算'"></p>
+                                        </div>
+                                        <div class="flex items-center space-x-2 shrink-0">
+                                            <template x-if="!tag.isFYC">
+                                                <div class="flex items-center space-x-1">
+                                                    <span class="text-xs text-stone-500">固定點數:</span>
+                                                    <input type="number" x-model.number="tag.points" class="w-20 px-2 py-1 border rounded text-sm text-center font-bold">
+                                                </div>
+                                            </template>
+                                            <template x-if="tag.isFYC">
+                                                <span class="text-xs bg-red-50 text-red-700 px-2 py-1 rounded font-bold border border-red-200">自動換算 (1000 FYC = 1 P)</span>
+                                            </template>
+                                            <button @click="removeTag(index)" class="text-rose-600 hover:text-rose-800 p-1">刪除</button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            <div class="pt-2 flex justify-end">
+                                <button @click="addNewTag" class="px-4 py-2 bg-stone-800 hover:bg-stone-900 text-amber-200 rounded-xl text-xs font-bold transition">＋ 新增獲點任務 Tag</button>
+                            </div>
+                        </div>
+
+                        <!-- Announcement & Marquee Edit -->
+                        <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-6 space-y-4">
+                            <h3 class="text-lg font-bold ming-font text-red-900 border-b pb-2">公告與跑馬燈戰報編輯</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-stone-700 mb-1">跑馬燈戰報文字 (由右至左動態滾動)</label>
+                                    <input type="text" x-model="marqueeText" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-red-600 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-stone-700 mb-1">最新消息公告彈窗標題</label>
+                                    <input type="text" x-model="announcement.title" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-red-600 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-stone-700 mb-1">最新消息公告彈窗內容</label>
+                                    <textarea x-model="announcement.content" rows="3" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-red-600 outline-none"></textarea>
+                                </div>
+                                <button @click="saveGameSettings" class="px-5 py-2.5 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-bold transition shadow">儲存公告與跑馬燈設定</button>
+                            </div>
+                        </div>
+
+                        <!-- 30 Tile Board Editor -->
+                        <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-6 space-y-4">
+                            <h3 class="text-lg font-bold ming-font text-red-900 border-b pb-2">30 格大富翁地圖編輯</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto p-2">
+                                <template x-for="(tile, idx) in boardTiles" :key="idx">
+                                    <div class="bg-stone-50 border border-stone-200 rounded-xl p-3 space-y-2">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-xs font-bold text-red-700" x-text="'第 ' + (idx+1) + ' 格'"></span>
+                                            <input type="text" x-model="tile.icon" class="w-10 text-center border rounded text-xs py-0.5">
+                                        </div>
+                                        <input type="text" x-model="tile.name" class="w-full px-2 py-1 border rounded text-xs font-bold" placeholder="格子名稱">
+                                        <input type="text" x-model="tile.reward" class="w-full px-2 py-1 border rounded text-xs text-stone-600" placeholder="獎勵內容描述">
+                                    </div>
+                                </template>
+                            </div>
+                            <div class="flex justify-end pt-2">
+                                <button @click="saveBoardTiles" class="px-5 py-2.5 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-bold transition shadow">儲存 30 格地圖設定</button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- TAB 4: 使用者獎勵統整 -->
+                <template x-if="adminTab === 'rewards'">
+                    <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-6 space-y-4">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <h3 class="text-lg font-bold ming-font text-red-900">使用者踩格與活動實體獎勵統整</h3>
+                            <button @click="exportRewardData" class="px-4 py-2 bg-stone-800 hover:bg-stone-900 text-amber-200 rounded-xl text-xs font-bold transition">匯出獎勵清單 CSV</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-stone-100 text-stone-700 uppercase text-xs">
+                                    <tr>
+                                        <th class="p-3 rounded-l-lg">夥伴姓名</th>
+                                        <th class="p-3">組別</th>
+                                        <th class="p-3">獲得獎勵項目</th>
+                                        <th class="p-3">時間</th>
+                                        <th class="p-3 text-center rounded-r-lg">發放狀態</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-stone-100">
+                                    <template x-for="r in rewardLogs" :key="r.id">
+                                        <tr class="hover:bg-stone-50">
+                                            <td class="p-3 font-bold text-stone-800" x-text="r.userName"></td>
+                                            <td class="p-3 text-stone-600" x-text="r.groupName"></td>
+                                            <td class="p-3 font-medium text-red-700" x-text="r.rewardName"></td>
+                                            <td class="p-3 text-xs text-stone-400" x-text="r.time"></td>
+                                            <td class="p-3 text-center">
+                                                <button @click="toggleRewardStatus(r.id)" :class="r.status === '已發放' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'" class="px-3 py-1 rounded-full text-xs font-bold transition" x-text="r.status || '待發放'"></button>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- TAB 5: 密碼更改 -->
+                <template x-if="adminTab === 'security'">
+                    <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-6 max-w-xl mx-auto space-y-4">
+                        <h3 class="text-lg font-bold ming-font text-red-900 border-b pb-2">管理員密碼變更</h3>
+                        <form @submit.prevent="updateAdminPassword" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-stone-700 mb-1">目前管理員密碼</label>
+                                <input type="password" x-model="pwdForm.old" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-red-600">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-stone-700 mb-1">新管理員密碼</label>
+                                <input type="password" x-model="pwdForm.new" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-red-600">
+                            </div>
+                            <button type="submit" class="w-full py-2.5 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-bold transition shadow">確認修改密碼</button>
+                        </form>
+                    </div>
+                </template>
+
+                <!-- TAB 6: 版本熱更新與 Sandbox 預覽 -->
+                <template x-if="adminTab === 'update'">
+                    <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-6 space-y-4">
+                        <h3 class="text-lg font-bold ming-font text-red-900 border-b pb-2">軟體版本熱更新與 Sandbox 預覽</h3>
+                        <p class="text-xs text-stone-600">在此輸入版本更新公告或佈署程式碼指令，點擊預覽可在 Sandbox 中測試，確認後送出將同步更新所有使用者端。</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-3">
+                                <label class="block text-xs font-bold text-stone-700">更新資訊與指令輸入框</label>
+                                <textarea x-model="sandboxCode" rows="6" class="w-full font-mono text-xs p-3 border rounded-lg bg-stone-900 text-amber-300 outline-none" placeholder="// 輸入熱更新說明或組態代碼"></textarea>
+                                <div class="flex space-x-3">
+                                    <button @click="previewSandbox" class="flex-1 py-2.5 bg-stone-800 hover:bg-stone-900 text-amber-200 rounded-xl text-xs font-bold transition">預覽 Sandbox</button>
+                                    <button @click="publishUpdate" class="flex-1 py-2.5 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-bold transition shadow">送出全體熱更新</button>
+                                </div>
+                            </div>
+                            <div class="border border-stone-200 rounded-xl p-4 bg-stone-50 flex flex-col justify-between">
+                                <h4 class="text-xs font-bold text-stone-700 uppercase mb-2">Sandbox 即時預覽視窗</h4>
+                                <div class="flex-1 bg-white border border-stone-300 rounded-lg p-4 text-sm flex items-center justify-center text-stone-500 overflow-y-auto" x-html="sandboxPreviewHtml">
+                                    點擊「預覽 Sandbox」以在此載入畫面。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- VIEW 3: Partner Battle Room (夥伴戰情室) -->
+        <template x-if="currentUser && !currentUser.isAdmin">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+                <!-- Partner Top Greeting Banner -->
+                <div class="bg-royal-gradient text-white rounded-2xl shadow-xl p-6 flex flex-col md:flex-row justify-between items-center border border-amber-400/40 gap-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-14 h-14 rounded-full bg-amber-400 text-red-900 font-black flex items-center justify-center text-xl shadow-lg border-2 border-white ming-font" x-text="currentUser.name.substring(0,1)"></div>
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h2 class="text-2xl font-black ming-font gold-gradient-text" x-text="currentUser.name"></h2>
+                                <span class="px-2 py-0.5 bg-amber-400/20 text-amber-300 border border-amber-400/50 rounded text-xs font-bold" x-text="currentUser.rank"></span>
+                                <span class="px-2 py-0.5 bg-red-800 text-amber-200 rounded text-xs font-bold" x-text="currentUser.group"></span>
+                            </div>
+                            <p class="text-xs text-amber-200/80 mt-1">
+                                個人 FYC: <span class="font-bold text-white font-mono" x-text="currentUser.fyc.toLocaleString()"></span> |
+                                團隊總 FYC (含Buff): <span class="font-bold text-amber-300 font-mono" x-text="calculateTotalFYC(currentUser).toLocaleString()"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-black/30 px-4 py-2 rounded-xl border border-amber-500/30 text-center">
+                            <span class="text-xs text-amber-300 block">可用點數</span>
+                            <span class="text-xl font-black font-mono text-white" x-text="currentUser.points"></span>
+                        </div>
+                        <div class="bg-black/30 px-4 py-2 rounded-xl border border-amber-500/30 text-center">
+                            <span class="text-xs text-amber-300 block">剩餘骰子數</span>
+                            <span class="text-xl font-black font-mono text-amber-300" x-text="currentUser.dice"></span>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label>密碼</label>
-                    <input type="password" id="reg-pass" class="input-box" placeholder="設定登入密碼">
+
+                <!-- Dashboard Grid Layout -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                    <!-- Left Column: Report Submission & Group Teammates -->
+                    <div class="space-y-6 lg:col-span-1">
+                        <!-- Score / Tag Submission Card -->
+                        <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-5 space-y-4">
+                            <h3 class="text-base font-bold ming-font text-red-900 border-b pb-2 flex items-center justify-between">
+                                <span>成績申報與點數兌換</span>
+                                <span class="text-xs text-stone-400 font-normal">1000 FYC = 1 P</span>
+                            </h3>
+                            <form @submit.prevent="submitScore" class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-stone-700 mb-1">選擇申報任務 / Tag</label>
+                                    <select x-model="submitForm.tagIndex" @change="onTagChange" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-red-600 bg-white">
+                                        <template x-for="(t, idx) in availableTags" :key="idx">
+                                            <option :value="idx" x-text="t.name + (t.isFYC ? ' (FYC換算)' : ' (固定 ' + t.points + ' P)')"></option>
+                                        </template>
+                                    </select>
+                                </div>
+                                <template x-if="isCurrentTagFYC">
+                                    <div>
+                                        <label class="block text-xs font-bold text-stone-700 mb-1">輸入 FYC 金額</label>
+                                        <input type="number" x-model.number="submitForm.amount" min="1" required class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-red-600" placeholder="例如：10000">
+                                    </div>
+                                </template>
+                                <template x-if="!isCurrentTagFYC">
+                                    <div>
+                                        <label class="block text-xs font-bold text-stone-700 mb-1">詳細說明 / 備註</label>
+                                        <input type="text" x-model="submitForm.detail" required class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-red-600" placeholder="請填寫說明事項">
+                                    </div>
+                                </template>
+                                <button type="submit" class="w-full py-2.5 bg-royal-gradient text-amber-200 font-bold rounded-xl shadow gold-hover transition text-sm">
+                                    送出申報（等待指揮中心審核）
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Group Teammates Status (Read-Only) -->
+                        <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-5 space-y-3">
+                            <h3 class="text-base font-bold ming-font text-red-900 border-b pb-2">
+                                組內成員動態 (<span x-text="currentUser.group"></span>)
+                            </h3>
+                            <div class="space-y-2 max-h-64 overflow-y-auto">
+                                <template x-for="tm in getGroupTeammates(currentUser.group)" :key="tm.id">
+                                    <div class="flex items-center justify-between p-2.5 bg-stone-50 rounded-xl border border-stone-200 text-sm">
+                                        <div>
+                                            <span class="font-bold text-stone-800" x-text="tm.name"></span>
+                                            <span class="text-xs text-stone-400 ml-1" x-text="'(' + tm.rank + ')'"></span>
+                                        </div>
+                                        <div class="text-right text-xs font-mono">
+                                            <span class="text-red-700 font-bold" x-text="tm.fyc.toLocaleString() + ' FYC'"></span> |
+                                            <span class="text-amber-700" x-text="tm.points + ' 點'"></span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Shoutbox (嗆蝦留言板) -->
+                        <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-5 space-y-4">
+                            <h3 class="text-base font-bold ming-font text-red-900 border-b pb-2">🔥 嗆蝦士氣留言板</h3>
+                            <form @submit.prevent="postShout" class="space-y-2.5">
+                                <input type="text" x-model="shoutForm.title" required class="w-full px-3 py-1.5 border rounded-lg text-xs outline-none focus:ring-2 focus:ring-red-600" placeholder="留言標題 / 口號">
+                                <textarea x-model="shoutForm.content" rows="2" required class="w-full px-3 py-1.5 border rounded-lg text-xs outline-none focus:ring-2 focus:ring-red-600" placeholder="互勉激勵士氣內容..."></textarea>
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center space-x-1.5 text-xs text-stone-600 cursor-pointer">
+                                        <input type="checkbox" x-model="shoutForm.isAnonymous" class="rounded text-red-700 focus:ring-red-600">
+                                        <span>匿名發言</span>
+                                    </label>
+                                    <button type="submit" class="px-4 py-1.5 bg-red-700 text-white rounded-lg text-xs font-bold hover:bg-red-800 transition">發布留言</button>
+                                </div>
+                            </form>
+                            <div class="space-y-3 max-h-64 overflow-y-auto pt-2">
+                                <template x-for="msg in shoutMessages" :key="msg.id">
+                                    <div class="bg-stone-50 border border-stone-200 rounded-xl p-3 space-y-1.5 text-xs">
+                                        <div class="flex justify-between items-center">
+                                            <span class="font-bold text-red-900" x-text="msg.isAnonymous ? '匿名夥伴' : msg.author"></span>
+                                            <span class="text-stone-400" x-text="msg.time"></span>
+                                        </div>
+                                        <p class="font-bold text-stone-800" x-text="msg.title"></p>
+                                        <p class="text-stone-600" x-text="msg.content"></p>
+                                        <div class="flex justify-between items-center pt-1 border-t border-stone-200">
+                                            <button @click="likeShout(msg.id)" class="text-rose-600 font-medium hover:underline flex items-center space-x-1">
+                                                <span>❤️ Like</span>
+                                                <span x-text="'(' + msg.likes + ')'"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: 30-Tile Monopoly Board & Dice Rolling -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Dice & Board Action Card -->
+                        <div class="bg-royal-gradient text-white rounded-2xl shadow-xl p-6 border border-amber-400/40 flex flex-col sm:flex-row justify-between items-center gap-6">
+                            <div class="space-y-2 text-center sm:text-left">
+                                <h3 class="text-2xl font-black ming-font gold-gradient-text">30格大富翁競賽爭霸</h3>
+                                <p class="text-xs text-amber-200/90">每次擲骰消耗 <span class="font-bold text-white">10 點</span> 點數。移動並停駐於格子可獲得驚喜獎勵與Buff！</p>
+                                <div class="flex items-center justify-center sm:justify-start space-x-2 pt-1">
+                                    <span class="text-xs bg-black/30 px-3 py-1 rounded border border-amber-400/30 text-amber-300">目前所在位置：第 <span class="font-bold text-white" x-text="(currentUser.boardPosition || 0) + 1"></span> 格</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center space-y-3">
+                                <!-- 3D Dice Graphic preview -->
+                                <div class="dice-scene flex items-center justify-center">
+                                    <div class="dice" :style="diceTransform">
+                                        <div class="dice-face dice-face-1 text-red-700">⚀</div>
+                                        <div class="dice-face dice-face-2 text-red-700">⚁</div>
+                                        <div class="dice-face dice-face-3 text-red-700">⚂</div>
+                                        <div class="dice-face dice-face-4 text-red-700">⚃</div>
+                                        <div class="dice-face dice-face-5 text-red-700">⚄</div>
+                                        <div class="dice-face dice-face-6 text-red-700">⚅</div>
+                                    </div>
+                                </div>
+                                <button @click="rollDice" :disabled="currentUser.points < 10 || isRolling" class="px-6 py-3 bg-amber-400 hover:bg-amber-300 text-red-950 font-black rounded-xl shadow-lg transition transform active:scale-95 disabled:opacity-50 text-sm flex items-center space-x-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                                    <span x-text="isRolling ? '骰子滾動中...' : '擲骰子 (-10點)'"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 30 Tile Monopoly Grid UI -->
+                        <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-6 space-y-4">
+                            <h3 class="text-lg font-bold ming-font text-red-900 border-b pb-2 flex justify-between items-center">
+                                <span>30格棋盤地圖 (點擊格子可看詳細說明)</span>
+                                <span class="text-xs text-stone-400 font-normal">棋子 🟢 代表您目前位置</span>
+                            </h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-5 md:grid-cols-6 gap-3">
+                                <template x-for="(tile, idx) in boardTiles" :key="idx">
+                                    <div @click="openTileModal(tile, idx)" class="border-2 rounded-xl p-3 flex flex-col justify-between items-center cursor-pointer transition transform hover:-translate-y-1 relative shadow-sm"
+                                         :class="(currentUser.boardPosition || 0) === idx ? 'border-red-600 bg-red-50/80 ring-2 ring-red-400' : 'border-stone-200 hover:border-amber-400 bg-white'">
+                                        <div class="w-full flex justify-between items-center text-[10px] font-bold text-stone-400">
+                                            <span x-text="idx + 1"></span>
+                                            <span x-text="tile.icon"></span>
+                                        </div>
+                                        <div class="text-center my-2">
+                                            <p class="text-xs font-bold text-stone-800 line-clamp-1" x-text="tile.name"></p>
+                                        </div>
+                                        <template x-if="(currentUser.boardPosition || 0) === idx">
+                                            <span class="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow animate-bounce">📍 您在此</span>
+                                        </template>
+                                        <span class="text-[10px] text-amber-700 font-medium truncate w-full text-center" x-text="tile.reward"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button onclick="handleRegister()" class="btn-orange" style="width: 100%; margin-top: 8px;">完成註冊並登入</button>
+            </div>
+        </template>
+    </main>
+
+    <!-- MODAL: Latest Announcement Popup -->
+    <template x-if="showAnnouncementModal">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 border-2 gold-border animate-fadeIn">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h3 class="text-xl font-black ming-font text-red-900" x-text="announcement.title"></h3>
+                    <button @click="showAnnouncementModal = false" class="text-stone-400 hover:text-stone-700 font-bold text-lg">&times;</button>
+                </div>
+                <div class="text-sm text-stone-700 leading-relaxed whitespace-pre-line" x-text="announcement.content"></div>
+                <div class="flex justify-end pt-2">
+                    <button @click="showAnnouncementModal = false" class="px-5 py-2 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-bold transition">了解並進入</button>
+                </div>
             </div>
         </div>
+    </template>
 
-        <!-- 2. Partner Dashboard View (戰情室) -->
-        <div id="view-partner" class="hidden" style="display: flex; flex-direction: column; gap: 20px;">
-            <!-- Stats Grid -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
-                <div class="card">
-                    <p style="font-size: 12px; color: #71717a;">個人總業績 (含 Buff)</p>
-                    <p id="p-stat-fyc" style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #18181b; margin-top: 4px;">0</p>
-                    <span id="p-stat-fyc-sub" style="font-size: 10px; color: #71717a;">個人: 0 | 裂變: 0</span>
-                </div>
-                <div class="card">
-                    <p style="font-size: 12px; color: #71717a;">可用點數 / 骰子</p>
-                    <p id="p-stat-points" style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #ea580c; margin-top: 4px;">0 P / <span style="color:#18181b">0 骰</span></p>
-                    <span style="font-size: 10px; color: #71717a;">每擲骰消耗 10 點</span>
-                </div>
-                <div class="card">
-                    <p style="font-size: 12px; color: #71717a;">組別總業績</p>
-                    <p id="p-stat-group-fyc" style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #18181b; margin-top: 4px;">0</p>
-                    <span style="font-size: 10px; color: #71717a;">同組組員業績加總</span>
-                </div>
-                <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
-                    <div>
-                        <p style="font-size: 12px; color: #71717a;">大富翁棋盤位置</p>
-                        <p id="p-stat-pos" style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #ea580c; margin-top: 4px;">第 1 格</p>
+    <!-- MODAL: Tile Detail View Modal -->
+    <template x-if="activeTileModal">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 border-2 gold-border">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-2xl" x-text="activeTileModal.icon"></span>
+                        <h3 class="text-lg font-black ming-font text-red-900" x-text="'第 ' + (activeTileModal.index + 1) + ' 格：' + activeTileModal.name"></h3>
                     </div>
-                    <button onclick="rollDice()" class="btn-orange" style="padding: 8px; font-size: 13px; margin-top: 10px;">🎲 擲骰子 (耗 10 P)</button>
+                    <button @click="activeTileModal = null" class="text-stone-400 hover:text-stone-700 font-bold text-lg">&times;</button>
+                </div>
+                <div class="space-y-3">
+                    <div class="p-3 bg-amber-50 rounded-xl border border-amber-200">
+                        <span class="text-xs font-bold text-amber-900 block mb-1">格子獎勵與說明</span>
+                        <p class="text-sm text-stone-800 font-bold" x-text="activeTileModal.reward"></p>
+                    </div>
+                    <p class="text-xs text-stone-500">當您擲骰停駐於此格子時，系統將自動解鎖並發放對應獎勵至您的獎勵統整清單中！</p>
+                </div>
+                <div class="flex justify-end pt-2">
+                    <button @click="activeTileModal = null" class="px-5 py-2 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-bold transition">關閉</button>
                 </div>
             </div>
+        </div>
+    </template>
 
-            <!-- Main Grid -->
-            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; align-items: start;">
-                <!-- Left Column: Submission & Shoutbox -->
-                <div style="display: flex; flex-direction: column; gap: 20px;">
-                    <div class="card">
-                        <h3 style="font-family: 'Noto Serif TC', serif; font-size: 16px; color: #18181b; margin-bottom: 14px;">📝 成績與任務申報</h3>
+    <!-- MODAL: Landing on Tile / Reward Earned Modal -->
+    <template x-if="earnedRewardModal">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 text-center border-2 gold-border">
+                <div class="w-16 h-16 bg-red-100 text-red-700 rounded-full flex items-center justify-center mx-auto text-3xl shadow">🎉</div>
+                <h3 class="text-xl font-black ming-font text-red-900">踩格子戰報：獲得獎勵！</h3>
+                <p class="text-base font-bold text-stone-800" x-text="earnedRewardModal.text"></p>
+                <p class="text-xs text-stone-500">該筆獎勵已無縫整合寫入指揮中心「使用者獎勵統整」。</p>
+                <div class="pt-2">
+                    <button @click="closeEarnedRewardModal" class="px-6 py-2.5 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-bold transition">太棒了！收下獎勵</button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- MODAL: Edit Partner Modal (Admin) -->
+    <template x-if="editingPartner">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-stone-200">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h3 class="text-lg font-black ming-font text-red-900">編輯夥伴資料與業績 Buff</h3>
+                    <button @click="editingPartner = null" class="text-stone-400 hover:text-stone-700 font-bold text-lg">&times;</button>
+                </div>
+                <form @submit.prevent="savePartnerEdit" class="space-y-3.5">
+                    <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label>申報任務 (Tag)</label>
-                            <select id="sub-tag" onchange="toggleTagInput()" class="input-box">
-                                <option value="FYC">FYC 業績 (1,000 FYC = 1P)</option>
-                                <option value="活動邀約">活動邀約 (2點)</option>
-                                <option value="增員面談">增員面談 (3點)</option>
+                            <label class="block text-xs font-bold text-stone-700 mb-1">姓名</label>
+                            <input type="text" x-model="editingPartner.name" required class="w-full px-3 py-2 border rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-stone-700 mb-1">組別</label>
+                            <input type="text" x-model="editingPartner.group" required class="w-full px-3 py-2 border rounded-lg text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-stone-700 mb-1">職級</label>
+                            <select x-model="editingPartner.rank" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+                                <option value="業務專員">業務專員</option>
+                                <option value="業務主任">業務主任</option>
+                                <option value="業務襄理">業務襄理</option>
+                                <option value="業務經理">業務經理</option>
                             </select>
                         </div>
-                        <div id="sub-fyc-box">
-                            <label>FYC 金額</label>
-                            <input type="number" id="sub-fyc-val" class="input-box" placeholder="例如：10000">
+                        <div>
+                            <label class="block text-xs font-bold text-stone-700 mb-1">本身 FYC 總額</label>
+                            <input type="number" x-model.number="editingPartner.fyc" required class="w-full px-3 py-2 border rounded-lg text-sm font-mono">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-stone-700 mb-1">可用點數</label>
+                            <input type="number" x-model.number="editingPartner.points" required class="w-full px-3 py-2 border rounded-lg text-sm font-mono">
                         </div>
                         <div>
-                            <label>備註說明</label>
-                            <input type="text" id="sub-desc" class="input-box" placeholder="填寫說明或證明">
-                        </div>
-                        <button onclick="submitScore()" class="btn-orange" style="width: 100%;">送交指揮中心審核</button>
-                    </div>
-
-                    <!-- 嗆蝦留言板 -->
-                    <div class="card">
-                        <h3 style="font-family: 'Noto Serif TC', serif; font-size: 15px; color: #18181b; margin-bottom: 10px;">💬 嗆蝦士氣留言板</h3>
-                        <div id="shoutbox-list" style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;"></div>
-                        <div style="display: flex; gap: 6px;">
-                            <input type="text" id="shout-input" class="input-box" style="margin: 0;" placeholder="發言激勵士氣...">
-                            <button onclick="postShout()" class="btn-orange" style="padding: 0 14px;">發送</button>
+                            <label class="block text-xs font-bold text-stone-700 mb-1">骰子數</label>
+                            <input type="number" x-model.number="editingPartner.dice" required class="w-full px-3 py-2 border rounded-lg text-sm font-mono">
                         </div>
                     </div>
-
-                    <div class="card">
-                        <h3 style="font-family: 'Noto Serif TC', serif; font-size: 15px; color: #18181b; margin-bottom: 10px;">👥 同組夥伴狀況 (唯讀)</h3>
-                        <div id="partner-group-list" style="max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;"></div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1">業績 Buff (複選下線夥伴，其業績將自動併入)</label>
+                        <div class="max-h-36 overflow-y-auto border rounded-lg p-2 space-y-1 bg-stone-50">
+                            <template x-for="p in partners.filter(x => x.id !== editingPartner.id)" :key="p.id">
+                                <label class="flex items-center space-x-2 text-xs p-1 hover:bg-stone-100 rounded cursor-pointer">
+                                    <input type="checkbox" :value="p.name" x-model="editingPartner.buffs" class="rounded text-red-700">
+                                    <span class="font-bold text-stone-800" x-text="p.name"></span>
+                                    <span class="text-stone-400" x-text="'(' + p.group + ' - ' + p.fyc + ' FYC)'"></span>
+                                </label>
+                            </template>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Right Column: Monopoly Board (30格直完跳格子) -->
-                <div class="card">
-                    <h3 style="font-family: 'Noto Serif TC', serif; font-size: 18px; color: #18181b; margin-bottom: 6px;">🗺️ 30格大富翁戰場 (跳格子)</h3>
-                    <p style="font-size: 11px; color: #71717a; margin-bottom: 14px;">點擊任意格子可查看詳細獎勵與說明，即時掌握棋子位置</p>
-                    <div id="monopoly-board-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px;">
-                        <!-- 動態生成 30 格 -->
+                    <div class="flex justify-end space-x-3 pt-2">
+                        <button type="button" @click="editingPartner = null" class="px-4 py-2 bg-stone-200 text-stone-700 rounded-xl text-xs font-bold">取消</button>
+                        <button type="submit" class="px-5 py-2 bg-red-700 text-white rounded-xl text-xs font-bold hover:bg-red-800 transition">儲存編輯</button>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
+    </template>
 
-        <!-- 3. Admin Dashboard View (指揮中心) -->
-        <div id="view-admin" class="hidden card">
-            <h2 style="color: #18181b; font-size: 20px; margin-bottom: 14px; font-family: 'Noto Serif TC', serif;">🛡️ 指揮中心後台管理</h2>
-            <p id="admin-summary-text" style="font-size: 13px; color: #71717a; margin-bottom: 20px;">總指揮官已完整登入。</p>
-            
-            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-                <button onclick="adminSubTab('approval')" class="btn-orange" style="font-size: 12px; padding: 8px 14px;">點數審核</button>
-                <button onclick="adminSubTab('users')" class="btn-orange" style="font-size: 12px; padding: 8px 14px;">夥伴管理</button>
-            </div>
-            <div id="admin-sub-content"></div>
-        </div>
-
+    <!-- Global Notification Banner / Toast -->
+    <div x-show="toastMessage" x-transition class="fixed bottom-6 right-6 z-50 bg-stone-900 text-white px-5 py-3 rounded-xl shadow-2xl border border-amber-500/40 text-sm flex items-center space-x-3">
+        <span class="text-amber-400 text-lg">📢</span>
+        <span x-text="toastMessage"></span>
     </div>
 
-    <!-- Script Logic -->
+    <!-- Alpine.js Application Logic -->
     <script>
-        function updateClock() {
-            const now = new Date();
-            const timeStr = now.toLocaleString('zh-TW', { hour12: false });
-            const clockEl = document.getElementById('live-clock');
-            if (clockEl) clockEl.innerText = `⏱️ ${timeStr}`;
-        }
-        setInterval(updateClock, 1000);
+        function competitionApp() {
+            return {
+                isOnline: navigator.onLine,
+                networkTime: '',
+                currentUser: null,
+                authMode: 'login',
+                adminTab: 'audit',
+                showAnnouncementModal: true,
+                activeTileModal: null,
+                earnedRewardModal: null,
+                editingPartner: null,
+                toastMessage: '',
+                isRolling: false,
+                diceTransform: 'rotateX(0deg) rotateY(0deg)',
 
-        window.addEventListener('online', updateOnlineStatus);
-        window.addEventListener('offline', updateOnlineStatus);
-        function updateOnlineStatus() {
-            const banner = document.getElementById('network-banner');
-            if (!banner) return;
-            banner.style.display = navigator.onLine ? 'none' : 'block';
-        }
+                // Forms
+                loginForm: { account: '', password: '' },
+                regForm: { name: '', email: '', password: '', rank: '業務專員', group: '金牌第一組' },
+                forgotForm: { name: '', email: '' },
+                forgotResult: '',
+                submitForm: { tagIndex: 0, amount: '', detail: '' },
+                shoutForm: { title: '', content: '', isAnonymous: false },
+                pwdForm: { old: '', new: '' },
+                sandboxCode: '// 這裡可輸入版本熱更新測試代碼',
+                sandboxPreviewHtml: '等待預覽...',
 
-        function getDB() {
-            let dbStr = localStorage.getItem('competition_tycoon_db');
-            if (!dbStr) {
-                const defaultTiles = Array.from({ length: 30 }, (_, i) => ({
-                    id: i + 1,
-                    name: i === 0 ? '起點 尊榮豐收站' : `第 ${i + 1} 格：菁英站`,
-                    type: i % 5 === 0 ? 'bonus' : 'normal',
-                    icon: i % 5 === 0 ? '👑' : '💼',
-                    rewardDesc: '獲得隨機 5~15 點業務積分與尊榮抽獎券！',
-                    desc: `這是充滿機遇與高額獎勵的第 ${i + 1} 格。`
-                }));
-                const db = {
-                    users: [
-                        { username: 'admin', password: 'admin', name: '總指揮官', role: '業務經理', group: '指揮中心', email: 'admin@tycoon.com', fyc: 0, points: 100, diceCount: 10, position: 1, buffs: [], isAdmin: true }
-                    ],
-                    pendingSubmissions: [],
-                    rewardsLog: [],
-                    shoutbox: [
-                        { name: '總指揮官', text: '各位大亨夥伴衝刺啦！', time: '10:00' }
-                    ],
-                    marqueenMessages: ['👑 歡迎登入競賽大亨灰白橘戰情室', '💡 提示：提交 FYC 業績自動換算點數，每次擲骰消耗 10 點！'],
-                    notice: { title: '👑 競賽大亨尊榮啟動', content: '歡迎各位菁英夥伴迎向半年期衝刺！', active: true },
-                    tiles: defaultTiles,
-                    tags: {
-                        'FYC': { name: 'FYC 業績', rate: 1000, points: 1 },
-                        '活動邀約': { name: '活動邀約', points: 2 },
-                        '增員面談': { name: '增員面談', points: 3 }
-                    },
-                    adminPassword: 'admin'
-                };
-                localStorage.setItem('competition_tycoon_db', JSON.stringify(db));
-                return db;
-            }
-            return JSON.parse(dbStr);
-        }
+                // Persistent App State
+                adminPassword: 'admin',
+                marqueeText: '🔥 歡迎參加競賽大亨半年期雙軌競賽！ 🏆 累積FYC突破百萬即刻解鎖神祕大獎！ 📢 記得每日上線擲骰子踩格子！',
+                announcement: {
+                    title: '競賽大亨 2026/12/14 ~ 2027/06/02 正式啟動',
+                    content: '各位優秀的夥伴大家好！本次半年期競賽結合保險業務開發與下線增員雙軌制。透過日常申報業績、邀約、面談與考試獲取點數，並運用點數擲骰子在大富翁棋盤中贏取大獎！請全力以赴，共創顛峰！'
+                },
+                availableTags: [
+                    { name: 'FYC 業績申報', isFYC: true, points: 0 },
+                    { name: '活動邀約', isFYC: false, points: 5 },
+                    { name: '增員面談', isFYC: false, points: 10 },
+                    { name: '新夥伴公司考', isFYC: false, points: 15 },
+                    { name: '新夥伴外部考', isFYC: false, points: 15 },
+                    { name: '新夥伴報聘', isFYC: false, points: 30 }
+                ],
+                boardTiles: Array.from({ length: 30 }, (_, i) => ({
+                    name: i === 0 ? '起點：榮耀起航' : (i === 14 ? '幸運轉折點' : (i === 29 ? '終極大亨站' : '業務衝刺格 ' + (i + 1))),
+                    icon: i === 0 ? '🏁' : (i === 14 ? '⭐' : (i === 29 ? '👑' : '💼')),
+                    reward: i === 0 ? '獲得 20 點 + 2 骰子' : (i === 14 ? '額外獲得 50 點獎勵' : (i === 29 ? '解鎖特級榮譽獎盃與實體大獎' : '獲得 ' + ((i % 5) + 5) * 2 + ' 點數與動能 Buff'))
+                })),
+                partners: [
+                    { id: '1', name: '王大亨', email: 'king@example.com', password: '123', rank: '業務經理', group: '王者金牌組', fyc: 150000, points: 120, dice: 15, boardPosition: 5, buffs: ['陳小美', '林業務'] },
+                    { id: '2', name: '陳小美', email: 'mei@example.com', password: '123', rank: '業務襄理', group: '王者金牌組', fyc: 80000, points: 60, dice: 8, boardPosition: 2, buffs: [] },
+                    { id: '3', name: '林業務', email: 'lin@example.com', password: '123', rank: '業務主任', group: '王者金牌組', fyc: 45000, points: 40, dice: 5, boardPosition: 12, buffs: [] },
+                    { id: '4', name: '張專員', email: 'zhang@example.com', password: '123', rank: '業務專員', group: '菁英飆速組', fyc: 30000, points: 25, dice: 4, boardPosition: 0, buffs: [] }
+                ],
+                pendingAudits: [
+                    { id: 'a1', userId: '2', userName: '陳小美', groupName: '王者金牌組', tag: '增員面談', detail: '完成與準增員對象面談', earnedPoints: 10, earnedDice: 1, time: '2026-10-20 10:30' }
+                ],
+                rewardLogs: [
+                    { id: 'r1', userId: '1', userName: '王大亨', groupName: '王者金牌組', rewardName: '第 6 格獎勵：獲得 20 點', time: '2026-10-19 14:20', status: '已發放' }
+                ],
+                shoutMessages: [
+                    { id: 's1', author: '王大亨', title: '衝刺百萬FYC！', content: '大家一起加油，半年期大亨非我們莫屬！', isAnonymous: false, time: '11:00', likes: 5 }
+                ],
 
-        function saveDB(db) { localStorage.setItem('competition_tycoon_db', JSON.stringify(db)); }
+                init() {
+                    // Load state from localStorage if available
+                    const saved = localStorage.getItem('competition_tycoon_data');
+                    if (saved) {
+                        try {
+                            const data = JSON.parse(saved);
+                            this.partners = data.partners || this.partners;
+                            this.pendingAudits = data.pendingAudits || this.pendingAudits;
+                            this.rewardLogs = data.rewardLogs || this.rewardLogs;
+                            this.boardTiles = data.boardTiles || this.boardTiles;
+                            this.availableTags = data.availableTags || this.availableTags;
+                            this.marqueeText = data.marqueeText || this.marqueeText;
+                            this.announcement = data.announcement || this.announcement;
+                            this.shoutMessages = data.shoutMessages || this.shoutMessages;
+                            this.adminPassword = data.adminPassword || this.adminPassword;
+                        } catch (e) { console.error(e); }
+                    }
 
-        let currentUser = JSON.parse(sessionStorage.getItem('tycoon_current_user')) || null;
+                    // Network listeners & time sync
+                    window.addEventListener('online', () => { this.isOnline = true; this.showToast('網路已恢復連線'); });
+                    window.addEventListener('offline', () => { this.isOnline = false; this.showToast('⚠️ 警告：網路已斷線！'); });
+                    
+                    setInterval(() => {
+                        const now = new Date();
+                        this.networkTime = now.toLocaleString('zh-TW', { hour12: false });
+                    }, 1000);
+                },
 
-        function initApp() {
-            const viewAuth = document.getElementById('view-auth');
-            const viewPartner = document.getElementById('view-partner');
-            const viewAdmin = document.getElementById('view-admin');
-            const headerUser = document.getElementById('header-user-info');
-            const marqueeBar = document.getElementById('marquee-bar');
+                saveState() {
+                    const data = {
+                        partners: this.partners,
+                        pendingAudits: this.pendingAudits,
+                        rewardLogs: this.rewardLogs,
+                        boardTiles: this.boardTiles,
+                        availableTags: this.availableTags,
+                        marqueeText: this.marqueeText,
+                        announcement: this.announcement,
+                        shoutMessages: this.shoutMessages,
+                        adminPassword: this.adminPassword
+                    };
+                    localStorage.setItem('competition_tycoon_data', JSON.stringify(data));
+                },
 
-            const db = getDB();
+                showToast(msg) {
+                    this.toastMessage = msg;
+                    setTimeout(() => { if (this.toastMessage === msg) this.toastMessage = ''; }, 3500);
+                },
 
-            if (!currentUser) {
-                viewAuth.classList.remove('hidden');
-                viewPartner.classList.add('hidden');
-                viewAdmin.classList.add('hidden');
-                headerUser.style.display = 'none';
-                marqueeBar.classList.add('hidden');
-            } else {
-                viewAuth.classList.add('hidden');
-                headerUser.style.display = 'flex';
-                marqueeBar.classList.remove('hidden');
+                handleLogin() {
+                    if (this.loginForm.account === 'admin' && this.loginForm.password === this.adminPassword) {
+                        this.currentUser = { name: '管理員', isAdmin: true };
+                        this.showToast('成功登入指揮中心後台');
+                        return;
+                    }
+                    const found = this.partners.find(p => p.name === this.loginForm.account && p.password === this.loginForm.password);
+                    if (found) {
+                        this.currentUser = found;
+                        this.showToast('歡迎回來，' + found.name + '！');
+                    } else {
+                        this.showToast('登入失敗：帳號或密碼錯誤');
+                    }
+                },
 
-                document.getElementById('nav-username').innerText = currentUser.name;
-                document.getElementById('nav-role-group').innerText = `${currentUser.role || '業務專員'} | ${currentUser.group}`;
-                document.getElementById('marquee-content').innerHTML = (db.marqueenMessages || []).join(' &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ');
+                handleRegister() {
+                    if (!this.regForm.name || !this.regForm.email || !this.regForm.password) {
+                        this.showToast('請完整填寫註冊資料');
+                        return;
+                    }
+                    if (this.partners.some(p => p.name === this.regForm.name)) {
+                        this.showToast('註冊失敗：此姓名已存在');
+                        return;
+                    }
+                    const newP = {
+                        id: Date.now().toString(),
+                        name: this.regForm.name,
+                        email: this.regForm.email,
+                        password: this.regForm.password,
+                        rank: this.regForm.rank,
+                        group: this.regForm.group,
+                        fyc: 0,
+                        points: 0,
+                        dice: 0,
+                        boardPosition: 0,
+                        buffs: []
+                    };
+                    this.partners.push(newP);
+                    this.saveState();
+                    this.currentUser = newP;
+                    this.showToast('註冊成功！起始數均為0，已自動登入');
+                },
 
-                if (currentUser.isAdmin || currentUser.username === 'admin') {
-                    viewPartner.classList.add('hidden');
-                    viewAdmin.classList.remove('hidden');
-                    renderAdminDashboard(db);
-                } else {
-                    viewAdmin.classList.add('hidden');
-                    viewPartner.classList.remove('hidden');
-                    renderPartnerDashboard(db);
+                handleForgot() {
+                    const found = this.partners.find(p => p.name === this.forgotForm.name && p.email === this.forgotForm.email);
+                    if (found) {
+                        this.forgotResult = '您的密碼為：' + found.password;
+                    } else {
+                        this.forgotResult = '找不到符合該姓名與信箱之註冊資料';
+                    }
+                },
+
+                logout() {
+                    this.currentUser = null;
+                    this.showToast('已安全登出');
+                },
+
+                get isCurrentTagFYC() {
+                    return this.availableTags[this.submitForm.tagIndex] && this.availableTags[this.submitForm.tagIndex].isFYC;
+                },
+
+                onTagChange() {
+                    this.submitForm.amount = '';
+                    this.submitForm.detail = '';
+                },
+
+                submitScore() {
+                    const tag = this.availableTags[this.submitForm.tagIndex];
+                    let earnedPoints = 0;
+                    let earnedDice = 1;
+                    let detailText = '';
+
+                    if (tag.isFYC) {
+                        const amt = Number(this.submitForm.amount) || 0;
+                        earnedPoints = Math.floor(amt / 1000);
+                        detailText = `FYC 金額: $${amt.toLocaleString()} (換算 ${earnedPoints} 點)`;
+                    } else {
+                        earnedPoints = tag.points;
+                        detailText = this.submitForm.detail || tag.name;
+                    }
+
+                    const auditItem = {
+                        id: 'au_' + Date.now(),
+                        userId: this.currentUser.id,
+                        userName: this.currentUser.name,
+                        groupName: this.currentUser.group,
+                        tag: tag.name,
+                        detail: detailText,
+                        earnedPoints: earnedPoints,
+                        earnedDice: earnedDice,
+                        time: new Date().toLocaleString('zh-TW', { hour12: false })
+                    };
+
+                    this.pendingAudits.push(auditItem);
+                    this.saveState();
+                    this.showToast('申報已送出，等待指揮中心審核！');
+                    this.submitForm.amount = '';
+                    this.submitForm.detail = '';
+                },
+
+                approveAudit(auditId) {
+                    const idx = this.pendingAudits.findIndex(a => a.id === auditId);
+                    if (idx === -1) return;
+                    const audit = this.pendingAudits[idx];
+                    
+                    const p = this.partners.find(x => x.id === audit.userId);
+                    if (p) {
+                        p.points += audit.earnedPoints;
+                        p.dice += audit.earnedDice;
+                        if (audit.tag.includes('FYC') && audit.detail.includes('FYC 金額:')) {
+                            // Extract amount from detail string if needed or keep separate
+                        }
+                    }
+
+                    this.pendingAudits.splice(idx, 1);
+                    this.saveState();
+
+                    // Trigger Confetti effect
+                    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                    this.showToast('審核通過！已發放點數與骰子給 ' + audit.userName);
+                },
+
+                calculateTotalFYC(p) {
+                    let total = p.fyc || 0;
+                    if (p.buffs && p.buffs.length > 0) {
+                        p.buffs.forEach(buffName => {
+                            const sub = this.partners.find(x => x.name === buffName);
+                            if (sub) {
+                                total += (sub.fyc || 0);
+                            }
+                        });
+                    }
+                    return total;
+                },
+
+                getGroupTeammates(groupName) {
+                    return this.partners.filter(p => p.group === groupName);
+                },
+
+                openEditPartner(p) {
+                    this.editingPartner = JSON.parse(JSON.stringify(p));
+                    if (!this.editingPartner.buffs) this.editingPartner.buffs = [];
+                },
+
+                savePartnerEdit() {
+                    const idx = this.partners.findIndex(x => x.id === this.editingPartner.id);
+                    if (idx !== -1) {
+                        this.partners[idx] = this.editingPartner;
+                        this.saveState();
+                        this.showToast('夥伴資料更新成功');
+                        this.editingPartner = null;
+                    }
+                },
+
+                deletePartner(id) {
+                    if (confirm('確定要刪除此位夥伴嗎？刪除後無法復原。')) {
+                        this.partners = this.partners.filter(x => x.id !== id);
+                        this.saveState();
+                        this.showToast('夥伴已刪除');
+                    }
+                },
+
+                addNewTag() {
+                    this.availableTags.push({ name: '新任務 Tag', isFYC: false, points: 10 });
+                    this.saveState();
+                },
+
+                removeTag(index) {
+                    this.availableTags.splice(index, 1);
+                    this.saveState();
+                },
+
+                saveGameSettings() {
+                    this.saveState();
+                    this.showToast('遊戲與公告設定已儲存');
+                },
+
+                saveBoardTiles() {
+                    this.saveState();
+                    this.showToast('30格地圖已成功更新');
+                },
+
+                toggleRewardStatus(rid) {
+                    const r = this.rewardLogs.find(x => x.id === rid);
+                    if (r) {
+                        r.status = r.status === '已發放' ? '待發放' : '已發放';
+                        this.saveState();
+                    }
+                },
+
+                exportRewardData() {
+                    let csv = '姓名,組別,獎勵項目,時間,狀態\n';
+                    this.rewardLogs.forEach(r => {
+                        csv += `"${r.userName}","${r.groupName}","${r.rewardName}","${r.time}","${r.status || '待發放'}"\n`;
+                    });
+                    const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'competition_tycoon_rewards.csv';
+                    a.click();
+                    this.showToast('獎勵清單已匯出 CSV');
+                },
+
+                updateAdminPassword() {
+                    if (this.pwdForm.old !== this.adminPassword) {
+                        this.showToast('目前管理員密碼錯誤');
+                        return;
+                    }
+                    this.adminPassword = this.pwdForm.new;
+                    this.saveState();
+                    this.pwdForm.old = '';
+                    this.pwdForm.new = '';
+                    this.showToast('管理員密碼變更成功');
+                },
+
+                previewSandbox() {
+                    this.sandboxPreviewHtml = `<div class="p-3 text-emerald-700 font-bold bg-emerald-50 rounded border border-emerald-200">Sandbox 預覽正常：<br><span class="text-xs text-stone-600 font-normal">${this.sandboxCode}</span></div>`;
+                    this.showToast('Sandbox 預覽已更新');
+                },
+
+                publishUpdate() {
+                    this.saveState();
+                    this.showToast('🚀 軟體版本熱更新已同步至所有使用者端！');
+                },
+
+                postShout() {
+                    const msg = {
+                        id: 'sh_' + Date.now(),
+                        author: this.currentUser.name,
+                        title: this.shoutForm.title,
+                        content: this.shoutForm.content,
+                        isAnonymous: this.shoutForm.isAnonymous,
+                        time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' }),
+                        likes: 0
+                    };
+                    this.shoutMessages.unshift(msg);
+                    this.saveState();
+                    this.shoutForm.title = '';
+                    this.shoutForm.content = '';
+                    this.showToast('📢 嗆蝦留言已發布，全體夥伴已收到通知！');
+                },
+
+                likeShout(mid) {
+                    const m = this.shoutMessages.find(x => x.id === mid);
+                    if (m) {
+                        m.likes++;
+                        this.saveState();
+                    }
+                },
+
+                openTileModal(tile, idx) {
+                    this.activeTileModal = { ...tile, index: idx };
+                },
+
+                rollDice() {
+                    if (this.currentUser.points < 10 || this.isRolling) return;
+                    this.currentUser.points -= 10;
+                    this.isRolling = true;
+
+                    // Vibration feedback if supported
+                    if (navigator.vibrate) {
+                        navigator.vibrate([100, 50, 100]);
+                    }
+
+                    // Random 3D dice roll animation angles
+                    const randomRoll = Math.floor(Math.random() * 6) + 1;
+                    const rotations = {
+                        1: 'rotateX(0deg) rotateY(0deg)',
+                        2: 'rotateX(0deg) rotateY(-90deg)',
+                        3: 'rotateX(0deg) rotateY(-180deg)',
+                        4: 'rotateX(0deg) rotateY(90deg)',
+                        5: 'rotateX(-90deg) rotateY(0deg)',
+                        6: 'rotateX(90deg) rotateY(0deg)'
+                    };
+                    this.diceTransform = rotations[randomRoll];
+
+                    setTimeout(() => {
+                        this.isRolling = false;
+                        const currentPos = this.currentUser.boardPosition || 0;
+                        const newPos = (currentPos + randomRoll) % 30;
+                        this.currentUser.boardPosition = newPos;
+
+                        // Update in partners list
+                        const pIdx = this.partners.findIndex(x => x.id === this.currentUser.id);
+                        if (pIdx !== -1) {
+                            this.partners[pIdx].points = this.currentUser.points;
+                            this.partners[pIdx].boardPosition = newPos;
+                        }
+
+                        const landedTile = this.boardTiles[newPos];
+                        this.earnedRewardModal = {
+                            text: `您擲出了 ${randomRoll} 點！前進至第 ${newPos + 1} 格「${landedTile.name}」。獎勵：${landedTile.reward}`
+                        };
+
+                        // Push to reward logs
+                        this.rewardLogs.unshift({
+                            id: 'rw_' + Date.now(),
+                            userId: this.currentUser.id,
+                            userName: this.currentUser.name,
+                            groupName: this.currentUser.group,
+                            rewardName: `第 ${newPos + 1} 格(${landedTile.name})：${landedTile.reward}`,
+                            time: new Date().toLocaleString('zh-TW', { hour12: false }),
+                            status: '待發放'
+                        });
+
+                        this.saveState();
+                    }, 1000);
+                },
+
+                closeEarnedRewardModal() {
+                    this.earnedRewardModal = null;
                 }
             }
-            updateOnlineStatus();
         }
-
-        function renderPartnerDashboard(db) {
-            const groupMembers = db.users.filter(x => x.group === currentUser.group);
-            let buffFYC = 0;
-            if (currentUser.buffs) {
-                currentUser.buffs.forEach(b => {
-                    const t = db.users.find(u => u.name === b);
-                    if (t) buffFYC += (t.fyc || 0);
-                });
-            }
-            const totalFYC = (currentUser.fyc || 0) + buffFYC;
-            const groupTotalFYC = groupMembers.reduce((sum, m) => sum + (m.fyc || 0), 0);
-
-            document.getElementById('p-stat-fyc').innerText = totalFYC;
-            document.getElementById('p-stat-fyc-sub').innerText = `個人: ${currentUser.fyc || 0} | 裂變: ${buffFYC}`;
-            document.getElementById('p-stat-points').innerHTML = `${currentUser.points || 0} P / <span style="color:#18181b">${currentUser.diceCount || 0} 骰</span>`;
-            document.getElementById('p-stat-group-fyc').innerText = groupTotalFYC;
-            document.getElementById('p-stat-pos').innerText = `第 ${currentUser.position || 1} 格`;
-
-            // 同組夥伴
-            document.getElementById('partner-group-list').innerHTML = groupMembers.map(m => `
-                <div style="background: #fafafa; padding: 6px 10px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; border: 1px solid #e4e4e7;">
-                    <span style="font-weight: bold;">${m.name} (${m.role})</span>
-                    <span style="color: #ea580c;">FYC: ${m.fyc || 0} | 格: #${m.position || 1}</span>
-                </div>
-            `).join('');
-
-            // 嗆蝦留言板渲染
-            document.getElementById('shoutbox-list').innerHTML = (db.shoutbox || []).map(s => `
-                <div style="background: #fafafa; padding: 6px 10px; border-radius: 8px; font-size: 12px; border: 1px solid #e4e4e7;">
-                    <span style="font-weight: bold; color: #ea580c;">${s.name}</span>: ${s.text} <span style="font-size: 10px; color: #a1a1aa; float: right;">${s.time}</span>
-                </div>
-            `).join('');
-
-            // 30格棋盤 (顯示誰在該格)
-            document.getElementById('monopoly-board-grid').innerHTML = db.tiles.map(t => {
-                const occupiers = groupMembers.filter(m => (m.position || 1) === t.id);
-                return `
-                    <div onclick="openTileDetail(${t.id})" style="background: #fafafa; border: 1px solid #d4d4d8; padding: 8px 4px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 11px; position: relative;">
-                        <div style="font-size: 14px;">${t.icon}</div>
-                        <div style="color: #18181b; margin-top: 2px; font-weight: bold;">#${t.id}</div>
-                        <div style="display:flex; justify-content:center; gap:2px; margin-top:2px;">
-                            ${occupiers.map(o => `<span style="background:#ea580c; color:#fff; font-size:9px; padding:1px 4px; border-radius:4px;" title="${o.name}">${o.name[0]}</span>`).join('')}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            toggleTagInput();
-        }
-
-        function postShout() {
-            const input = document.getElementById('shout-input');
-            const text = input.value.trim();
-            if (!text) return;
-            const db = getDB();
-            if (!db.shoutbox) db.shoutbox = [];
-            db.shoutbox.unshift({
-                name: currentUser.name,
-                text,
-                time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
-            });
-            saveDB(db);
-            input.value = '';
-            initApp();
-        }
-
-        function renderAdminDashboard(db) {
-            document.getElementById('admin-summary-text').innerText = `總指揮官已完整登入。目前夥伴總人數：${db.users.length} 人 | 待審核案件：${db.pendingSubmissions.filter(x=>x.status==='pending').length} 筆`;
-            adminSubTab('approval');
-        }
-
-        function adminSubTab(tab) {
-            const db = getDB();
-            const el = document.getElementById('admin-sub-content');
-            if (!el) return;
-            if (tab === 'approval') {
-                const pendings = db.pendingSubmissions.filter(x => x.status === 'pending');
-                if (pendings.length === 0) {
-                    el.innerHTML = `<p style="font-size: 13px; color: #71717a;">目前沒有等待審核的申報案件。</p>`;
-                    return;
-                }
-                el.innerHTML = `<div style="display: flex; flex-direction: column; gap: 10px;">` + pendings.map(s => `
-                    <div style="background: #fafafa; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #d4d4d8;">
-                        <div>
-                            <span style="font-weight: bold;">${s.name} (${s.group})</span>
-                            <span style="font-size: 12px; color: #71717a; margin-left: 10px;">項目: <b>${s.tag}</b> | 內容: ${s.tag==='FYC' ? s.fycVal+' FYC' : s.desc}</span>
-                        </div>
-                        <button onclick="approveSub('${s.id}')" class="btn-orange" style="padding: 6px 12px; font-size: 12px;">通過撥發</button>
-                    </div>
-                `).join('') + `</div>`;
-            } else if (tab === 'users') {
-                el.innerHTML = `<div style="display: flex; flex-direction: column; gap: 10px;">` + db.users.map(u => `
-                    <div style="background: #fafafa; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #d4d4d8; font-size: 13px;">
-                        <div><b>${u.name}</b> (${u.username}) | 組別: <span style="color:#ea580c;">${u.group}</span> | 職級: ${u.role} | 點數: ${u.points}P</div>
-                        ${u.username !== 'admin' ? `<button onclick="deleteUser('${u.username}')" style="background: #fee2e2; color: #991b1b; border:none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px;">刪除</button>` : ''}
-                    </div>
-                `).join('') + `</div>`;
-            }
-        }
-
-        function approveSub(subId) {
-            const db = getDB();
-            const sub = db.pendingSubmissions.find(x => x.id === subId);
-            if (!sub) return;
-            sub.status = 'approved';
-            const user = db.users.find(x => x.username === sub.username);
-            if (user) {
-                let addPoints = sub.tag === 'FYC' ? Math.floor(sub.fycVal / 1000) : (db.tags[sub.tag]?.points || 2);
-                if(sub.tag === 'FYC') user.fyc = (user.fyc || 0) + sub.fycVal;
-                user.points = (user.points || 0) + addPoints;
-                user.diceCount = (user.diceCount || 0) + 1;
-            }
-            saveDB(db);
-            try { confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } }); } catch(e){}
-            alert('審核通過！');
-            initApp();
-        }
-
-        function deleteUser(username) {
-            if (confirm('確定要刪除此位夥伴嗎？')) {
-                const db = getDB();
-                db.users = db.users.filter(x => x.username !== username);
-                saveDB(db);
-                initApp();
-            }
-        }
-
-        function toggleTagInput() {
-            const tag = document.getElementById('sub-tag')?.value;
-            const fycBox = document.getElementById('sub-fyc-box');
-            if (!fycBox) return;
-            fycBox.style.display = (tag === 'FYC') ? 'block' : 'none';
-        }
-
-        function submitScore() {
-            const tag = document.getElementById('sub-tag').value;
-            const desc = document.getElementById('sub-desc').value.trim();
-            const fycVal = parseInt(document.getElementById('sub-fyc-val')?.value) || 0;
-            const db = getDB();
-            db.pendingSubmissions.push({
-                id: 'SUB_' + Date.now(),
-                username: currentUser.username,
-                name: currentUser.name,
-                group: currentUser.group,
-                tag, desc, fycVal, status: 'pending',
-                time: new Date().toLocaleString()
-            });
-            saveDB(db);
-            alert('申報已送出！');
-        }
-
-        function rollDice() {
-            if ((currentUser.points || 0) < 10) {
-                alert('可用點數不足 10 點！');
-                return;
-            }
-            const db = getDB();
-            const idx = db.users.findIndex(x => x.username === currentUser.username);
-            db.users[idx].points -= 10;
-            const roll = Math.floor(Math.random() * 6) + 1;
-            let newPos = (currentUser.position || 1) + roll;
-            if (newPos > 30) newPos -= 30;
-            db.users[idx].position = newPos;
-            db.users[idx].points += (roll * 5);
-            currentUser = db.users[idx];
-            saveDB(db);
-            alert(`🎲 擲出 ${roll} 點！前進至第 ${newPos} 格！`);
-            initApp();
-        }
-
-        function openTileDetail(tileId) {
-            const db = getDB();
-            const t = db.tiles.find(x => x.id === tileId);
-            if (!t) return;
-            alert(`第 ${t.id} 格：${t.name}\n\n${t.rewardDesc}\n${t.desc}`);
-        }
-
-        function switchAuthTab(tab) {
-            const formLogin = document.getElementById('form-login');
-            const formReg = document.getElementById('form-register');
-            const btnLogin = document.getElementById('tab-btn-login');
-            const btnReg = document.getElementById('tab-btn-reg');
-            if (tab === 'login') {
-                formLogin.classList.remove('hidden');
-                formReg.classList.add('hidden');
-                btnLogin.classList.add('active');
-                btnReg.classList.remove('active');
-            } else {
-                formLogin.classList.add('hidden');
-                formReg.classList.remove('hidden');
-                btnReg.classList.add('active');
-                btnLogin.classList.remove('active');
-            }
-        }
-
-        function handleLogin() {
-            const u = document.getElementById('login-user').value.trim();
-            const p = document.getElementById('login-pass').value.trim();
-            const db = getDB();
-
-            if (u === 'admin' && p === db.adminPassword) {
-                currentUser = db.users.find(x => x.username === 'admin') || { username: 'admin', name: '總指揮官', isAdmin: true };
-                sessionStorage.setItem('tycoon_current_user', JSON.stringify(currentUser));
-                initApp();
-                return;
-            }
-
-            const found = db.users.find(x => (x.username === u || x.name === u) && x.password === p);
-            if (found) {
-                currentUser = found;
-                sessionStorage.setItem('tycoon_current_user', JSON.stringify(currentUser));
-                initApp();
-            } else {
-                alert('帳號或密碼錯誤！');
-            }
-        }
-
-        function handleRegister() {
-            const name = document.getElementById('reg-name').value.trim();
-            const role = document.getElementById('reg-role').value;
-            const group = document.getElementById('reg-group').value.trim();
-            const username = document.getElementById('reg-username').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
-            const password = document.getElementById('reg-pass').value.trim();
-
-            if (!name || !username || !password || !email || !group) {
-                alert('請完整填寫註冊欄位！');
-                return;
-            }
-
-            const db = getDB();
-            if (db.users.some(x => x.username === username)) {
-                alert('此帳號已被註冊！');
-                return;
-            }
-
-            const newUser = {
-                username, password, name, role, group, email,
-                fyc: 0, points: 0, diceCount: 0, position: 1, buffs: [], isAdmin: false
-            };
-
-            db.users.push(newUser);
-            saveDB(db);
-            currentUser = newUser;
-            sessionStorage.setItem('tycoon_current_user', JSON.stringify(currentUser));
-            alert('註冊成功！');
-            initApp();
-        }
-
-        function logout() {
-            currentUser = null;
-            sessionStorage.removeItem('tycoon_current_user');
-            initApp();
-        }
-
-        window.onload = function() { initApp(); };
     </script>
 </body>
 </html>
