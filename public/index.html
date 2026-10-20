@@ -8,21 +8,22 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body {
-            background-color: #09090b;
-            color: #f4f4f5;
+        body {
+            background-color: #f4f4f5;
+            color: #18181b;
             font-family: 'Plus Jakarta Sans', sans-serif;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
         header {
-            background: rgba(24, 24, 27, 0.95);
-            border-bottom: 1px solid rgba(249, 115, 22, 0.3);
+            background: #ffffff;
+            border-bottom: 1px solid #e4e4e7;
             padding: 16px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
             z-index: 20;
@@ -31,7 +32,7 @@
             font-family: 'Noto Serif TC', serif;
             font-weight: 900;
             font-size: 24px;
-            background: linear-gradient(135deg, #fed7aa 0%, #f97316 50%, #c2410c 100%);
+            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -46,16 +47,15 @@
             gap: 20px;
         }
         .card {
-            background: rgba(39, 39, 42, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(249, 115, 22, 0.3);
+            background: #ffffff;
+            border: 1px solid #e4e4e7;
             border-radius: 20px;
             padding: 24px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
         .btn-orange {
             background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
-            color: #000;
+            color: #fff;
             font-weight: 700;
             padding: 12px 20px;
             border-radius: 12px;
@@ -68,29 +68,28 @@
         .input-box {
             width: 100%;
             padding: 10px 14px;
-            background: #18181b;
-            border: 1px solid #3f3f46;
+            background: #fafafa;
+            border: 1px solid #d4d4d8;
             border-radius: 10px;
-            color: #fff;
+            color: #18181b;
             font-size: 14px;
             margin-top: 4px;
             margin-bottom: 12px;
             outline: none;
         }
-        .input-box:focus { border-color: #f97316; }
-        label { font-size: 12px; color: #fdba74; font-weight: 600; display: block; }
-        .tabs { display: flex; background: #18181b; padding: 4px; border-radius: 12px; margin-bottom: 16px; border: 1px solid #3f3f46; }
-        .tab-btn { flex: 1; padding: 8px; background: transparent; border: none; color: #a1a1aa; font-weight: 600; cursor: pointer; border-radius: 8px; font-size: 13px; }
-        .tab-btn.active { background: #f97316; color: #000; }
+        .input-box:focus { border-color: #f97316; background: #fff; }
+        label { font-size: 12px; color: #71717a; font-weight: 600; display: block; }
+        .tabs { display: flex; background: #f4f4f5; padding: 4px; border-radius: 12px; margin-bottom: 16px; border: 1px solid #e4e4e7; }
+        .tab-btn { flex: 1; padding: 8px; background: transparent; border: none; color: #71717a; font-weight: 600; cursor: pointer; border-radius: 8px; font-size: 13px; }
+        .tab-btn.active { background: #f97316; color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .hidden { display: none !important; }
         
-        .marquee-container { overflow: hidden; white-space: nowrap; background: #18181b; border-bottom: 1px solid rgba(249,115,22,0.3); padding: 10px; font-size: 13px; color: #fed7aa; display: flex; align-items: center; }
+        .marquee-container { overflow: hidden; white-space: nowrap; background: #18181b; border-bottom: 1px solid #3f3f46; padding: 10px; font-size: 13px; color: #fed7aa; display: flex; align-items: center; }
         .marquee-text { display: inline-block; padding-left: 100%; animation: marquee 30s linear infinite; }
         @keyframes marquee {
             0% { transform: translate(0, 0); }
             100% { transform: translate(-100%, 0); }
         }
-        
         #network-banner { background: #9a3412; color: #ffedd5; text-align: center; font-size: 12px; padding: 6px; font-weight: bold; display: none; }
     </style>
 </head>
@@ -102,40 +101,180 @@
     <!-- Header -->
     <header>
         <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 28px; background: #f97316; padding: 6px 10px; border-radius: 14px; color: #000;">🎲</span>
+            <span style="font-size: 28px; background: #f97316; padding: 6px 10px; border-radius: 14px; color: #fff;">🎲</span>
             <div>
                 <h1 class="logo-title">競賽大亨</h1>
-                <p style="font-size: 11px; color: #a1a1aa; font-family: monospace;">COMPETITION TYCOON | 2026.12.14 - 2027.06.02 <span id="live-clock" style="margin-left: 10px; color: #fb923c;"></span></p>
+                <p style="font-size: 11px; color: #71717a; font-family: monospace;">COMPETITION TYCOON | 2026.12.14 - 2027.06.02 <span id="live-clock" style="margin-left: 10px; color: #ea580c;"></span></p>
             </div>
         </div>
         <div id="header-user-info" class="hidden" style="display: flex; align-items: center; gap: 12px;">
             <div style="text-align: right;">
-                <div id="nav-username" style="font-weight: bold; font-size: 13px; color: #fed7aa;">--</div>
-                <div id="nav-role-group" style="font-size: 11px; color: #a1a1aa;">--</div>
+                <div id="nav-username" style="font-weight: bold; font-size: 13px; color: #18181b;">--</div>
+                <div id="nav-role-group" style="font-size: 11px; color: #71717a;">--</div>
             </div>
-            <button onclick="logout()" style="background: #27272a; color: #f4f4f5; border: 1px solid #3f3f46; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">登出</button>
+            <button onclick="logout()" style="background: #f4f4f5; color: #18181b; border: 1px solid #d4d4d8; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">登出</button>
         </div>
     </header>
 
     <!-- Marquee -->
     <div id="marquee-bar" class="marquee-container hidden">
-        <span style="background: #f97316; color: #000; padding: 2px 8px; border-radius: 6px; font-weight: bold; margin-right: 15px; flex-shrink: 0;">戰報</span>
-        <div class="marquee-text" id="marquee-content">👑 歡迎登入競賽大亨灰黑橘戰情室！</div>
+        <span style="background: #f97316; color: #fff; padding: 2px 8px; border-radius: 6px; font-weight: bold; margin-right: 15px; flex-shrink: 0;">戰報</span>
+        <div class="marquee-text" id="marquee-content">👑 歡迎登入競賽大亨灰白橘戰情室！</div>
     </div>
 
-    <!-- Main Container -->
-    <div id="app-container" class="container"></div>
+    <!-- Main Container (Static Direct Render) -->
+    <div class="container">
+        
+        <!-- 1. Auth View (Login / Register) -->
+        <div id="view-auth" style="max-width: 420px; width: 100%; margin: 40px auto;" class="card">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span style="font-size: 42px;">👑</span>
+                <h2 style="font-family: 'Noto Serif TC', serif; font-size: 24px; color: #18181b; margin-top: 6px;">競賽大亨</h2>
+                <p style="font-size: 11px; color: #71717a;">Competition Tycoon 灰白橘商戰雙軌競賽</p>
+            </div>
 
-    <!-- Modals -->
-    <div id="modal-notice" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 20px;">
-        <div class="card" style="max-width: 450px; width: 100%;">
-            <h3 id="notice-modal-title" style="font-family: 'Noto Serif TC', serif; font-size: 18px; color: #fed7aa; margin-bottom: 10px;">📢 最新消息公告</h3>
-            <p id="notice-modal-content" style="font-size: 14px; color: #d4d4d8; margin-bottom: 20px; line-height: 1.6;"></p>
-            <button onclick="document.getElementById('modal-notice').style.display='none'" class="btn-orange" style="width: 100%;">我知道了</button>
+            <div class="tabs">
+                <button onclick="switchAuthTab('login')" id="tab-btn-login" class="tab-btn active">登入系統</button>
+                <button onclick="switchAuthTab('register')" id="tab-btn-reg" class="tab-btn">立即註冊</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="form-login">
+                <div>
+                    <label>帳號 / 姓名</label>
+                    <input type="text" id="login-user" class="input-box" placeholder="請輸入帳號或姓名 (管理者請輸入 admin)">
+                </div>
+                <div>
+                    <label>密碼</label>
+                    <input type="password" id="login-pass" class="input-box" placeholder="請輸入密碼">
+                </div>
+                <button onclick="handleLogin()" class="btn-orange" style="width: 100%; margin-top: 8px;">進入戰情室</button>
+            </div>
+
+            <!-- Register Form -->
+            <div id="form-register" class="hidden">
+                <div>
+                    <label>真實姓名</label>
+                    <input type="text" id="reg-name" class="input-box" placeholder="例如：王大明">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div>
+                        <label>職級</label>
+                        <select id="reg-role" class="input-box">
+                            <option value="業務專員">業務專員</option>
+                            <option value="業務主任">業務主任</option>
+                            <option value="業務襄理">業務襄理</option>
+                            <option value="業務經理">業務經理</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>隸屬組別 (同名自動整併)</label>
+                        <input type="text" id="reg-group" class="input-box" placeholder="例如：A組">
+                    </div>
+                </div>
+                <div>
+                    <label>註冊帳號</label>
+                    <input type="text" id="reg-username" class="input-box" placeholder="設定登入帳號">
+                </div>
+                <div>
+                    <label>電子信箱</label>
+                    <input type="email" id="reg-email" class="input-box" placeholder="your@email.com">
+                </div>
+                <div>
+                    <label>密碼</label>
+                    <input type="password" id="reg-pass" class="input-box" placeholder="設定登入密碼">
+                </div>
+                <button onclick="handleRegister()" class="btn-orange" style="width: 100%; margin-top: 8px;">完成註冊並登入</button>
+            </div>
         </div>
+
+        <!-- 2. Partner Dashboard View -->
+        <div id="view-partner" class="hidden" style="display: flex; flex-direction: column; gap: 20px;">
+            <!-- Stats Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                <div class="card">
+                    <p style="font-size: 12px; color: #71717a;">個人總業績 (含 Buff)</p>
+                    <p id="p-stat-fyc" style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #18181b; margin-top: 4px;">0</p>
+                    <span id="p-stat-fyc-sub" style="font-size: 10px; color: #71717a;">個人: 0 | 裂變: 0</span>
+                </div>
+                <div class="card">
+                    <p style="font-size: 12px; color: #71717a;">可用點數 / 骰子</p>
+                    <p id="p-stat-points" style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #ea580c; margin-top: 4px;">0 P / <span style="color:#18181b">0 骰</span></p>
+                    <span style="font-size: 10px; color: #71717a;">每擲骰消耗 10 點</span>
+                </div>
+                <div class="card">
+                    <p style="font-size: 12px; color: #71717a;">組別總業績</p>
+                    <p id="p-stat-group-fyc" style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #18181b; margin-top: 4px;">0</p>
+                    <span style="font-size: 10px; color: #71717a;">同組組員業績加總</span>
+                </div>
+                <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <p style="font-size: 12px; color: #71717a;">大富翁棋盤位置</p>
+                        <p id="p-stat-pos" style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #ea580c; margin-top: 4px;">第 1 格</p>
+                    </div>
+                    <button onclick="rollDice()" class="btn-orange" style="padding: 8px; font-size: 13px; margin-top: 10px;">🎲 擲骰子 (耗 10 P)</button>
+                </div>
+            </div>
+
+            <!-- Main Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; align-items: start;">
+                <!-- Submission Form & Group View -->
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="card">
+                        <h3 style="font-family: 'Noto Serif TC', serif; font-size: 16px; color: #18181b; margin-bottom: 14px;">📝 成績與任務申報</h3>
+                        <div>
+                            <label>申報任務 (Tag)</label>
+                            <select id="sub-tag" onchange="toggleTagInput()" class="input-box">
+                                <option value="FYC">FYC 業績 (1,000 FYC = 1P)</option>
+                                <option value="活動邀約">活動邀約 (2點)</option>
+                                <option value="增員面談">增員面談 (3點)</option>
+                            </select>
+                        </div>
+                        <div id="sub-fyc-box">
+                            <label>FYC 金額</label>
+                            <input type="number" id="sub-fyc-val" class="input-box" placeholder="例如：10000">
+                        </div>
+                        <div>
+                            <label>備註說明</label>
+                            <input type="text" id="sub-desc" class="input-box" placeholder="填寫說明或證明">
+                        </div>
+                        <button onclick="submitScore()" class="btn-orange" style="width: 100%;">送交指揮中心審核</button>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="font-family: 'Noto Serif TC', serif; font-size: 15px; color: #18181b; margin-bottom: 10px;">👥 同組夥伴狀況 (唯讀)</h3>
+                        <div id="partner-group-list" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                            <!-- 動態填充 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monopoly Board -->
+                <div class="card">
+                    <h3 style="font-family: 'Noto Serif TC', serif; font-size: 16px; color: #18181b; margin-bottom: 6px;">🗺️ 30格大富翁戰場</h3>
+                    <p style="font-size: 11px; color: #71717a; margin-bottom: 14px;">點擊任意格子可查看詳細獎勵與說明</p>
+                    <div id="monopoly-board-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">
+                        <!-- 動態填充 30 格 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Admin Dashboard View -->
+        <div id="view-admin" class="hidden card">
+            <h2 style="color: #18181b; font-size: 20px; margin-bottom: 14px; font-family: 'Noto Serif TC', serif;">🛡️ 指揮中心後台管理</h2>
+            <p id="admin-summary-text" style="font-size: 13px; color: #71717a; margin-bottom: 20px;">總指揮官已完整登入。</p>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                <button onclick="adminSubTab('approval')" class="btn-orange" style="font-size: 12px; padding: 8px 14px;">點數審核</button>
+                <button onclick="adminSubTab('users')" class="btn-orange" style="font-size: 12px; padding: 8px 14px;">夥伴管理</button>
+            </div>
+            <div id="admin-sub-content"></div>
+        </div>
+
     </div>
 
-    <!-- Script -->
+    <!-- Script Logic -->
     <script>
         function updateClock() {
             const now = new Date();
@@ -170,16 +309,13 @@
                     ],
                     pendingSubmissions: [],
                     rewardsLog: [],
-                    marqueenMessages: ['👑 歡迎登入競賽大亨灰黑橘戰情室', '💡 提示：提交 FYC 業績自動換算點數，每次擲骰消耗 10 點！'],
+                    marqueenMessages: ['👑 歡迎登入競賽大亨灰白橘戰情室', '💡 提示：提交 FYC 業績自動換算點數，每次擲骰消耗 10 點！'],
                     notice: { title: '👑 競賽大亨尊榮啟動', content: '歡迎各位菁英夥伴迎向半年期衝刺！', active: true },
                     tiles: defaultTiles,
                     tags: {
                         'FYC': { name: 'FYC 業績', rate: 1000, points: 1 },
                         '活動邀約': { name: '活動邀約', points: 2 },
-                        '增員面談': { name: '增員面談', points: 3 },
-                        '新夥伴公司考': { name: '新夥伴公司考', points: 5 },
-                        '新夥伴外部考': { name: '新夥伴外部考', points: 4 },
-                        '新夥伴報聘': { name: '新夥伴報聘', points: 10 }
+                        '增員面談': { name: '增員面談', points: 3 }
                     },
                     adminPassword: 'admin'
                 };
@@ -194,118 +330,43 @@
         let currentUser = JSON.parse(sessionStorage.getItem('tycoon_current_user')) || null;
 
         function initApp() {
-            const container = document.getElementById('app-container');
+            const viewAuth = document.getElementById('view-auth');
+            const viewPartner = document.getElementById('view-partner');
+            const viewAdmin = document.getElementById('view-admin');
             const headerUser = document.getElementById('header-user-info');
             const marqueeBar = document.getElementById('marquee-bar');
-            if (!container) return;
 
             const db = getDB();
 
             if (!currentUser) {
-                if (headerUser) headerUser.style.display = 'none';
-                if (marqueeBar) marqueeBar.classList.add('hidden');
-                container.innerHTML = `
-                    <div style="max-width: 420px; width: 100%; margin: 40px auto;" class="card">
-                        <div style="text-align: center; margin-bottom: 20px;">
-                            <span style="font-size: 42px;">👑</span>
-                            <h2 style="font-family: 'Noto Serif TC', serif; font-size: 24px; color: #fed7aa; margin-top: 6px;">競賽大亨</h2>
-                            <p style="font-size: 11px; color: #a1a1aa;">Competition Tycoon 灰黑橘商戰雙軌競賽</p>
-                        </div>
-
-                        <div class="tabs">
-                            <button onclick="switchTab('login')" id="btn-tab-login" class="tab-btn active">登入系統</button>
-                            <button onclick="switchTab('register')" id="btn-tab-reg" class="tab-btn">立即註冊</button>
-                            <button onclick="switchTab('forgot')" id="btn-tab-forgot" class="tab-btn">忘記密碼</button>
-                        </div>
-
-                        <!-- Login Form -->
-                        <div id="form-login">
-                            <div>
-                                <label>帳號 / 姓名</label>
-                                <input type="text" id="login-user" class="input-box" placeholder="請輸入帳號或姓名">
-                            </div>
-                            <div>
-                                <label>密碼</label>
-                                <input type="password" id="login-pass" class="input-box" placeholder="請輸入密碼">
-                            </div>
-                            <button onclick="handleLogin()" class="btn-orange" style="width: 100%; margin-top: 8px;">進入戰情室</button>
-                        </div>
-
-                        <!-- Register Form -->
-                        <div id="form-register" class="hidden">
-                            <div>
-                                <label>真實姓名</label>
-                                <input type="text" id="reg-name" class="input-box" placeholder="例如：王大明">
-                            </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                                <div>
-                                    <label>職級</label>
-                                    <select id="reg-role" class="input-box">
-                                        <option value="業務專員">業務專員</option>
-                                        <option value="業務主任">業務主任</option>
-                                        <option value="業務襄理">業務襄理</option>
-                                        <option value="業務經理">業務經理</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label>隸屬組別 (同名自動整併)</label>
-                                    <input type="text" id="reg-group" class="input-box" placeholder="例如：A組">
-                                </div>
-                            </div>
-                            <div>
-                                <label>註冊帳號</label>
-                                <input type="text" id="reg-username" class="input-box" placeholder="設定登入帳號">
-                            </div>
-                            <div>
-                                <label>電子信箱</label>
-                                <input type="email" id="reg-email" class="input-box" placeholder="your@email.com">
-                            </div>
-                            <div>
-                                <label>密碼</label>
-                                <input type="password" id="reg-pass" class="input-box" placeholder="設定登入密碼">
-                            </div>
-                            <button onclick="handleRegister()" class="btn-orange" style="width: 100%; margin-top: 8px;">完成註冊並登入</button>
-                        </div>
-
-                        <!-- Forgot Password Form -->
-                        <div id="form-forgot" class="hidden">
-                            <div>
-                                <label>註冊帳號</label>
-                                <input type="text" id="forgot-user" class="input-box" placeholder="輸入您的註冊帳號">
-                            </div>
-                            <div>
-                                <label>電子信箱</label>
-                                <input type="email" id="forgot-email" class="input-box" placeholder="輸入註冊時的信箱">
-                            </div>
-                            <button onclick="handleForgot()" class="btn-orange" style="width: 100%; margin-top: 8px;">查詢密碼</button>
-                            <div id="forgot-result" style="margin-top: 12px; font-size: 13px; color: #fed7aa; text-align: center; font-weight: bold;"></div>
-                        </div>
-                    </div>
-                `;
+                viewAuth.classList.remove('hidden');
+                viewPartner.classList.add('hidden');
+                viewAdmin.classList.add('hidden');
+                headerUser.style.display = 'none';
+                marqueeBar.classList.add('hidden');
             } else {
-                if (headerUser) headerUser.style.display = 'flex';
-                if (marqueeBar) marqueeBar.classList.remove('hidden');
+                viewAuth.classList.add('hidden');
+                headerUser.style.display = 'flex';
+                marqueeBar.classList.remove('hidden');
+
                 document.getElementById('nav-username').innerText = currentUser.name;
                 document.getElementById('nav-role-group').innerText = `${currentUser.role || '業務專員'} | ${currentUser.group}`;
                 document.getElementById('marquee-content').innerHTML = (db.marqueenMessages || []).join(' &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ');
 
                 if (currentUser.isAdmin || currentUser.username === 'admin') {
-                    renderAdminDashboard(container, db);
+                    viewPartner.classList.add('hidden');
+                    viewAdmin.classList.remove('hidden');
+                    renderAdminDashboard(db);
                 } else {
-                    renderPartnerDashboard(container, db);
-                }
-
-                if (db.notice && db.notice.active && !window.hasShownNotice) {
-                    window.hasShownNotice = true;
-                    document.getElementById('notice-modal-title').innerText = db.notice.title;
-                    document.getElementById('notice-modal-content').innerText = db.notice.content;
-                    document.getElementById('modal-notice').style.display = 'flex';
+                    viewAdmin.classList.add('hidden');
+                    viewPartner.classList.remove('hidden');
+                    renderPartnerDashboard(db);
                 }
             }
             updateOnlineStatus();
         }
 
-        function renderPartnerDashboard(container, db) {
+        function renderPartnerDashboard(db) {
             const groupMembers = db.users.filter(x => x.group === currentUser.group);
             let buffFYC = 0;
             if (currentUser.buffs) {
@@ -317,131 +378,63 @@
             const totalFYC = (currentUser.fyc || 0) + buffFYC;
             const groupTotalFYC = groupMembers.reduce((sum, m) => sum + (m.fyc || 0), 0);
 
-            const tagOptions = Object.keys(db.tags).map(t => `<option value="${t}">${t} (${t === 'FYC' ? '1000 FYC=1P' : db.tags[t].points + '點'})</option>`).join('');
+            document.getElementById('p-stat-fyc').innerText = totalFYC;
+            document.getElementById('p-stat-fyc-sub').innerText = `個人: ${currentUser.fyc || 0} | 裂變: ${buffFYC}`;
+            document.getElementById('p-stat-points').innerHTML = `${currentUser.points || 0} P / <span style="color:#18181b">${currentUser.diceCount || 0} 骰</span>`;
+            document.getElementById('p-stat-group-fyc').innerText = groupTotalFYC;
+            document.getElementById('p-stat-pos').innerText = `第 ${currentUser.position || 1} 格`;
 
-            container.innerHTML = `
-                <!-- Stats Grid -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
-                    <div class="card">
-                        <p style="font-size: 12px; color: #a1a1aa;">個人總業績 (含 Buff)</p>
-                        <p style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #fff; margin-top: 4px;">${totalFYC}</p>
-                        <span style="font-size: 10px; color: #fed7aa;">個人: ${currentUser.fyc || 0} | 裂變: ${buffFYC}</span>
-                    </div>
-                    <div class="card">
-                        <p style="font-size: 12px; color: #a1a1aa;">可用點數 / 骰子</p>
-                        <p style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #fb923c; margin-top: 4px;">${currentUser.points || 0} P / <span style="color:#fff">${currentUser.diceCount || 0} 骰</span></p>
-                        <span style="font-size: 10px; color: #fed7aa;">每擲骰消耗 10 點</span>
-                    </div>
-                    <div class="card">
-                        <p style="font-size: 12px; color: #a1a1aa;">組別總業績 (${currentUser.group})</p>
-                        <p style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #fff; margin-top: 4px;">${groupTotalFYC}</p>
-                        <span style="font-size: 10px; color: #a1a1aa;">同組組員業績加總</span>
-                    </div>
-                    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
-                        <div>
-                            <p style="font-size: 12px; color: #a1a1aa;">大富翁棋盤位置</p>
-                            <p style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #fb923c; margin-top: 4px;">第 ${currentUser.position || 1} 格</p>
-                        </div>
-                        <button onclick="rollDice()" class="btn-orange" style="padding: 8px; font-size: 13px; margin-top: 10px;">🎲 擲骰子 (耗 10 P)</button>
-                    </div>
+            // 同組夥伴
+            document.getElementById('partner-group-list').innerHTML = groupMembers.map(m => `
+                <div style="background: #fafafa; padding: 8px 12px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; border: 1px solid #e4e4e7;">
+                    <span style="font-weight: bold;">${m.name} (${m.role})</span>
+                    <span style="color: #ea580c;">FYC: ${m.fyc || 0} | 格: #${m.position || 1}</span>
                 </div>
+            `).join('');
 
-                <!-- Main Grid -->
-                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; align-items: start;">
-                    <!-- Submission Form & Group View -->
-                    <div style="display: flex; flex-direction: column; gap: 20px;">
-                        <div class="card">
-                            <h3 style="font-family: 'Noto Serif TC', serif; font-size: 16px; color: #fed7aa; margin-bottom: 14px;">📝 成績與任務申報</h3>
-                            <div>
-                                <label>申報任務 (Tag)</label>
-                                <select id="sub-tag" onchange="toggleTagInput()" class="input-box">${tagOptions}</select>
-                            </div>
-                            <div id="sub-fyc-box">
-                                <label>FYC 金額</label>
-                                <input type="number" id="sub-fyc-val" class="input-box" placeholder="例如：10000">
-                            </div>
-                            <div>
-                                <label>備註說明</label>
-                                <input type="text" id="sub-desc" class="input-box" placeholder="填寫說明或證明">
-                            </div>
-                            <button onclick="submitScore()" class="btn-orange" style="width: 100%;">送交指揮中心審核</button>
-                        </div>
-
-                        <div class="card">
-                            <h3 style="font-family: 'Noto Serif TC', serif; font-size: 15px; color: #fed7aa; margin-bottom: 10px;">👥 同組夥伴狀況 (唯讀)</h3>
-                            <div style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
-                                ${groupMembers.map(m => `
-                                    <div style="background: #18181b; padding: 8px 12px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; border: 1px solid #3f3f46;">
-                                        <span style="font-weight: bold;">${m.name} (${m.role})</span>
-                                        <span style="color: #fb923c;">FYC: ${m.fyc \vert{}\vert{} 0} \vert{} 格: #${m.position || 1}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Monopoly Board -->
-                    <div class="card">
-                        <h3 style="font-family: 'Noto Serif TC', serif; font-size: 16px; color: #fed7aa; margin-bottom: 6px;">🗺️ 30格大富翁戰場</h3>
-                        <p style="font-size: 11px; color: #a1a1aa; margin-bottom: 14px;">點擊任意格子可查看詳細獎勵與說明</p>
-                        <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">
-                            ${db.tiles.map(t => `
-                                <div onclick="openTileDetail(${t.id})" style="background: #18181b; border: 1px solid #3f3f46; padding: 10px 4px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 11px;">
-                                    <div style="font-size: 16px;">${t.icon}</div>
-                                    <div style="color: #fed7aa; margin-top: 4px; font-weight: bold;">#${t.id}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
+            // 30格棋盤
+            document.getElementById('monopoly-board-grid').innerHTML = db.tiles.map(t => `
+                <div onclick="openTileDetail(${t.id})" style="background: #fafafa; border: 1px solid #d4d4d8; padding: 10px 4px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 11px;">
+                    <div style="font-size: 16px;">${t.icon}</div>
+                    <div style="color: #18181b; margin-top: 4px; font-weight: bold;">#${t.id}</div>
                 </div>
-            `;
+            `).join('');
+
             toggleTagInput();
         }
 
-        function renderAdminDashboard(container, db) {
-            container.innerHTML = `
-                <div class="card">
-                    <h2 style="color: #fed7aa; font-size: 20px; margin-bottom: 14px; font-family: 'Noto Serif TC', serif;">🛡️ 指揮中心後台管理</h2>
-                    <p style="font-size: 13px; color: #a1a1aa; margin-bottom: 20px;">總指揮官已完整登入。目前夥伴總人數：${db.users.length} 人 | 待審核案件：${db.pendingSubmissions.filter(x=>x.status==='pending').length} 筆</p>
-                    
-                    <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-                        <button onclick="adminSubTab('approval')" class="btn-orange" style="font-size: 12px; padding: 8px 14px;">點數審核</button>
-                        <button onclick="adminSubTab('users')" class="btn-orange" style="font-size: 12px; padding: 8px 14px;">夥伴管理</button>
-                        <button onclick="adminSubTab('settings')" class="btn-orange" style="font-size: 12px; padding: 8px 14px;">遊戲與 Tag 設定</button>
-                    </div>
-
-                    <div id="admin-sub-content">
-                        ${renderAdminApproval(db)}
-                    </div>
-                </div>
-            `;
+        function renderAdminDashboard(db) {
+            document.getElementById('admin-summary-text').innerText = `總指揮官已完整登入。目前夥伴總人數：${db.users.length} 人 | 待審核案件：${db.pendingSubmissions.filter(x=>x.status==='pending').length} 筆`;
+            adminSubTab('approval');
         }
 
         function adminSubTab(tab) {
             const db = getDB();
             const el = document.getElementById('admin-sub-content');
             if (!el) return;
-            if (tab === 'approval') el.innerHTML = renderAdminApproval(db);
-            if (tab === 'users') el.innerHTML = renderAdminUsers(db);
-            if (tab === 'settings') el.innerHTML = renderAdminSettings(db);
-        }
-
-        function renderAdminApproval(db) {
-            const pendings = db.pendingSubmissions.filter(x => x.status === 'pending');
-            if (pendings.length === 0) return `<p style="font-size: 13px; color: #a1a1aa;">目前沒有等待審核的申報案件。</p>`;
-            return `
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    ${pendings.map(s => `
-                        <div style="background: #18181b; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #3f3f46; flex-wrap: wrap; gap: 10px;">
-                            <div>
-                                <span style="font-weight: bold; color: #fed7aa;">${s.name} (${s.group})</span>
-                                <span style="font-size: 12px; color: #a1a1aa; margin-left: 10px;">申報項目: <b>${s.tag}</b> \vert{} 內容: ${s.tag==='FYC' ? s.fycVal+' FYC' : s.desc}</span>
-                            </div>
-                            <button onclick="approveSub('${s.id}')" class="btn-orange" style="padding: 6px 12px; font-size: 12px;">通過撥發</button>
+            if (tab === 'approval') {
+                const pendings = db.pendingSubmissions.filter(x => x.status === 'pending');
+                if (pendings.length === 0) {
+                    el.innerHTML = `<p style="font-size: 13px; color: #71717a;">目前沒有等待審核的申報案件。</p>`;
+                    return;
+                }
+                el.innerHTML = `<div style="display: flex; flex-direction: column; gap: 10px;">` + pendings.map(s => `
+                    <div style="background: #fafafa; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #d4d4d8;">
+                        <div>
+                            <span style="font-weight: bold;">${s.name} (${s.group})</span>
+                            <span style="font-size: 12px; color: #71717a; margin-left: 10px;">項目: <b>${s.tag}</b> | 內容: ${s.tag==='FYC' ? s.fycVal+' FYC' : s.desc}</span>
                         </div>
-                    `).join('')}
-                </div>
-            `;
+                        <button onclick="approveSub('${s.id}')" class="btn-orange" style="padding: 6px 12px; font-size: 12px;">通過撥發</button>
+                    </div>
+                `).join('') + `</div>`;
+            } else if (tab === 'users') {
+                el.innerHTML = `<div style="display: flex; flex-direction: column; gap: 10px;">` + db.users.map(u => `
+                    <div style="background: #fafafa; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #d4d4d8; font-size: 13px;">
+                        <div><b>${u.name}</b> (${u.username}) | 組別: <span style="color:#ea580c;">${u.group}</span> | 職級: ${u.role}</div>
+                        ${u.username !== 'admin' ? `<button onclick="deleteUser('${u.username}')" style="background: #fee2e2; color: #991b1b; border:none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px;">刪除</button>` : ''}
+                    </div>
+                `).join('') + `</div>`;
+            }
         }
 
         function approveSub(subId) {
@@ -449,139 +442,32 @@
             const sub = db.pendingSubmissions.find(x => x.id === subId);
             if (!sub) return;
             sub.status = 'approved';
-
             const user = db.users.find(x => x.username === sub.username);
             if (user) {
-                let addPoints = 0;
-                if (sub.tag === 'FYC') {
-                    addPoints = Math.floor(sub.fycVal / 1000);
-                    user.fyc = (user.fyc || 0) + sub.fycVal;
-                } else {
-                    addPoints = db.tags[sub.tag]?.points || 2;
-                }
+                let addPoints = sub.tag === 'FYC' ? Math.floor(sub.fycVal / 1000) : (db.tags[sub.tag]?.points || 2);
+                if(sub.tag === 'FYC') user.fyc = (user.fyc || 0) + sub.fycVal;
                 user.points = (user.points || 0) + addPoints;
                 user.diceCount = (user.diceCount || 0) + 1;
             }
-
-            db.marqueenMessages.unshift(`👑 恭喜 ${sub.name} 通過 ${sub.tag} 審核獲得獎勵！`);
             saveDB(db);
-            try { confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } }); } catch(e){}
-            alert('審核通過！點數與骰子已撥發。');
+            alert('審核通過！');
             initApp();
-        }
-
-        function renderAdminUsers(db) {
-            return `
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    ${db.users.map(u => `
-                        <div style="background: #18181b; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #3f3f46; font-size: 13px; flex-wrap: wrap; gap: 10px;">
-                            <div>
-                                <b>${u.name}</b> (${u.username}) | 組別: <span style="color: #fb923c;">${u.group}</span> | 職級: ${u.role} \vert{} 點數: ${u.points}P
-                            </div>
-                            <div style="display: flex; gap: 8px;">
-                                <button onclick="openEditUser('${u.username}')" style="background: #3f3f46; color: #fff; border:none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px;">編輯/Buff</button>
-                                ${u.username !== 'admin' ? `<button onclick="deleteUser('${u.username}')" style="background: #7f1d1d; color: #fff; border:none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px;">刪除</button>` : ''}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
         }
 
         function deleteUser(username) {
-            if (confirm('⚠️ 確定要刪除此位夥伴嗎？刪除後無法復原。')) {
+            if (confirm('確定要刪除此位夥伴嗎？')) {
                 const db = getDB();
                 db.users = db.users.filter(x => x.username !== username);
                 saveDB(db);
-                alert('夥伴已刪除。');
                 initApp();
             }
-        }
-
-        function openEditUser(username) {
-            const db = getDB();
-            const u = db.users.find(x => x.username === username);
-            if (!u) return;
-            const otherUsers = db.users.filter(x => x.username !== username);
-
-            const html = `
-                <div id="modal-edit" style="position:fixed; inset:0; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; z-index:60; padding:20px;">
-                    <div class="card" style="max-width: 450px; width:100%; max-height:85vh; overflow-y:auto;">
-                        <h3 style="color:#fed7aa; font-family:'Noto Serif TC',serif; margin-bottom:12px;">⚙️ 編輯夥伴與業績 Buff</h3>
-                        <label>姓名</label><input type="text" id="ed-name" value="${u.name}" class="input-box">
-                        <label>組別</label><input type="text" id="ed-group" value="${u.group}" class="input-box">
-                        <label>FYC 總額</label><input type="number" id="ed-fyc" value="${u.fyc || 0}" class="input-box">
-                        <label>可用點數</label><input type="number" id="ed-points" value="${u.points || 0}" class="input-box">
-                        <label>骰子數</label><input type="number" id="ed-dice" value="${u.diceCount || 0}" class="input-box">
-                        
-                        <label style="margin-top:10px; color:#fb923c;">⚡ 業績 Buff (複選被增員夥伴)</label>
-                        <div style="background:#18181b; padding:10px; border-radius:8px; max-height:120px; overflow-y:auto; margin-top:4px; border:1px solid #3f3f46;">
-                            ${otherUsers.map(ou => `
-                                <label style="display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:4px; cursor:pointer;">
-                                    <input type="checkbox" name="buff-chk" value="${ou.name}" ${(u.buffs\vert{}\vert{}[]).includes(ou.name)?'checked':''}>${ou.name} (${ou.group} / FYC:${ou.fyc||0})
-                                </label>
-                            `).join('')}
-                        </div>
-
-                        <div style="display:flex; gap:10px; margin-top:16px;">
-                            <button onclick="saveEditUser('${username}')" class="btn-orange" style="flex:1;">儲存變更</button>
-                            <button onclick="document.getElementById('modal-edit').remove()" style="background:#3f3f46; color:#fff; border:none; padding:10px; border-radius:10px; cursor:pointer; flex:1;">取消</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', html);
-        }
-
-        function saveEditUser(username) {
-            const db = getDB();
-            const u = db.users.find(x => x.username === username);
-            if (!u) return;
-            u.name = document.getElementById('ed-name').value.trim();
-            u.group = document.getElementById('ed-group').value.trim();
-            u.fyc = parseInt(document.getElementById('ed-fyc').value) || 0;
-            u.points = parseInt(document.getElementById('ed-points').value) || 0;
-            u.diceCount = parseInt(document.getElementById('ed-dice').value) || 0;
-
-            const chks = document.querySelectorAll('input[name="buff-chk"]:checked');
-            u.buffs = Array.from(chks).map(c => c.value);
-
-            saveDB(db);
-            document.getElementById('modal-edit').remove();
-            alert('夥伴資料更新成功！');
-            initApp();
-        }
-
-        function renderAdminSettings(db) {
-            return `
-                <div style="display:flex; flex-direction:column; gap:16px; max-width:500px;">
-                    <div style="background:#18181b; padding:16px; border-radius:12px; border:1px solid #3f3f46;">
-                        <h4 style="color:#fed7aa; margin-bottom:10px;">➕ 新增任務 Tag 與換算點數</h4>
-                        <label>任務名稱 (Tag)</label><input type="text" id="new-tag-name" class="input-box" placeholder="例如：直播分享">
-                        <label>換算點數 / 固定點數</label><input type="number" id="new-tag-pts" class="input-box" placeholder="例如：5">
-                        <button onclick="addNewTag()" class="btn-orange" style="width:100%;">新增 Tag</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function addNewTag() {
-            const name = document.getElementById('new-tag-name').value.trim();
-            const pts = parseInt(document.getElementById('new-tag-pts').value) || 0;
-            if (!name) { alert('請輸入任務名稱'); return; }
-            const db = getDB();
-            db.tags[name] = { name, points: pts };
-            saveDB(db);
-            alert(`成功新增任務 Tag：「${name}」（${pts} 點）`);
-            adminSubTab('settings');
         }
 
         function toggleTagInput() {
             const tag = document.getElementById('sub-tag')?.value;
             const fycBox = document.getElementById('sub-fyc-box');
             if (!fycBox) return;
-            if (tag === 'FYC') fycBox.style.display = 'block';
-            else fycBox.style.display = 'none';
+            fycBox.style.display = (tag === 'FYC') ? 'block' : 'none';
         }
 
         function submitScore() {
@@ -589,7 +475,6 @@
             const desc = document.getElementById('sub-desc').value.trim();
             const fycVal = parseInt(document.getElementById('sub-fyc-val')?.value) || 0;
             const db = getDB();
-
             db.pendingSubmissions.push({
                 id: 'SUB_' + Date.now(),
                 username: currentUser.username,
@@ -599,12 +484,12 @@
                 time: new Date().toLocaleString()
             });
             saveDB(db);
-            alert('申報已送出，等待指揮中心審核！');
+            alert('申報已送出！');
         }
 
         function rollDice() {
             if ((currentUser.points || 0) < 10) {
-                alert('可用點數不足 10 點，無法擲骰子！');
+                alert('可用點數不足 10 點！');
                 return;
             }
             const db = getDB();
@@ -615,10 +500,9 @@
             if (newPos > 30) newPos -= 30;
             db.users[idx].position = newPos;
             db.users[idx].points += (roll * 5);
-
             currentUser = db.users[idx];
             saveDB(db);
-            alert(`🎲 擲出 ${roll} 點！前進至第 ${newPos} 格，獲得 ${roll*5} 點獎勵！`);
+            alert(`🎲 擲出 ${roll} 點！前進至第 ${newPos} 格！`);
             initApp();
         }
 
@@ -629,23 +513,21 @@
             alert(`第 ${t.id} 格：${t.name}\n\n${t.rewardDesc}\n${t.desc}`);
         }
 
-        function switchTab(tab) {
-            document.getElementById('form-login').classList.add('hidden');
-            document.getElementById('form-register').classList.add('hidden');
-            document.getElementById('form-forgot').classList.add('hidden');
-            document.getElementById('btn-tab-login').classList.remove('active');
-            document.getElementById('btn-tab-reg').classList.remove('active');
-            document.getElementById('btn-tab-forgot').classList.remove('active');
-
+        function switchAuthTab(tab) {
+            const formLogin = document.getElementById('form-login');
+            const formReg = document.getElementById('form-register');
+            const btnLogin = document.getElementById('tab-btn-login');
+            const btnReg = document.getElementById('tab-btn-reg');
             if (tab === 'login') {
-                document.getElementById('form-login').classList.remove('hidden');
-                document.getElementById('btn-tab-login').classList.add('active');
-            } else if (tab === 'register') {
-                document.getElementById('form-register').classList.remove('hidden');
-                document.getElementById('btn-tab-reg').classList.add('active');
-            } else if (tab === 'forgot') {
-                document.getElementById('form-forgot').classList.remove('hidden');
-                document.getElementById('btn-tab-forgot').classList.add('active');
+                formLogin.classList.remove('hidden');
+                formReg.classList.add('hidden');
+                btnLogin.classList.add('active');
+                btnReg.classList.remove('active');
+            } else {
+                formLogin.classList.add('hidden');
+                formReg.classList.remove('hidden');
+                btnReg.classList.add('active');
+                btnLogin.classList.remove('active');
             }
         }
 
@@ -697,30 +579,15 @@
 
             db.users.push(newUser);
             saveDB(db);
-
             currentUser = newUser;
             sessionStorage.setItem('tycoon_current_user', JSON.stringify(currentUser));
-            alert('註冊成功！已自動登入戰情室。');
+            alert('註冊成功！');
             initApp();
-        }
-
-        function handleForgot() {
-            const u = document.getElementById('forgot-user').value.trim();
-            const e = document.getElementById('forgot-email').value.trim();
-            const db = getDB();
-            const found = db.users.find(x => (x.username === u || x.name === u) && x.email === e);
-            const resEl = document.getElementById('forgot-result');
-            if (found) {
-                resEl.innerText = `您的密碼為：${found.password}`;
-            } else {
-                resEl.innerText = `找不到符合的帳號與信箱紀錄！`;
-            }
         }
 
         function logout() {
             currentUser = null;
             sessionStorage.removeItem('tycoon_current_user');
-            window.hasShownNotice = false;
             initApp();
         }
 
