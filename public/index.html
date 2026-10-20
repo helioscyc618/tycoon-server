@@ -9,8 +9,8 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background-color: #09090b;
-            color: #e7e5e4;
+            background-color: #2b0c0c;
+            color: #fef3c7;
             font-family: 'Plus Jakarta Sans', sans-serif;
             height: 100vh;
             display: flex;
@@ -18,8 +18,8 @@
             overflow: hidden;
         }
         header {
-            background: rgba(18, 18, 22, 0.95);
-            border-bottom: 1px solid rgba(234, 179, 8, 0.2);
+            background: rgba(69, 10, 10, 0.95);
+            border-bottom: 1px solid rgba(252, 211, 77, 0.3);
             padding: 16px 24px;
             display: flex;
             justify-content: space-between;
@@ -30,7 +30,7 @@
             font-family: 'Noto Serif TC', serif;
             font-weight: 900;
             font-size: 24px;
-            background: linear-gradient(135deg, #fef08a 0%, #eab308 50%, #ca8a04 100%);
+            background: linear-gradient(135deg, #fffbeb 0%, #fde68a 50%, #f59e0b 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -39,20 +39,20 @@
             display: flex;
             flex-direction: column;
             padding: 20px;
-            background: radial-gradient(circle at center, #1c1c24 0%, #09090b 100%);
+            background: radial-gradient(circle at center, #450a0a 0%, #2b0c0c 100%);
             overflow-y: auto;
         }
         .card {
-            background: rgba(28, 28, 36, 0.85);
+            background: rgba(74, 22, 22, 0.85);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(234, 179, 8, 0.3);
+            border: 1px solid rgba(252, 211, 77, 0.3);
             border-radius: 20px;
             padding: 24px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
         }
-        .btn-gold {
-            background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
-            color: #000;
+        .btn-red-beige {
+            background: linear-gradient(135deg, #fde68a 0%, #f59e0b 100%);
+            color: #450a0a;
             font-weight: 700;
             padding: 12px 20px;
             border-radius: 12px;
@@ -61,31 +61,32 @@
             font-size: 14px;
             transition: opacity 0.2s;
         }
-        .btn-gold:hover { opacity: 0.9; }
+        .btn-red-beige:hover { opacity: 0.9; }
         .input-box {
             width: 100%;
             padding: 10px 14px;
-            background: #121216;
-            border: 1px solid #272732;
+            background: #2b0c0c;
+            border: 1px solid #7f1d1d;
             border-radius: 10px;
-            color: #fff;
+            color: #fef3c7;
             font-size: 14px;
             margin-top: 4px;
             margin-bottom: 12px;
             outline: none;
         }
-        .input-box:focus { border-color: #eab308; }
-        label { font-size: 12px; color: #a8a29e; font-weight: 600; display: block; }
-        .tabs { display: flex; background: #121216; padding: 4px; border-radius: 12px; margin-bottom: 16px; border: 1px solid #272732; }
-        .tab-btn { flex: 1; padding: 8px; background: transparent; border: none; color: #a8a29e; font-weight: 600; cursor: pointer; border-radius: 8px; font-size: 13px; }
-        .tab-btn.active { background: #eab308; color: #000; }
+        .input-box:focus { border-color: #fde68a; }
+        label { font-size: 12px; color: #fde68a; font-weight: 600; display: block; }
+        .tabs { display: flex; background: #2b0c0c; padding: 4px; border-radius: 12px; margin-bottom: 16px; border: 1px solid #7f1d1d; }
+        .tab-btn { flex: 1; padding: 8px; background: transparent; border: none; color: #d1d5db; font-weight: 600; cursor: pointer; border-radius: 8px; font-size: 13px; }
+        .tab-btn.active { background: #fde68a; color: #450a0a; }
         .hidden { display: none !important; }
         
+        .marquee-container { overflow: hidden; white-space: nowrap; background: #3b0707; border-bottom: 1px solid rgba(252,211,77,0.3); padding: 10px; font-size: 13px; color: #fef3c7; display: flex; align-items: center; }
+        .marquee-text { display: inline-block; padding-left: 100%; animation: marquee 25s linear infinite; }
         @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        .marquee-container { overflow: hidden; white-space: nowrap; background: #121216; border-bottom: 1px solid rgba(234,179,8,0.2); padding: 10px; font-size: 13px; color: #fde047; }
-        .marquee-text { display: inline-block; animation: marquee 30s linear infinite; }
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
     </style>
 </head>
 <body>
@@ -93,25 +94,25 @@
     <!-- Header -->
     <header>
         <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 28px; background: #eab308; padding: 6px 10px; border-radius: 14px; color: #000;">🎲</span>
+            <span style="font-size: 28px; background: #fde68a; padding: 6px 10px; border-radius: 14px; color: #450a0a;">🎲</span>
             <div>
                 <h1 class="logo-title">競賽大亨</h1>
-                <p style="font-size: 11px; color: #78716c; font-family: monospace;">COMPETITION TYCOON | 2026.12.14 - 2027.06.02</p>
+                <p style="font-size: 11px; color: #fde68a; font-family: monospace;">COMPETITION TYCOON | 2026.12.14 - 2027.06.02</p>
             </div>
         </div>
         <div id="header-user-info" class="hidden" style="display: flex; align-items: center; gap: 12px;">
             <div style="text-align: right;">
-                <div id="nav-username" style="font-weight: bold; font-size: 13px; color: #fde047;">--</div>
-                <div id="nav-role-group" style="font-size: 11px; color: #a8a29e;">--</div>
+                <div id="nav-username" style="font-weight: bold; font-size: 13px; color: #fde68a;">--</div>
+                <div id="nav-role-group" style="font-size: 11px; color: #e7e5e4;">--</div>
             </div>
-            <button onclick="logout()" style="background: #1c1c24; color: #e7e5e4; border: 1px solid #272732; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">登出</button>
+            <button onclick="logout()" style="background: #450a0a; color: #fef3c7; border: 1px solid #7f1d1d; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">登出</button>
         </div>
     </header>
 
     <!-- Marquee -->
     <div id="marquee-bar" class="marquee-container hidden">
-        <span style="background: #eab308; color: #000; padding: 2px 8px; border-radius: 6px; font-weight: bold; margin-right: 10px;">戰報</span>
-        <div class="marquee-text" id="marquee-content">👑 歡迎登入競賽大亨黑金戰情室！</div>
+        <span style="background: #fde68a; color: #450a0a; padding: 2px 8px; border-radius: 6px; font-weight: bold; margin-right: 15px; flex-shrink: 0;">戰報</span>
+        <div class="marquee-text" id="marquee-content">👑 歡迎登入競賽大亨紅米戰情室！</div>
     </div>
 
     <!-- Main Container -->
@@ -136,7 +137,7 @@
                     ],
                     pendingSubmissions: [],
                     rewardsLog: [],
-                    marqueenMessages: ['👑 歡迎登入競賽大亨黑金戰情室', '💡 提示：提交 FYC 業績自動換算點數，每次擲骰消耗 10 點！'],
+                    marqueenMessages: ['👑 歡迎登入競賽大亨紅米戰情室', '💡 提示：提交 FYC 業績自動換算點數，每次擲骰消耗 10 點！'],
                     notice: { title: '👑 競賽大亨尊榮啟動', content: '歡迎各位菁英夥伴迎向半年期衝刺！', active: true },
                     tiles: defaultTiles,
                     tags: {
@@ -171,8 +172,8 @@
                     <div style="max-width: 420px; width: 100%; margin: auto;" class="card">
                         <div style="text-align: center; margin-bottom: 20px;">
                             <span style="font-size: 42px;">👑</span>
-                            <h2 style="font-family: 'Noto Serif TC', serif; font-size: 24px; color: #fde047; margin-top: 6px;">競賽大亨</h2>
-                            <p style="font-size: 11px; color: #78716c;">Competition Tycoon 奢華商戰雙軌競賽</p>
+                            <h2 style="font-family: 'Noto Serif TC', serif; font-size: 24px; color: #fde68a; margin-top: 6px;">競賽大亨</h2>
+                            <p style="font-size: 11px; color: #fef3c7;">Competition Tycoon 紅米商戰雙軌競賽</p>
                         </div>
 
                         <div class="tabs">
@@ -184,13 +185,13 @@
                         <div id="form-login">
                             <div>
                                 <label>帳號 / 姓名</label>
-                                <input type="text" id="login-user" class="input-box" placeholder="請輸入帳號">
+                                <input type="text" id="login-user" class="input-box" placeholder="請輸入帳號或姓名">
                             </div>
                             <div>
                                 <label>密碼</label>
                                 <input type="password" id="login-pass" class="input-box" placeholder="請輸入密碼">
                             </div>
-                            <button onclick="handleLogin()" class="btn-gold" style="width: 100%; margin-top: 8px;">進入戰情室</button>
+                            <button onclick="handleLogin()" class="btn-red-beige" style="width: 100%; margin-top: 8px;">進入戰情室</button>
                         </div>
 
                         <!-- Register Form -->
@@ -226,7 +227,7 @@
                                 <label>密碼</label>
                                 <input type="password" id="reg-pass" class="input-box" placeholder="設定登入密碼">
                             </div>
-                            <button onclick="handleRegister()" class="btn-gold" style="width: 100%; margin-top: 8px;">完成註冊並登入</button>
+                            <button onclick="handleRegister()" class="btn-red-beige" style="width: 100%; margin-top: 8px;">完成註冊並登入</button>
                         </div>
                     </div>
                 `;
@@ -235,7 +236,7 @@
                 if (marqueeBar) marqueeBar.classList.remove('hidden');
                 document.getElementById('nav-username').innerText = currentUser.name;
                 document.getElementById('nav-role-group').innerText = `${currentUser.role || '業務專員'} | ${currentUser.group}`;
-                document.getElementById('marquee-content').innerText = (db.marqueenMessages || []).join(' &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ');
+                document.getElementById('marquee-content').innerHTML = (db.marqueenMessages || []).join(' &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ');
 
                 if (currentUser.isAdmin || currentUser.username === 'admin') {
                     renderAdminDashboard(container, db);
@@ -264,26 +265,26 @@
                     <!-- Stats Grid -->
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
                         <div class="card">
-                            <p style="font-size: 12px; color: #a8a29e;">個人總業績 (含 Buff)</p>
+                            <p style="font-size: 12px; color: #fef3c7;">個人總業績 (含 Buff)</p>
                             <p style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #fff; margin-top: 4px;">${totalFYC}</p>
-                            <span style="font-size: 10px; color: #78716c;">個人: ${currentUser.fyc || 0} | 裂變: ${buffFYC}</span>
+                            <span style="font-size: 10px; color: #fde68a;">個人: ${currentUser.fyc || 0} | 裂變: ${buffFYC}</span>
                         </div>
                         <div class="card">
-                            <p style="font-size: 12px; color: #a8a29e;">可用點數 / 骰子</p>
-                            <p style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #facc15; margin-top: 4px;">${currentUser.points || 0} P / <span style="color:#fff">${currentUser.diceCount || 0} 骰</span></p>
-                            <span style="font-size: 10px; color: #78716c;">每擲骰消耗 10 點</span>
+                            <p style="font-size: 12px; color: #fef3c7;">可用點數 / 骰子</p>
+                            <p style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #fde68a; margin-top: 4px;">${currentUser.points || 0} P / <span style="color:#fff">${currentUser.diceCount || 0} 骰</span></p>
+                            <span style="font-size: 10px; color: #fde68a;">每擲骰消耗 10 點</span>
                         </div>
                         <div class="card">
-                            <p style="font-size: 12px; color: #a8a29e;">組別總業績 (${currentUser.group})</p>
+                            <p style="font-size: 12px; color: #fef3c7;">組別總業績 (${currentUser.group})</p>
                             <p style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #fff; margin-top: 4px;">${groupTotalFYC}</p>
-                            <span style="font-size: 10px; color: #78716c;">同組組員業績加總</span>
+                            <span style="font-size: 10px; color: #fde68a;">同組組員業績加總</span>
                         </div>
                         <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
                             <div>
-                                <p style="font-size: 12px; color: #a8a29e;">大富翁棋盤位置</p>
-                                <p style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #facc15; margin-top: 4px;">第 ${currentUser.position || 1} 格</p>
+                                <p style="font-size: 12px; color: #fef3c7;">大富翁棋盤位置</p>
+                                <p style="font-size: 26px; font-family: 'Noto Serif TC', serif; font-weight: bold; color: #fde68a; margin-top: 4px;">第 ${currentUser.position || 1} 格</p>
                             </div>
-                            <button onclick="rollDice()" class="btn-gold" style="padding: 8px; font-size: 13px;">🎲 擲骰子 (耗 10 P)</button>
+                            <button onclick="rollDice()" class="btn-red-beige" style="padding: 8px; font-size: 13px;">🎲 擲骰子 (耗 10 P)</button>
                         </div>
                     </div>
 
@@ -291,7 +292,7 @@
                     <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
                         <!-- Submission Form -->
                         <div class="card">
-                            <h3 style="font-family: 'Noto Serif TC', serif; font-size: 16px; color: #fde047; margin-bottom: 14px;">📝 成績與任務申報</h3>
+                            <h3 style="font-family: 'Noto Serif TC', serif; font-size: 16px; color: #fde68a; margin-bottom: 14px;">📝 成績與任務申報</h3>
                             <div>
                                 <label>申報任務 (Tag)</label>
                                 <select id="sub-tag" onchange="toggleTagInput()" class="input-box">${tagOptions}</select>
@@ -304,21 +305,21 @@
                                 <label>備註說明</label>
                                 <input type="text" id="sub-desc" class="input-box" placeholder="填寫說明或證明">
                             </div>
-                            <button onclick="submitScore()" class="btn-gold" style="width: 100%;">送交指揮中心審核</button>
+                            <button onclick="submitScore()" class="btn-red-beige" style="width: 100%;">送交指揮中心審核</button>
                         </div>
 
                         <!-- Monopoly Board -->
                         <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
-                            <h3 style="font-family: 'Noto Serif TC', serif; font-size: 16px; color: #fde047; margin-bottom: 10px;">🗺️ 30格大富翁戰場</h3>
+                            <h3 style="font-family: 'Noto Serif TC', serif; font-size: 16px; color: #fde68a; margin-bottom: 10px;">🗺️ 30格大富翁戰場</h3>
                             <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin: 10px 0;">
                                 ${db.tiles.map(t => `
-                                    <div onclick="alert('第 ${t.id} 格：${t.name}\\n${t.rewardDesc}')" style="background: #121216; border: 1px solid #272732; padding: 8px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 11px;">
+                                    <div onclick="alert('第 ${t.id} 格：${t.name}\\n${t.rewardDesc}')" style="background: #2b0c0c; border: 1px solid #7f1d1d; padding: 8px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 11px;">
                                         <div style="font-size: 14px;">${t.icon}</div>
-                                        <div style="color: #a8a29e; margin-top: 2px;">#${t.id}</div>
+                                        <div style="color: #fde68a; margin-top: 2px;">#${t.id}</div>
                                     </div>
                                 `).join('')}
                             </div>
-                            <p style="font-size: 11px; color: #78716c; text-align: center;">點擊任意格子可查看獎勵詳情</p>
+                            <p style="font-size: 11px; color: #fef3c7; text-align: center;">點擊任意格子可查看獎勵詳情</p>
                         </div>
                     </div>
                 </div>
@@ -329,9 +330,9 @@
         function renderAdminDashboard(container, db) {
             container.innerHTML = `
                 <div style="max-width: 1000px; width: 100%; margin: auto;" class="card">
-                    <h2 style="color: #fde047; font-size: 20px; margin-bottom: 10px;">🛡️ 指揮中心後台管理</h2>
-                    <p style="font-size: 13px; color: #a8a29e; margin-bottom: 20px;">總指揮官已完整登入。目前夥伴總人數：${db.users.length} 人</p>
-                    <button onclick="logout()" class="btn-gold">登出系統</button>
+                    <h2 style="color: #fde68a; font-size: 20px; margin-bottom: 10px;">🛡️ 指揮中心後台管理</h2>
+                    <p style="font-size: 13px; color: #fef3c7; margin-bottom: 20px;">總指揮官已完整登入。目前夥伴總人數：${db.users.length} 人</p>
+                    <button onclick="logout()" class="btn-red-beige">登出系統</button>
                 </div>
             `;
         }
@@ -412,13 +413,13 @@
                 return;
             }
 
-            const found = db.users.find(x => x.username === u && x.password === p);
+            const found = db.users.find(x => (x.username === u || x.name === u) && x.password === p);
             if (found) {
                 currentUser = found;
                 sessionStorage.setItem('tycoon_current_user', JSON.stringify(currentUser));
                 initApp();
             } else {
-                alert('帳號或密碼錯誤！');
+                alert('帳號或密碼錯誤！請確認輸入的帳號與密碼是否正確。');
             }
         }
 
@@ -437,7 +438,7 @@
 
             const db = getDB();
             if (db.users.some(x => x.username === username)) {
-                alert('此帳號已被註冊！');
+                alert('此帳號已被註冊！請更換帳號名稱。');
                 return;
             }
 
@@ -451,6 +452,7 @@
 
             currentUser = newUser;
             sessionStorage.setItem('tycoon_current_user', JSON.stringify(currentUser));
+            alert('註冊成功！已自動為您登入戰情室。');
             initApp();
         }
 
