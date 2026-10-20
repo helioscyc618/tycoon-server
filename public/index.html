@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>競賽大亨 | Competition Tycoon (雲端同步版)</title>
+    <title>競賽大亨 | Competition Tycoon (完整雲端旗艦版)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Alpine.js -->
@@ -87,10 +87,10 @@
         </div>
     </div>
 
-    <!-- MAIN VIEW CONTAINER -->
+    <!-- MAIN CONTAINER -->
     <main class="flex-1 overflow-y-auto p-3 sm:p-6 max-w-7xl mx-auto w-full">
 
-        <!-- VIEW 1: AUTHENTICATION / LOGIN / REGISTER / FORGOT -->
+        <!-- AUTH VIEW -->
         <template x-if="!currentUser">
             <div class="max-w-md mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-gold-rich/50 my-6">
                 <div class="bg-gradient-to-r from-ruby-900 via-ruby-700 to-ruby-900 p-6 text-center text-white relative">
@@ -98,17 +98,16 @@
                         <i class="fas fa-dice"></i>
                     </div>
                     <h1 class="text-3xl font-bold ming-title tracking-wider text-gold-300">競賽大亨</h1>
-                    <p class="text-xs text-gold-100 mt-1 tracking-widest font-serif">Competition Tycoon (Server Cloud Edition)</p>
+                    <p class="text-xs text-gold-100 mt-1 tracking-widest font-serif">Competition Tycoon (Cloud Flagship Edition)</p>
                 </div>
 
                 <div class="flex border-b border-gray-200 bg-gray-50 text-sm font-semibold">
                     <button @click="authTab = 'login'" class="flex-1 py-3 text-center transition" :class="authTab === 'login' ? 'bg-white text-ruby-800 border-b-2 border-ruby-700' : 'text-gray-500 hover:text-gray-700'">登入系統</button>
                     <button @click="authTab = 'register'" class="flex-1 py-3 text-center transition" :class="authTab === 'register' ? 'bg-white text-ruby-800 border-b-2 border-ruby-700' : 'text-gray-500 hover:text-gray-700'">新夥伴註冊</button>
-                    <button @click="authTab = 'forgot'" class="flex-1 py-3 text-center transition" :class="authTab === 'forgot' ? 'bg-white text-ruby-800 border-b-2 border-ruby-700' : 'text-gray-500 hover:text-gray-700'">忘記密碼</button>
+                    <button @click="authTab = 'forgot'" class="flex-1 py-3 text-center transition" :class="authTab === 'forgot' ? 'bg-white text-ruby-800 border-b-2 border-ruby-700' : 'text-gray-500 hover:text-gray-700'">更改密碼</button>
                 </div>
 
                 <div class="p-6 space-y-4">
-                    <!-- LOGIN -->
                     <template x-if="authTab === 'login'">
                         <form @submit.prevent="login()" class="space-y-4">
                             <div>
@@ -119,14 +118,13 @@
                                 <label class="block text-xs font-bold text-gray-700 mb-1">密碼</label>
                                 <input type="password" x-model="loginForm.password" required class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="請輸入密碼">
                             </div>
-                            <button type="submit" class="w-full bg-gradient-to-r from-ruby-700 to-ruby-800 text-gold-300 font-bold py-3 rounded-lg shadow hover:from-ruby-800 hover:to-ruby-900 transition flex items-center justify-center space-x-2">
+                            <button type="submit" class="w-full bg-gradient-to-r from-ruby-700 to-ruby-800 text-gold-300 font-bold py-3 rounded-lg shadow transition flex items-center justify-center space-x-2">
                                 <i class="fas fa-sign-in-alt"></i>
                                 <span>進入雲端戰情室</span>
                             </button>
                         </form>
                     </template>
 
-                    <!-- REGISTER -->
                     <template x-if="authTab === 'register'">
                         <form @submit.prevent="register()" class="space-y-3">
                             <div>
@@ -157,7 +155,7 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">選擇頭貼 (10選1)</label>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">選擇頭貼</label>
                                 <div class="grid grid-cols-5 gap-2 mt-1">
                                     <template x-for="av in avatarList" :key="av">
                                         <button type="button" @click="regForm.avatar = av" 
@@ -174,33 +172,31 @@
                         </form>
                     </template>
 
-                    <!-- FORGOT -->
                     <template x-if="authTab === 'forgot'">
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">註冊姓名</label>
-                                <input type="text" x-model="forgotForm.name" class="w-full px-3 py-2 border rounded-lg text-sm">
-                            </div>
+                        <form @submit.prevent="changePassword()" class="space-y-4">
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 mb-1">電子信箱</label>
-                                <input type="email" x-model="forgotForm.email" class="w-full px-3 py-2 border rounded-lg text-sm">
+                                <input type="email" x-model="pwdForm.email" required class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="請輸入您的註冊信箱">
                             </div>
-                            <button @click="findPassword()" class="w-full bg-ruby-800 text-white font-bold py-2.5 rounded-lg shadow text-sm">查詢密碼</button>
-                            <template x-if="forgotResult">
-                                <div class="p-3 bg-gold-100 border border-gold-400 rounded-lg text-center">
-                                    <p class="text-xs text-gray-600">查詢結果：</p>
-                                    <p class="text-base font-bold text-ruby-900 mt-1" x-text="forgotResult"></p>
-                                </div>
-                            </template>
-                        </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">舊密碼</label>
+                                <input type="password" x-model="pwdForm.oldPassword" required class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="請輸入舊密碼">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">新密碼</label>
+                                <input type="password" x-model="pwdForm.newPassword" required class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="請輸入新密碼">
+                            </div>
+                            <button type="submit" class="w-full bg-ruby-800 text-white font-bold py-2.5 rounded-lg shadow text-sm">確認更改密碼</button>
+                        </form>
                     </template>
                 </div>
             </div>
         </template>
 
-        <!-- VIEW 2: WAR ROOM -->
+        <!-- WAR ROOM VIEW -->
         <template x-if="currentUser">
             <div class="space-y-6">
+                <!-- User Profile Banner -->
                 <div class="bg-gradient-to-br from-white via-cream to-gold-100 rounded-2xl p-5 shadow-lg border border-gold-rich/40 flex flex-col md:flex-row justify-between items-center gap-4">
                     <div class="flex items-center space-x-4">
                         <div class="w-16 h-16 bg-ruby-800 text-gold-300 rounded-2xl flex items-center justify-center text-3xl shadow-md border-2 border-gold-rich" x-text="currentUser.avatar"></div>
@@ -210,13 +206,13 @@
                                 <span class="px-2 py-0.5 bg-ruby-700 text-white text-xs rounded-full font-semibold" x-text="currentUser.rank"></span>
                                 <span class="px-2 py-0.5 bg-gold-600 text-white text-xs rounded-full font-semibold" x-text="currentUser.group"></span>
                             </div>
-                            <p class="text-xs text-gray-600 mt-1">雲端即時連線中，多裝置資料已同步更新。</p>
+                            <p class="text-xs text-gray-600 mt-1">雲端即時連線中，多裝置資料已自動同步更新。</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-4 gap-3 text-center w-full md:w-auto">
                         <div class="bg-white p-3 rounded-xl shadow border border-gold-300">
                             <span class="block text-xs text-gray-500">FYC 總額</span>
-                            <span class="text-lg font-bold text-ruby-800" x-text="formatCurrency(getTotalFYC(currentUser))"></span>
+                            <span class="text-lg font-bold text-ruby-800" x-text="formatCurrency(currentUser.fyc)"></span>
                         </div>
                         <div class="bg-white p-3 rounded-xl shadow border border-gold-300">
                             <span class="block text-xs text-gray-500">可用點數</span>
@@ -233,13 +229,13 @@
                     </div>
                 </div>
 
-                <!-- MAIN GRID -->
+                <!-- CONTENT GRID -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <!-- LEFT COLUMN -->
+                    <!-- LEFT -->
                     <div class="lg:col-span-5 space-y-6">
                         <div class="bg-white rounded-2xl p-5 shadow-md border border-gold-rich/30">
                             <h3 class="text-base font-bold text-ruby-900 ming-title mb-3 flex items-center">
-                                <i class="fas fa-file-invoice-dollar text-gold-600 mr-2"></i> 成績申報與 Tag 任務提交
+                                <i class="fas fa-file-invoice-dollar text-gold-600 mr-2"></i> 成績申報與任務提交
                             </h3>
                             <form @submit.prevent="submitDeclaration()" class="space-y-3">
                                 <div>
@@ -266,7 +262,7 @@
                             </form>
                         </div>
 
-                        <!-- 聊天/留言板 -->
+                        <!-- 聊天留言板 -->
                         <div class="bg-white rounded-2xl p-5 shadow-md border border-gold-rich/30">
                             <h3 class="text-base font-bold text-ruby-900 ming-title mb-3 flex items-center justify-between">
                                 <span class="flex items-center"><i class="fas fa-comments text-gold-600 mr-2"></i> 雲端士氣留言板</span>
@@ -282,7 +278,7 @@
                                     <button type="submit" class="bg-ruby-800 text-white px-4 py-1.5 rounded font-bold text-xs">發布留言</button>
                                 </div>
                             </form>
-                            <div class="space-y-3 max-h-64 overflow-y-auto pr-1">
+                            <div class="space-y-3 max-h-56 overflow-y-auto pr-1">
                                 <template x-for="(msg, mIndex) in messages" :key="mIndex">
                                     <div class="p-3 bg-cream rounded-xl border border-gold-300 text-xs space-y-1">
                                         <div class="flex justify-between font-bold text-ruby-900">
@@ -297,7 +293,7 @@
                         </div>
                     </div>
 
-                    <!-- RIGHT COLUMN: BOARD & DICE -->
+                    <!-- RIGHT: BOARD & DICE -->
                     <div class="lg:col-span-7 space-y-6">
                         <div class="bg-gradient-to-r from-ruby-900 via-ruby-800 to-ruby-900 p-5 rounded-2xl shadow-lg border-2 border-gold-rich text-white flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div>
@@ -318,13 +314,10 @@
 
                         <!-- BOARD GRID -->
                         <div class="bg-white rounded-2xl p-5 shadow-md border border-gold-rich/30">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-base font-bold text-ruby-900 ming-title"><i class="fas fa-map text-gold-600 mr-2"></i> 30格雲端大富翁棋盤</h3>
-                            </div>
+                            <h3 class="text-base font-bold text-ruby-900 ming-title mb-4"><i class="fas fa-map text-gold-600 mr-2"></i> 30格雲端大富翁棋盤</h3>
                             <div class="grid grid-cols-6 sm:grid-cols-10 gap-2">
                                 <template x-for="(cell, index) in settings.boardCells" :key="index">
-                                    <div @click="openCellModal(cell, index)" 
-                                        class="relative p-2 rounded-xl border-2 flex flex-col items-center justify-center cursor-pointer transition h-20 text-center shadow-sm"
+                                    <div class="relative p-2 rounded-xl border-2 flex flex-col items-center justify-center h-20 text-center shadow-sm"
                                         :class="hasPlayerHere(index) ? 'border-ruby-700 bg-ruby-50 ring-2 ring-gold-rich' : 'border-gold-300 bg-cream'">
                                         <span class="absolute top-1 left-1 text-[9px] font-bold text-gray-400 font-mono" x-text="index + 1"></span>
                                         <span class="text-lg mb-1" x-text="cell.icon"></span>
@@ -344,43 +337,151 @@
         </template>
     </main>
 
-    <!-- MODAL: ADMIN PANEL -->
+    <!-- MODAL: ADMIN PANEL WITH ALL TABS -->
     <div x-show="openAdminModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-3 sm:p-6" x-transition>
-        <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl border-2 border-gold-rich flex flex-col">
+        <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden shadow-2xl border-2 border-gold-rich flex flex-col">
             <div class="bg-ruby-900 p-4 text-white flex justify-between items-center">
-                <h2 class="text-xl font-bold text-gold-300">指揮中心雲端後台</h2>
-                <button @click="openAdminModal = false" class="text-gold-300"><i class="fas fa-times"></i></button>
+                <h2 class="text-xl font-bold text-gold-300"><i class="fas fa-shield-halved mr-2"></i> 指揮中心雲端後台</h2>
+                <button @click="openAdminModal = false" class="text-gold-300 hover:text-white"><i class="fas fa-times text-lg"></i></button>
             </div>
+
+            <!-- Admin Login -->
             <template x-if="!adminAuth">
                 <div class="p-8 max-w-md mx-auto text-center space-y-4 my-auto">
-                    <h3 class="text-xl font-bold text-ruby-900">請輸入管理者密碼 (預設 admin)</h3>
-                    <input type="password" x-model="adminPassInput" @keyup.enter="verifyAdmin()" class="w-full px-3 py-2 border rounded text-center text-sm">
-                    <button @click="verifyAdmin()" class="w-full bg-ruby-800 text-white font-bold py-2 rounded">解鎖後台</button>
+                    <h3 class="text-xl font-bold text-ruby-900 ming-title">請輸入管理者解鎖密碼</h3>
+                    <p class="text-xs text-gray-500">預設密碼為：admin</p>
+                    <input type="password" x-model="adminPassInput" @keyup.enter="verifyAdmin()" class="w-full px-3 py-2 border rounded text-center text-sm" placeholder="輸入管理者密碼">
+                    <button @click="verifyAdmin()" class="w-full bg-ruby-800 text-white font-bold py-2.5 rounded shadow">解鎖指揮中心</button>
                 </div>
             </template>
+
+            <!-- Admin Full Tabs Panel -->
             <template x-if="adminAuth">
-                <div class="p-6 overflow-y-auto space-y-4 text-xs">
-                    <h3 class="font-bold text-ruby-900 text-base">待審核項目</h3>
-                    <div class="space-y-2">
-                        <template x-for="(req, rIdx) in declarations" :key="rIdx">
-                            <div class="p-3 bg-cream border rounded flex justify-between items-center">
-                                <div>
-                                    <span class="font-bold text-ruby-900" x-text="req.userName + ' (' + req.tag + ')：'"></span>
-                                    <span x-text="req.details"></span>
-                                </div>
-                                <div class="space-x-2">
-                                    <button @click="approveDecl(rIdx)" class="bg-green-600 text-white px-3 py-1 rounded font-bold">通過</button>
-                                    <button @click="rejectDecl(rIdx)" class="bg-red-600 text-white px-3 py-1 rounded font-bold">拒絕</button>
+                <div class="flex flex-col flex-1 overflow-hidden">
+                    <!-- Tabs Header -->
+                    <div class="flex border-b bg-gray-100 text-xs sm:text-sm font-semibold overflow-x-auto">
+                        <button @click="adminTab = 'approvals'" class="px-5 py-3 border-b-2 transition whitespace-nowrap" :class="adminTab === 'approvals' ? 'border-ruby-700 text-ruby-900 bg-white font-bold' : 'border-transparent text-gray-600 hover:text-gray-900'">成績與點數審核</button>
+                        <button @click="adminTab = 'partners'" class="px-5 py-3 border-b-2 transition whitespace-nowrap" :class="adminTab === 'partners' ? 'border-ruby-700 text-ruby-900 bg-white font-bold' : 'border-transparent text-gray-600 hover:text-gray-900'">夥伴名單管理</button>
+                        <button @click="adminTab = 'rewards'" class="px-5 py-3 border-b-2 transition whitespace-nowrap" :class="adminTab === 'rewards' ? 'border-ruby-700 text-ruby-900 bg-white font-bold' : 'border-transparent text-gray-600 hover:text-gray-900'">獎勵發放狀況</button>
+                        <button @click="adminTab = 'settings'" class="px-5 py-3 border-b-2 transition whitespace-nowrap" :class="adminTab === 'settings' ? 'border-ruby-700 text-ruby-900 bg-white font-bold' : 'border-transparent text-gray-600 hover:text-gray-900'">遊戲與棋盤設定</button>
+                    </div>
+
+                    <!-- Tabs Body -->
+                    <div class="p-6 overflow-y-auto flex-1 space-y-4 text-xs sm:text-sm bg-cream">
+                        
+                        <!-- TAB 1: APPROVALS -->
+                        <template x-if="adminTab === 'approvals'">
+                            <div class="space-y-3">
+                                <h3 class="font-bold text-ruby-900 text-base mb-2">待審核申報項目 (<span x-text="declarations.length"></span>)</h3>
+                                <template x-if="declarations.length === 0">
+                                    <p class="text-gray-500 py-6 text-center">目前沒有待審核的項目。</p>
+                                </template>
+                                <div class="space-y-2">
+                                    <template x-for="(req, rIdx) in declarations" :key="rIdx">
+                                        <div class="p-3 bg-white border rounded-xl shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                                            <div>
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="font-bold text-ruby-900 text-sm" x-text="req.userName"></span>
+                                                    <span class="px-2 py-0.5 bg-gold-100 text-gold-700 text-[10px] rounded font-bold" x-text="req.tag"></span>
+                                                    <span class="text-gray-400 text-[10px]" x-text="req.time"></span>
+                                                </div>
+                                                <p class="text-gray-700 mt-1" x-text="req.details"></p>
+                                            </div>
+                                            <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                                                <button @click="approveDecl(rIdx)" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded font-bold text-xs">通過 (+<span x-text="req.points"></span>點)</button>
+                                                <button @click="rejectDecl(rIdx)" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded font-bold text-xs">拒絕</button>
+                                            </div>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                         </template>
+
+                        <!-- TAB 2: PARTNERS MANAGEMENT -->
+                        <template x-if="adminTab === 'partners'">
+                            <div class="space-y-4">
+                                <h3 class="font-bold text-ruby-900 text-base mb-2">全體夥伴資料管理 (<span x-text="partners.length"></span>)</h3>
+                                <div class="overflow-x-auto bg-white rounded-xl shadow border">
+                                    <table class="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr class="bg-ruby-900 text-gold-300 text-xs">
+                                                <th class="p-3">頭貼/姓名</th>
+                                                <th class="p-3">職級/組別</th>
+                                                <th class="p-3">FYC 總額</th>
+                                                <th class="p-3">可用點數</th>
+                                                <th class="p-3">骰子數</th>
+                                                <th class="p-3">操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y text-xs">
+                                            <template x-for="(p, pIdx) in partners" :key="p.email">
+                                                <tr class="hover:bg-cream">
+                                                    <td class="p-3 flex items-center space-x-2">
+                                                        <span class="text-xl" x-text="p.avatar"></span>
+                                                        <span class="font-bold text-ruby-900" x-text="p.name"></span>
+                                                    </td>
+                                                    <td class="p-3">
+                                                        <span x-text="p.rank"></span> / <span x-text="p.group"></span>
+                                                    </td>
+                                                    <td class="p-3 font-mono font-bold text-ruby-800" x-text="formatCurrency(p.fyc)"></td>
+                                                    <td class="p-3 font-mono font-bold text-gold-700" x-text="p.points"></td>
+                                                    <td class="p-3 font-mono" x-text="p.diceCount"></td>
+                                                    <td class="p-3 space-x-1">
+                                                        <button @click="addBonusPoints(pIdx)" class="bg-gold-600 text-white px-2 py-1 rounded font-bold">加點數</button>
+                                                        <button @click="deletePartner(pIdx)" class="bg-red-600 text-white px-2 py-1 rounded font-bold">刪除</button>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- TAB 3: REWARDS STATUS -->
+                        <template x-if="adminTab === 'rewards'">
+                            <div class="space-y-4">
+                                <h3 class="font-bold text-ruby-900 text-base mb-2">大富翁獎勵與兌換發放狀況</h3>
+                                <div class="bg-white p-4 rounded-xl shadow border space-y-3">
+                                    <p class="text-gray-600 text-xs">在此可檢視夥伴們在大富翁棋盤中獲得的獎勵或兌換紀錄。</p>
+                                    <template x-if="rewardsList.length === 0">
+                                        <div class="text-center py-8 text-gray-400">目前尚無獎勵發放紀錄。</div>
+                                    </template>
+                                    <div class="space-y-2">
+                                        <template x-for="(rew, rwIdx) in rewardsList" :key="rwIdx">
+                                            <div class="p-3 bg-cream border rounded-lg flex justify-between items-center text-xs">
+                                                <div>
+                                                    <span class="font-bold text-ruby-900" x-text="rew.userName"></span> 獲得了 <span class="font-bold text-gold-700" x-text="rew.rewardTitle"></span>
+                                                </div>
+                                                <span class="text-gray-400 text-[10px]" x-text="rew.time"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- TAB 4: SETTINGS -->
+                        <template x-if="adminTab === 'settings'">
+                            <div class="space-y-4">
+                                <h3 class="font-bold text-ruby-900 text-base mb-2">遊戲與戰報跑馬燈設定</h3>
+                                <div class="bg-white p-5 rounded-xl shadow border space-y-4">
+                                    <div>
+                                        <label class="block font-bold text-gray-700 mb-1">跑馬燈公告文字</label>
+                                        <input type="text" x-model="settings.tickerText" class="w-full px-3 py-2 border rounded text-xs">
+                                    </div>
+                                    <button @click="saveSettings()" class="bg-ruby-800 text-white font-bold px-5 py-2 rounded shadow text-xs">儲存設定至雲端</button>
+                                </div>
+                            </div>
+                        </template>
+
                     </div>
                 </div>
             </template>
         </div>
     </div>
 
-    <!-- NOTIFICATION MODAL -->
+    <!-- ALERT MODAL -->
     <div x-show="showNotificationModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" x-transition>
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border-2 border-gold-rich text-center">
             <h3 class="text-lg font-bold text-ruby-900" x-text="notificationTitle"></h3>
@@ -390,7 +491,7 @@
     </div>
 
     <script>
-        // 設定您的雲端伺服器 API 網址（例如 Render 服務網址）
+        // 請確保這裡填入您的 Render 雲端 API 網址
         const API_BASE = 'https://competition-tycoon.onrender.com/api';
 
         function app() {
@@ -398,17 +499,17 @@
                 isOnline: navigator.onLine,
                 taipeiTime: '',
                 authTab: 'login',
+                adminTab: 'approvals',
                 currentUser: null,
                 loginForm: { account: '', password: '' },
                 regForm: { name: '', email: '', password: '', rank: '業務專員', group: 'OO組', avatar: '👨‍💼' },
-                forgotForm: { name: '', email: '' },
-                forgotResult: '',
+                pwdForm: { email: '', oldPassword: '', newPassword: '' },
                 avatarList: ['👨‍💼', '👩‍💼', '🧑‍💼', '👨‍💻', '👩‍💻', '🧑‍🎨', '👨‍🎓', '👩‍🎓', '🦸‍♂️', '🦸‍♀️'],
                 partners: [],
                 declarations: [],
                 messages: [],
                 rewardsList: [],
-                settings: { tickerText: '🎉 賀！競賽大亨雲端同步連線中！', tags: [], boardCells: [] },
+                settings: { tickerText: '🎉 賀！競賽大亨雲端同步旗艦版正式啟動！', tags: [], boardCells: [] },
                 
                 declForm: { tag: 'FYC', fycAmount: 10000, desc: '' },
                 isFYCTag: true,
@@ -424,7 +525,6 @@
                 isRolling: false,
 
                 async init() {
-                    // 精準計算台北時間 (UTC+8)
                     setInterval(() => {
                         const now = new Date();
                         const taipeiFormatter = new Intl.DateTimeFormat('zh-TW', {
@@ -436,10 +536,8 @@
                         this.taipeiTime = taipeiFormatter.format(now).replace(/\//g, '-');
                     }, 1000);
 
-                    // 初次從雲端同步資料
                     await this.fetchCloudData();
 
-                    // 每 5 秒自動與伺服器同步一次，達成多裝置即時更新
                     setInterval(async () => {
                         await this.fetchCloudData();
                     }, 5000);
@@ -462,7 +560,6 @@
                             if (data.settings) this.settings = data.settings;
                             this.isOnline = true;
 
-                            // 即時更新當前登入使用者的最新資料
                             if (this.currentUser) {
                                 const latest = this.partners.find(p => p.email === this.currentUser.email);
                                 if (latest) this.currentUser = latest;
@@ -525,6 +622,22 @@
                     this.showAlert('註冊成功', '已同步至雲端伺服器！');
                 },
 
+                async changePassword() {
+                    const p = this.partners.find(x => x.email === this.pwdForm.email);
+                    if (!p) {
+                        this.showAlert('錯誤', '找不到此電子信箱的夥伴！');
+                        return;
+                    }
+                    if (p.password !== this.pwdForm.oldPassword) {
+                        this.showAlert('錯誤', '舊密碼不正確！');
+                        return;
+                    }
+                    p.password = this.pwdForm.newPassword;
+                    await this.syncToServer();
+                    this.showAlert('成功', '密碼已成功更新！');
+                    this.authTab = 'login';
+                },
+
                 logout() {
                     this.currentUser = null;
                     localStorage.removeItem('tycoon_current_user');
@@ -562,15 +675,40 @@
                         p.points += req.points;
                         p.totalPoints += req.points;
                         p.diceCount += req.dice;
+                        if (req.tag === 'FYC') {
+                            // 從備註提取 FYC 金額加總
+                            const match = req.details.match(/\$([0-9,]+)/);
+                            if (match) {
+                                const amt = parseInt(match[1].replace(/,/g, ''));
+                                p.fyc = (p.fyc || 0) + amt;
+                            }
+                        }
                     }
                     this.declarations.splice(index, 1);
                     await this.syncToServer();
-                    this.showAlert('審核通過', '已發放點數並同步更新！');
+                    this.showAlert('審核通過', '已發放點數與 FYC 並同步更新！');
                 },
 
                 async rejectDecl(index) {
                     this.declarations.splice(index, 1);
                     await this.syncToServer();
+                },
+
+                async addBonusPoints(pIdx) {
+                    const pts = prompt("請輸入要增加的點數：", "10");
+                    if (pts && !isNaN(pts)) {
+                        this.partners[pIdx].points += parseInt(pts);
+                        this.partners[pIdx].totalPoints += parseInt(pts);
+                        await this.syncToServer();
+                        this.showAlert('成功', '點數已手動調整！');
+                    }
+                },
+
+                async deletePartner(pIdx) {
+                    if (confirm("確定要刪除這位夥伴嗎？")) {
+                        this.partners.splice(pIdx, 1);
+                        await this.syncToServer();
+                    }
                 },
 
                 async postMessage() {
@@ -586,9 +724,14 @@
                     this.msgForm.content = '';
                 },
 
+                async saveSettings() {
+                    await this.syncToServer();
+                    this.showAlert('成功', '設定已儲存至雲端！');
+                },
+
                 verifyAdmin() {
                     if (this.adminPassInput === this.adminPassword) this.adminAuth = true;
-                    else this.showAlert('錯誤', '密碼不正確');
+                    else this.showAlert('錯誤', '管理者密碼不正確');
                 },
 
                 showAlert(title, text) {
@@ -597,11 +740,9 @@
                     this.showNotificationModal = true;
                 },
 
-                getTotalFYC(p) { return p.fyc || 0; },
                 formatCurrency(num) { return '$' + (num || 0).toLocaleString(); },
                 hasPlayerHere(idx) { return this.partners.some(p => p.position === idx); },
-                getPlayersOnCell(idx) { return this.partners.filter(p => p.position === idx); },
-                openCellModal() {}
+                getPlayersOnCell(idx) { return this.partners.filter(p => p.position === idx); }
             }
         }
     </script>
