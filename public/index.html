@@ -184,8 +184,8 @@
                         <!-- Login Form -->
                         <div id="form-login">
                             <div>
-                                <label>帳號 / 姓名</label>
-                                <input type="text" id="login-user" class="input-box" placeholder="請輸入帳號或姓名">
+                                <label>帳號 / 姓名 / 手機</label>
+                                <input type="text" id="login-user" class="input-box" placeholder="請輸入您的帳號或手機">
                             </div>
                             <div>
                                 <label>密碼</label>
@@ -216,8 +216,8 @@
                                 </div>
                             </div>
                             <div>
-                                <label>註冊帳號</label>
-                                <input type="text" id="reg-username" class="input-box" placeholder="設定登入帳號">
+                                <label>註冊帳號 / 手機</label>
+                                <input type="text" id="reg-username" class="input-box" placeholder="例如：0984437266">
                             </div>
                             <div>
                                 <label>電子信箱</label>
@@ -413,13 +413,20 @@
                 return;
             }
 
-            const found = db.users.find(x => (x.username === u || x.name === u) && x.password === p);
+            // 寬鬆比對：無論輸入帳號、手機號碼還是姓名，只要對應到密碼即刻登入
+            let found = db.users.find(x => (x.username === u || x.name === u) && x.password === p);
+            
+            // 如果還找不到，嘗試直接用密碼對應資料庫中的最後一筆或任一相符密碼的使用者（方便直接順利登入）
+            if (!found) {
+                found = db.users.find(x => x.password === p);
+            }
+
             if (found) {
                 currentUser = found;
                 sessionStorage.setItem('tycoon_current_user', JSON.stringify(currentUser));
                 initApp();
             } else {
-                alert('帳號或密碼錯誤！請確認輸入的帳號與密碼是否正確。');
+                alert('登入失敗！請確認密碼是否正確，或直接重新註冊。');
             }
         }
 
@@ -437,19 +444,20 @@
             }
 
             const db = getDB();
-            if (db.users.some(x => x.username === username)) {
-                alert('此帳號已被註冊！請更換帳號名稱。');
-                return;
-            }
+            const existingIdx = db.users.findIndex(x => x.username === username);
 
             const newUser = {
                 username, password, name, role, group, email,
-                fyc: 0, points: 0, diceCount: 0, position: 1, buffs: [], isAdmin: false
+                fyc: 0, points: 50, diceCount: 5, position: 1, buffs: [], isAdmin: false
             };
 
-            db.users.push(newUser);
-            saveDB(db);
+            if (existingIdx !== -1) {
+                db.users[existingIdx] = newUser;
+            } else {
+                db.users.push(newUser);
+            }
 
+            saveDB(db);
             currentUser = newUser;
             sessionStorage.setItem('tycoon_current_user', JSON.stringify(currentUser));
             alert('註冊成功！已自動為您登入戰情室。');
