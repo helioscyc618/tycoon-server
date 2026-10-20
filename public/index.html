@@ -10,15 +10,11 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <!-- Google Fonts: Noto Serif TC (明體) & Inter -->
+    <!-- Google Fonts: Noto Serif TC & Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase SDK (Google 雲端即時同步資料庫) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-
     <script>
         tailwind.config = {
             theme: {
@@ -28,7 +24,10 @@
                         gold: { 100: '#fef9c3', 300: '#fde047', 400: '#facc15', 500: '#eab308', 600: '#ca8a04', 700: '#a16207', rich: '#D4AF37' },
                         cream: '#FFF8F0'
                     },
-                    fontFamily: { serif: ['"Noto Serif TC"', 'serif'], sans: ['Inter', 'sans-serif'] }
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['Inter', 'sans-serif']
+                    }
                 }
             }
         }
@@ -50,11 +49,11 @@
     <header class="bg-gradient-to-r from-ruby-900 via-ruby-700 to-ruby-900 text-gold-300 px-4 py-2 shadow-md flex flex-wrap justify-between items-center text-xs sm:text-sm border-b-2 border-gold-rich">
         <div class="flex items-center space-x-3">
             <span class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium" :class="isOnline ? 'bg-green-900/60 text-green-200 border border-green-500' : 'bg-red-900/80 text-red-200 border border-red-500 animate-pulse'">
-                <i class="fas" :class="isOnline ? 'fa-cloud-arrow-up' : 'fa-triangle-exclamation'"></i>
-                <span x-text="isOnline ? '雲端同步正常 (Cloud Live)' : '離線警告 (Offline)'"></span>
+                <i class="fas" :class="isOnline ? 'fa-cloud' : 'fa-triangle-exclamation'"></i>
+                <span x-text="isOnline ? '雲端同步連線中 (Synced)' : '雲端連線中斷 (Offline)'"></span>
             </span>
             <span class="hidden md:inline-flex items-center text-gold-100">
-                <i class="fas fa-clock mr-1 text-gold-400"></i> 台北時間: <span class="font-mono ml-1 font-bold text-white" x-text="ntpTime"></span>
+                <i class="fas fa-clock mr-1 text-gold-400"></i> 台北時間 (UTC+8): <span class="font-mono ml-1 font-bold text-white" x-text="taipeiTime"></span>
             </span>
         </div>
         <div class="flex items-center space-x-3 mt-1 sm:mt-0">
@@ -77,20 +76,21 @@
     <!-- RUNNING TICKER -->
     <div class="bg-ruby-800 text-gold-300 py-2 px-3 overflow-hidden whitespace-nowrap border-b border-gold-rich/30 relative flex items-center shadow-inner">
         <div class="bg-gold-rich text-ruby-900 font-bold px-2.5 py-0.5 rounded text-xs mr-3 z-10 flex items-center shadow">
-            <i class="fas fa-bullhorn mr-1"></i> 戰報
+            <i class="fas fa-bullhorn mr-1"></i> 雲端戰報
         </div>
         <div class="overflow-hidden w-full relative">
             <div class="animate-marquee inline-block text-xs sm:text-sm font-medium tracking-wide">
                 <span x-text="settings.tickerText"></span>
                 <span class="mx-6 text-gold-400">♦</span>
-                <span>🔥 賀！雲端雙軌競賽即時連線中，全團隊業績與增員成長秒速同步！</span>
+                <span>🔥 伺服器即時同步中：所有裝置資料全自動更新！</span>
             </div>
         </div>
     </div>
 
-    <!-- MAIN CONTAINER -->
+    <!-- MAIN VIEW CONTAINER -->
     <main class="flex-1 overflow-y-auto p-3 sm:p-6 max-w-7xl mx-auto w-full">
-        <!-- AUTH VIEW -->
+
+        <!-- VIEW 1: AUTHENTICATION / LOGIN / REGISTER / FORGOT -->
         <template x-if="!currentUser">
             <div class="max-w-md mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-gold-rich/50 my-6">
                 <div class="bg-gradient-to-r from-ruby-900 via-ruby-700 to-ruby-900 p-6 text-center text-white relative">
@@ -98,14 +98,17 @@
                         <i class="fas fa-dice"></i>
                     </div>
                     <h1 class="text-3xl font-bold ming-title tracking-wider text-gold-300">競賽大亨</h1>
-                    <p class="text-xs text-gold-100 mt-1 tracking-widest font-serif">Cloud Edition 2026-2027</p>
+                    <p class="text-xs text-gold-100 mt-1 tracking-widest font-serif">Competition Tycoon (Server Cloud Edition)</p>
                 </div>
+
                 <div class="flex border-b border-gray-200 bg-gray-50 text-sm font-semibold">
-                    <button @click="authTab = 'login'" class="flex-1 py-3 text-center transition" :class="authTab === 'login' ? 'bg-white text-ruby-800 border-b-2 border-ruby-700' : 'text-gray-500'">登入系統</button>
-                    <button @click="authTab = 'register'" class="flex-1 py-3 text-center transition" :class="authTab === 'register' ? 'bg-white text-ruby-800 border-b-2 border-ruby-700' : 'text-gray-500'">新夥伴註冊</button>
-                    <button @click="authTab = 'forgot'" class="flex-1 py-3 text-center transition" :class="authTab === 'forgot' ? 'bg-white text-ruby-800 border-b-2 border-ruby-700' : 'text-gray-500'">忘記密碼</button>
+                    <button @click="authTab = 'login'" class="flex-1 py-3 text-center transition" :class="authTab === 'login' ? 'bg-white text-ruby-800 border-b-2 border-ruby-700' : 'text-gray-500 hover:text-gray-700'">登入系統</button>
+                    <button @click="authTab = 'register'" class="flex-1 py-3 text-center transition" :class="authTab === 'register' ? 'bg-white text-ruby-800 border-b-2 border-ruby-700' : 'text-gray-500 hover:text-gray-700'">新夥伴註冊</button>
+                    <button @click="authTab = 'forgot'" class="flex-1 py-3 text-center transition" :class="authTab === 'forgot' ? 'bg-white text-ruby-800 border-b-2 border-ruby-700' : 'text-gray-500 hover:text-gray-700'">忘記密碼</button>
                 </div>
+
                 <div class="p-6 space-y-4">
+                    <!-- LOGIN -->
                     <template x-if="authTab === 'login'">
                         <form @submit.prevent="login()" class="space-y-4">
                             <div>
@@ -116,10 +119,14 @@
                                 <label class="block text-xs font-bold text-gray-700 mb-1">密碼</label>
                                 <input type="password" x-model="loginForm.password" required class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="請輸入密碼">
                             </div>
-                            <button type="submit" class="w-full bg-gradient-to-r from-ruby-700 to-ruby-800 text-gold-300 font-bold py-3 rounded-lg shadow transition">進入戰情室</button>
+                            <button type="submit" class="w-full bg-gradient-to-r from-ruby-700 to-ruby-800 text-gold-300 font-bold py-3 rounded-lg shadow hover:from-ruby-800 hover:to-ruby-900 transition flex items-center justify-center space-x-2">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <span>進入雲端戰情室</span>
+                            </button>
                         </form>
                     </template>
 
+                    <!-- REGISTER -->
                     <template x-if="authTab === 'register'">
                         <form @submit.prevent="register()" class="space-y-3">
                             <div>
@@ -150,26 +157,33 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">選擇個人頭貼 Icon (10選1)</label>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">選擇頭貼 (10選1)</label>
                                 <div class="grid grid-cols-5 gap-2 mt-1">
                                     <template x-for="av in avatarList" :key="av">
-                                        <button type="button" @click="regForm.avatar = av" class="p-2 text-2xl rounded-lg border text-center transition flex items-center justify-center" :class="regForm.avatar === av ? 'border-ruby-700 bg-ruby-50 ring-2 ring-ruby-600 scale-105' : 'border-gray-200'" x-text="av"></button>
+                                        <button type="button" @click="regForm.avatar = av" 
+                                            class="p-2 text-2xl rounded-lg border text-center transition flex items-center justify-center"
+                                            :class="regForm.avatar === av ? 'border-ruby-700 bg-ruby-50 ring-2 ring-ruby-600 scale-105' : 'border-gray-200 hover:bg-gray-100'"
+                                            x-text="av">
+                                        </button>
                                     </template>
                                 </div>
                             </div>
-                            <button type="submit" class="w-full bg-gradient-to-r from-gold-600 to-gold-500 text-ruby-900 font-bold py-3 rounded-lg shadow transition mt-2">立即註冊 (雲端同步)</button>
+                            <button type="submit" class="w-full bg-gradient-to-r from-gold-600 to-gold-500 text-ruby-900 font-bold py-3 rounded-lg shadow transition mt-2">
+                                <i class="fas fa-user-plus"></i> 立即註冊同步至雲端伺服器
+                            </button>
                         </form>
                     </template>
 
+                    <!-- FORGOT -->
                     <template x-if="authTab === 'forgot'">
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 mb-1">註冊姓名</label>
-                                <input type="text" x-model="forgotForm.name" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="請輸入姓名">
+                                <input type="text" x-model="forgotForm.name" class="w-full px-3 py-2 border rounded-lg text-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 mb-1">電子信箱</label>
-                                <input type="email" x-model="forgotForm.email" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="請輸入註冊 Email">
+                                <input type="email" x-model="forgotForm.email" class="w-full px-3 py-2 border rounded-lg text-sm">
                             </div>
                             <button @click="findPassword()" class="w-full bg-ruby-800 text-white font-bold py-2.5 rounded-lg shadow text-sm">查詢密碼</button>
                             <template x-if="forgotResult">
@@ -184,7 +198,7 @@
             </div>
         </template>
 
-        <!-- WAR ROOM VIEW -->
+        <!-- VIEW 2: WAR ROOM -->
         <template x-if="currentUser">
             <div class="space-y-6">
                 <div class="bg-gradient-to-br from-white via-cream to-gold-100 rounded-2xl p-5 shadow-lg border border-gold-rich/40 flex flex-col md:flex-row justify-between items-center gap-4">
@@ -196,30 +210,32 @@
                                 <span class="px-2 py-0.5 bg-ruby-700 text-white text-xs rounded-full font-semibold" x-text="currentUser.rank"></span>
                                 <span class="px-2 py-0.5 bg-gold-600 text-white text-xs rounded-full font-semibold" x-text="currentUser.group"></span>
                             </div>
-                            <p class="text-xs text-gray-600 mt-1">歡迎來到競賽大亨雲端戰情室！所有數據即時連線同步中。</p>
+                            <p class="text-xs text-gray-600 mt-1">雲端即時連線中，多裝置資料已同步更新。</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-4 gap-3 text-center w-full md:w-auto">
                         <div class="bg-white p-3 rounded-xl shadow border border-gold-300">
-                            <span class="block text-xs text-gray-500 font-medium">FYC 總額</span>
+                            <span class="block text-xs text-gray-500">FYC 總額</span>
                             <span class="text-lg font-bold text-ruby-800" x-text="formatCurrency(getTotalFYC(currentUser))"></span>
                         </div>
                         <div class="bg-white p-3 rounded-xl shadow border border-gold-300">
-                            <span class="block text-xs text-gray-500 font-medium">可用點數</span>
+                            <span class="block text-xs text-gray-500">可用點數</span>
                             <span class="text-lg font-bold text-gold-600" x-text="currentUser.points"></span>
                         </div>
                         <div class="bg-white p-3 rounded-xl shadow border border-gold-300">
-                            <span class="block text-xs text-gray-500 font-medium">累積點數</span>
+                            <span class="block text-xs text-gray-500">累積點數</span>
                             <span class="text-lg font-bold text-gray-800" x-text="currentUser.totalPoints"></span>
                         </div>
                         <div class="bg-white p-3 rounded-xl shadow border border-gold-300">
-                            <span class="block text-xs text-gray-500 font-medium">骰子次數</span>
+                            <span class="block text-xs text-gray-500">骰子次數</span>
                             <span class="text-lg font-bold text-ruby-700" x-text="currentUser.diceCount"></span>
                         </div>
                     </div>
                 </div>
 
+                <!-- MAIN GRID -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- LEFT COLUMN -->
                     <div class="lg:col-span-5 space-y-6">
                         <div class="bg-white rounded-2xl p-5 shadow-md border border-gold-rich/30">
                             <h3 class="text-base font-bold text-ruby-900 ming-title mb-3 flex items-center">
@@ -237,47 +253,26 @@
                                 <template x-if="isFYCTag">
                                     <div>
                                         <label class="block text-xs font-bold text-gray-700 mb-1">輸入 FYC 金額</label>
-                                        <input type="number" x-model.number="declForm.fycAmount" min="0" step="100" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="例如：10000">
+                                        <input type="number" x-model.number="declForm.fycAmount" min="0" step="100" class="w-full px-3 py-2 border rounded-lg text-sm">
                                     </div>
                                 </template>
                                 <div>
                                     <label class="block text-xs font-bold text-gray-700 mb-1">任務說明 / 備註 <span class="text-red-600">* (必填)</span></label>
-                                    <input type="text" x-model="declForm.desc" required class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="請詳細填寫拜訪對象或案號...">
+                                    <input type="text" x-model="declForm.desc" required class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="詳細拜訪對象或案號...">
                                 </div>
-                                <button type="submit" class="w-full bg-gradient-to-r from-ruby-700 to-ruby-800 text-white font-bold py-2.5 rounded-lg shadow text-sm">送出審核申報</button>
+                                <button type="submit" class="w-full bg-ruby-800 text-white font-bold py-2.5 rounded-lg shadow hover:bg-ruby-900 transition text-sm">
+                                    送出至雲端審核
+                                </button>
                             </form>
                         </div>
 
+                        <!-- 聊天/留言板 -->
                         <div class="bg-white rounded-2xl p-5 shadow-md border border-gold-rich/30">
                             <h3 class="text-base font-bold text-ruby-900 ming-title mb-3 flex items-center justify-between">
-                                <span class="flex items-center"><i class="fas fa-users text-gold-600 mr-2"></i> 同組夥伴狀況 (雲端即時)</span>
-                                <span class="text-xs bg-gold-100 text-ruby-900 px-2 py-0.5 rounded font-bold" x-text="currentUser.group"></span>
-                            </h3>
-                            <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
-                                <template x-for="p in getGroupPartners()" :key="p.email">
-                                    <div class="flex items-center justify-between p-2 rounded-lg bg-gray-50 border text-xs">
-                                        <div class="flex items-center space-x-2">
-                                            <span class="text-lg" x-text="p.avatar"></span>
-                                            <div>
-                                                <p class="font-bold text-gray-800" x-text="p.name"></p>
-                                                <p class="text-[10px] text-gray-500" x-text="p.rank"></p>
-                                            </div>
-                                        </div>
-                                        <div class="text-right">
-                                            <p class="font-bold text-ruby-800" x-text="formatCurrency(getTotalFYC(p)) + ' FYC'"></p>
-                                            <p class="text-[10px] text-gold-600 font-semibold" x-text="p.points + ' 點'"></p>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-2xl p-5 shadow-md border border-gold-rich/30">
-                            <h3 class="text-base font-bold text-ruby-900 ming-title mb-3 flex items-center justify-between">
-                                <span class="flex items-center"><i class="fas fa-comments text-gold-600 mr-2"></i> 嗆蝦士氣留言板</span>
+                                <span class="flex items-center"><i class="fas fa-comments text-gold-600 mr-2"></i> 雲端士氣留言板</span>
                             </h3>
                             <form @submit.prevent="postMessage()" class="space-y-2 mb-4 pb-4 border-b">
-                                <input type="text" x-model="msgForm.title" required class="w-full px-3 py-1.5 border rounded text-xs" placeholder="留言標題...">
+                                <input type="text" x-model="msgForm.title" required class="w-full px-3 py-1.5 border rounded text-xs" placeholder="留言標題">
                                 <textarea x-model="msgForm.content" required rows="2" class="w-full px-3 py-1.5 border rounded text-xs resize-none" placeholder="激勵內容..."></textarea>
                                 <div class="flex justify-between items-center text-xs">
                                     <label class="flex items-center space-x-1 cursor-pointer">
@@ -288,26 +283,21 @@
                                 </div>
                             </form>
                             <div class="space-y-3 max-h-64 overflow-y-auto pr-1">
-                                <template x-for="(msg, mKey) in messages" :key="mKey">
-                                    <div class="p-3 bg-cream rounded-xl border border-gold-300 text-xs space-y-1.5">
-                                        <div class="flex justify-between items-start">
-                                            <span class="font-bold text-ruby-900 text-sm" x-text="msg.title"></span>
-                                            <span class="text-[10px] text-gray-500" x-text="msg.time"></span>
+                                <template x-for="(msg, mIndex) in messages" :key="mIndex">
+                                    <div class="p-3 bg-cream rounded-xl border border-gold-300 text-xs space-y-1">
+                                        <div class="flex justify-between font-bold text-ruby-900">
+                                            <span x-text="msg.title"></span>
+                                            <span class="text-[10px] text-gray-400" x-text="msg.time"></span>
                                         </div>
                                         <p class="text-gray-700" x-text="msg.content"></p>
-                                        <div class="flex justify-between items-center pt-1 text-[11px] text-gray-500">
-                                            <span class="font-medium text-gold-700" x-text="'發言人: ' + (msg.isAnonymous ? '神秘夥伴' : msg.author)"></span>
-                                            <button @click="likeMessage(mKey)" class="hover:text-ruby-700 flex items-center space-x-1">
-                                                <i class="fas fa-thumbs-up text-gold-600"></i>
-                                                <span x-text="msg.likes || 0"></span>
-                                            </button>
-                                        </div>
+                                        <span class="text-[10px] text-gold-700" x-text="'發言人: ' + (msg.isAnonymous ? '神秘夥伴' : msg.author)"></span>
                                     </div>
                                 </template>
                             </div>
                         </div>
                     </div>
 
+                    <!-- RIGHT COLUMN: BOARD & DICE -->
                     <div class="lg:col-span-7 space-y-6">
                         <div class="bg-gradient-to-r from-ruby-900 via-ruby-800 to-ruby-900 p-5 rounded-2xl shadow-lg border-2 border-gold-rich text-white flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div>
@@ -319,19 +309,23 @@
                                     <span class="block text-[10px] text-gold-300">目前位置</span>
                                     <span class="text-base font-bold text-white font-mono" x-text="'第 ' + (currentUser.position + 1) + ' 格'"></span>
                                 </div>
-                                <button @click="rollDice()" :disabled="currentUser.points < 10 || isRolling" class="bg-gradient-to-r from-gold-400 to-gold-600 text-ruby-900 font-bold px-6 py-3 rounded-xl shadow-lg transition text-sm">
+                                <button @click="rollDice()" :disabled="currentUser.points < 10 || isRolling" 
+                                    class="bg-gradient-to-r from-gold-400 to-gold-600 text-ruby-900 font-bold px-6 py-3 rounded-xl shadow-lg transition disabled:opacity-50 text-sm">
                                     <span x-text="isRolling ? '滾動中...' : '立即擲骰 (10點)'"></span>
                                 </button>
                             </div>
                         </div>
 
+                        <!-- BOARD GRID -->
                         <div class="bg-white rounded-2xl p-5 shadow-md border border-gold-rich/30">
                             <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-base font-bold text-ruby-900 ming-title"><i class="fas fa-map text-gold-600 mr-2"></i> 30格活潑大富翁棋盤</h3>
+                                <h3 class="text-base font-bold text-ruby-900 ming-title"><i class="fas fa-map text-gold-600 mr-2"></i> 30格雲端大富翁棋盤</h3>
                             </div>
                             <div class="grid grid-cols-6 sm:grid-cols-10 gap-2">
                                 <template x-for="(cell, index) in settings.boardCells" :key="index">
-                                    <div @click="openCellModal(cell, index)" class="relative p-2 rounded-xl border-2 flex flex-col items-center justify-center cursor-pointer transition hover:scale-105 h-20 text-center shadow-sm" :class="hasPlayerHere(index) ? 'border-ruby-700 bg-ruby-50 ring-2 ring-gold-rich' : 'border-gold-300 bg-cream'">
+                                    <div @click="openCellModal(cell, index)" 
+                                        class="relative p-2 rounded-xl border-2 flex flex-col items-center justify-center cursor-pointer transition h-20 text-center shadow-sm"
+                                        :class="hasPlayerHere(index) ? 'border-ruby-700 bg-ruby-50 ring-2 ring-gold-rich' : 'border-gold-300 bg-cream'">
                                         <span class="absolute top-1 left-1 text-[9px] font-bold text-gray-400 font-mono" x-text="index + 1"></span>
                                         <span class="text-lg mb-1" x-text="cell.icon"></span>
                                         <span class="text-[10px] font-bold text-gray-800 line-clamp-1" x-text="cell.title"></span>
@@ -350,207 +344,59 @@
         </template>
     </main>
 
-    <!-- MODALS -->
-    <div x-show="showNewsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" x-transition>
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border-2 border-gold-rich relative">
-            <h3 class="text-xl font-bold text-ruby-900 ming-title text-center mb-1" x-text="settings.newsTitle"></h3>
-            <div class="bg-cream p-4 rounded-xl border border-gold-300 text-sm text-gray-700 whitespace-pre-line mb-6 max-h-60 overflow-y-auto" x-text="settings.newsContent"></div>
-            <button @click="showNewsModal = false" class="w-full bg-ruby-800 text-white font-bold py-3 rounded-xl text-sm">我知道了，開始衝刺！</button>
-        </div>
-    </div>
-
-    <div x-show="showCellDetailModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" x-transition>
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border-2 border-gold-rich text-center">
-            <h3 class="text-xl font-bold text-ruby-900 ming-title mt-2" x-text="selectedCell.title"></h3>
-            <p class="text-sm text-gray-600 mt-2 bg-cream p-4 rounded-xl border" x-text="selectedCell.reward"></p>
-            <button @click="showCellDetailModal = false" class="mt-5 w-full bg-ruby-800 text-white font-bold py-2.5 rounded-xl text-sm">關閉</button>
-        </div>
-    </div>
-
-    <div x-show="showLandingModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" x-transition>
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border-2 border-gold-rich text-center">
-            <h3 class="text-xl font-bold text-ruby-900 ming-title">踩格子戰報！</h3>
-            <div class="my-4 p-4 bg-gold-100 rounded-xl border">
-                <h4 class="font-bold text-ruby-900 text-base" x-text="currentLandedCell.title"></h4>
-                <p class="text-sm text-gray-700 mt-1" x-text="currentLandedCell.reward"></p>
+    <!-- MODAL: ADMIN PANEL -->
+    <div x-show="openAdminModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-3 sm:p-6" x-transition>
+        <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl border-2 border-gold-rich flex flex-col">
+            <div class="bg-ruby-900 p-4 text-white flex justify-between items-center">
+                <h2 class="text-xl font-bold text-gold-300">指揮中心雲端後台</h2>
+                <button @click="openAdminModal = false" class="text-gold-300"><i class="fas fa-times"></i></button>
             </div>
-            <button @click="closeLandingModal()" class="w-full bg-ruby-800 text-white font-bold py-3 rounded-xl text-sm">收下獎勵並記錄</button>
+            <template x-if="!adminAuth">
+                <div class="p-8 max-w-md mx-auto text-center space-y-4 my-auto">
+                    <h3 class="text-xl font-bold text-ruby-900">請輸入管理者密碼 (預設 admin)</h3>
+                    <input type="password" x-model="adminPassInput" @keyup.enter="verifyAdmin()" class="w-full px-3 py-2 border rounded text-center text-sm">
+                    <button @click="verifyAdmin()" class="w-full bg-ruby-800 text-white font-bold py-2 rounded">解鎖後台</button>
+                </div>
+            </template>
+            <template x-if="adminAuth">
+                <div class="p-6 overflow-y-auto space-y-4 text-xs">
+                    <h3 class="font-bold text-ruby-900 text-base">待審核項目</h3>
+                    <div class="space-y-2">
+                        <template x-for="(req, rIdx) in declarations" :key="rIdx">
+                            <div class="p-3 bg-cream border rounded flex justify-between items-center">
+                                <div>
+                                    <span class="font-bold text-ruby-900" x-text="req.userName + ' (' + req.tag + ')：'"></span>
+                                    <span x-text="req.details"></span>
+                                </div>
+                                <div class="space-x-2">
+                                    <button @click="approveDecl(rIdx)" class="bg-green-600 text-white px-3 py-1 rounded font-bold">通過</button>
+                                    <button @click="rejectDecl(rIdx)" class="bg-red-600 text-white px-3 py-1 rounded font-bold">拒絕</button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
         </div>
     </div>
 
-    <div x-show="showDiceModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" x-transition>
-        <div class="bg-white rounded-2xl max-w-xs w-full p-6 shadow-2xl border-2 border-gold-rich text-center">
-            <h3 class="text-lg font-bold text-ruby-900 ming-title mb-4">🎲 正在擲骰中...</h3>
-            <div class="text-4xl bg-gold-100 border-2 border-gold-rich rounded-2xl w-24 h-24 mx-auto flex items-center justify-center font-bold text-ruby-900" x-text="rollingDiceNumber"></div>
-        </div>
-    </div>
-
+    <!-- NOTIFICATION MODAL -->
     <div x-show="showNotificationModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" x-transition>
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border-2 border-gold-rich text-center">
-            <h3 class="text-lg font-bold text-ruby-900 ming-title" x-text="notificationTitle"></h3>
+            <h3 class="text-lg font-bold text-ruby-900" x-text="notificationTitle"></h3>
             <p class="text-sm text-gray-600 mt-2" x-text="notificationText"></p>
             <button @click="showNotificationModal = false" class="mt-5 w-full bg-ruby-800 text-white font-bold py-2.5 rounded-xl text-sm">確定</button>
         </div>
     </div>
 
-    <!-- COMMAND CENTER MODAL -->
-    <div x-show="openAdminModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-3 sm:p-6" x-transition>
-        <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden shadow-2xl border-2 border-gold-rich flex flex-col">
-            <div class="bg-gradient-to-r from-ruby-900 via-ruby-800 to-ruby-900 p-4 text-white flex justify-between items-center border-b border-gold-rich">
-                <h2 class="text-xl font-bold ming-title text-gold-300">指揮中心後台管理 (雲端同步)</h2>
-                <button @click="openAdminModal = false" class="text-gold-300"><i class="fas fa-times"></i></button>
-            </div>
-
-            <template x-if="!adminAuth">
-                <div class="p-8 max-w-md mx-auto text-center space-y-4 my-auto">
-                    <h3 class="text-xl font-bold text-ruby-900 ming-title">請輸入管理者密碼</h3>
-                    <input type="password" x-model="adminPassInput" @keyup.enter="verifyAdmin()" class="w-full px-3 py-2 border rounded-lg text-sm text-center" placeholder="預設 admin">
-                    <button @click="verifyAdmin()" class="w-full bg-ruby-800 text-white font-bold py-2.5 rounded-lg text-sm">解鎖後台</button>
-                </div>
-            </template>
-
-            <template x-if="adminAuth">
-                <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
-                    <div class="w-full md:w-64 bg-gray-50 border-r p-3 flex flex-row md:flex-col space-x-1 md:space-y-1 text-xs font-semibold">
-                        <button @click="adminTab = 'approvals'" class="px-3 py-2.5 rounded-lg text-left" :class="adminTab === 'approvals' ? 'bg-ruby-800 text-white' : 'text-gray-700'">點數審核</button>
-                        <button @click="adminTab = 'partners'" class="px-3 py-2.5 rounded-lg text-left" :class="adminTab === 'partners' ? 'bg-ruby-800 text-white' : 'text-gray-700'">夥伴管理</button>
-                        <button @click="adminTab = 'settings'" class="px-3 py-2.5 rounded-lg text-left" :class="adminTab === 'settings' ? 'bg-ruby-800 text-white' : 'text-gray-700'">遊戲與 Tag 設定</button>
-                        <button @click="adminTab = 'boardSettings'" class="px-3 py-2.5 rounded-lg text-left" :class="adminTab === 'boardSettings' ? 'bg-ruby-800 text-white' : 'text-gray-700'">30格獎勵設定</button>
-                        <button @click="adminTab = 'rewards'" class="px-3 py-2.5 rounded-lg text-left" :class="adminTab === 'rewards' ? 'bg-ruby-800 text-white' : 'text-gray-700'">獎勵統整</button>
-                    </div>
-
-                    <div class="flex-1 p-5 overflow-y-auto bg-white">
-                        <template x-if="adminTab === 'approvals'">
-                            <div class="space-y-4">
-                                <h3 class="text-lg font-bold text-ruby-900 ming-title">雲端點數審核清單</h3>
-                                <div class="space-y-3">
-                                    <template x-for="(req, rKey) in declarations" :key="rKey">
-                                        <div class="p-4 rounded-xl border border-gold-300 bg-cream flex justify-between items-center">
-                                            <div>
-                                                <p class="font-bold text-ruby-900" x-text="req.userName + ' - ' + req.tag"></p>
-                                                <p class="text-xs text-gray-800 bg-white p-2 rounded" x-text="'說明: ' + req.details"></p>
-                                            </div>
-                                            <div class="space-x-2">
-                                                <button @click="approveDecl(rKey)" class="bg-green-600 text-white px-3 py-1.5 rounded text-xs font-bold">通過</button>
-                                                <button @click="rejectDecl(rKey)" class="bg-red-600 text-white px-3 py-1.5 rounded text-xs font-bold">拒絕</button>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-                        </template>
-
-                        <template x-if="adminTab === 'partners'">
-                            <div class="space-y-4">
-                                <h3 class="text-lg font-bold text-ruby-900 ming-title">雲端夥伴名單管理</h3>
-                                <table class="w-full text-left text-xs">
-                                    <thead>
-                                        <tr class="bg-ruby-900 text-gold-300">
-                                            <th class="p-2">夥伴</th>
-                                            <th class="p-2">職級/組別</th>
-                                            <th class="p-2">FYC 總額</th>
-                                            <th class="p-2">點數</th>
-                                            <th class="p-2">操作</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y">
-                                        <template x-for="(p, pKey) in partners" :key="pKey">
-                                            <tr>
-                                                <td class="p-2 font-bold" x-text="p.name"></td>
-                                                <td class="p-2" x-text="p.rank + ' / ' + p.group"></td>
-                                                <td class="p-2 text-ruby-900 font-bold" x-text="formatCurrency(getTotalFYC(p))"></td>
-                                                <td class="p-2 text-gold-600 font-bold" x-text="p.points"></td>
-                                                <td class="p-2 space-x-1">
-                                                    <button @click="editPartner(pKey)" class="bg-gold-600 text-white px-2 py-1 rounded">編輯</button>
-                                                    <button @click="promptDeletePartner(pKey)" class="bg-red-600 text-white px-2 py-1 rounded">刪除</button>
-                                                </td>
-                                            </tr>
-                                        </template>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </template>
-
-                        <template x-if="adminTab === 'settings'">
-                            <div class="space-y-4">
-                                <h3 class="text-lg font-bold text-ruby-900 ming-title">公告與跑馬燈設定</h3>
-                                <div class="space-y-2 text-xs">
-                                    <input type="text" x-model="settings.newsTitle" class="w-full p-2 border rounded" placeholder="公告標題">
-                                    <textarea x-model="settings.newsContent" class="w-full p-2 border rounded" rows="3" placeholder="公告內容"></textarea>
-                                    <input type="text" x-model="settings.tickerText" class="w-full p-2 border rounded" placeholder="跑馬燈文字">
-                                    <button @click="saveSettings()" class="bg-ruby-800 text-white px-4 py-2 rounded font-bold">儲存雲端設定</button>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-            </template>
-        </div>
-    </div>
-
-    <!-- EDIT PARTNER MODAL -->
-    <div x-show="showEditPartnerModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" x-transition>
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-3 text-xs">
-            <h3 class="text-lg font-bold text-ruby-900 ming-title">編輯夥伴與業績 Buff</h3>
-            <input type="text" x-model="editingPartner.name" class="w-full p-2 border rounded" placeholder="姓名">
-            <select x-model="editingPartner.rank" class="w-full p-2 border rounded bg-white">
-                <option value="業務專員">業務專員</option>
-                <option value="業務主任">業務主任</option>
-                <option value="業務襄理">業務襄理</option>
-                <option value="業務經理">業務經理</option>
-            </select>
-            <input type="text" x-model="editingPartner.group" class="w-full p-2 border rounded" placeholder="組別">
-            <div class="grid grid-cols-3 gap-2">
-                <input type="number" x-model.number="editingPartner.fyc" class="p-2 border rounded" placeholder="FYC">
-                <input type="number" x-model.number="editingPartner.points" class="p-2 border rounded" placeholder="點數">
-                <input type="number" x-model.number="editingPartner.diceCount" class="p-2 border rounded" placeholder="骰子">
-            </div>
-            <div class="p-2 bg-cream rounded border">
-                <p class="font-bold mb-1">業績 Buff (勾選被增員夥伴)：</p>
-                <div class="max-h-28 overflow-y-auto space-y-1">
-                    <template x-for="(p, pk) in partners" :key="pk">
-                        <template x-if="p.email !== editingPartner.email">
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" :value="p.name" x-model="editingPartner.buffs" class="rounded text-ruby-600">
-                                <span x-text="p.name"></span>
-                            </label>
-                        </template>
-                    </template>
-                </div>
-            </div>
-            <div class="flex justify-end space-x-2 pt-2">
-                <button @click="showEditPartnerModal = false" class="px-4 py-2 border rounded">取消</button>
-                <button @click="savePartnerEdit()" class="px-4 py-2 bg-ruby-800 text-white rounded font-bold">儲存</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- SCRIPT LOGIC (Firebase Realtime Database Integration) -->
     <script>
-        // 設定免費的 Firebase 雲端資料庫連線
-        const firebaseConfig = {
-            databaseURL: "https://competition-tycoon-default-rtdb.firebaseio.com/"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        function playBeep(type) {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain); gain.connect(ctx.destination);
-                osc.frequency.setValueAtTime(type === 'success' ? 587.33 : 440, ctx.currentTime);
-                gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-                osc.start(); osc.stop(ctx.currentTime + 0.3);
-            } catch(e) {}
-        }
+        // 設定您的雲端伺服器 API 網址（例如 Render 服務網址）
+        const API_BASE = 'https://competition-tycoon.onrender.com/api';
 
         function app() {
             return {
                 isOnline: navigator.onLine,
-                ntpTime: '',
+                taipeiTime: '',
                 authTab: 'login',
                 currentUser: null,
                 loginForm: { account: '', password: '' },
@@ -558,88 +404,112 @@
                 forgotForm: { name: '', email: '' },
                 forgotResult: '',
                 avatarList: ['👨‍💼', '👩‍💼', '🧑‍💼', '👨‍💻', '👩‍💻', '🧑‍🎨', '👨‍🎓', '👩‍🎓', '🦸‍♂️', '🦸‍♀️'],
-                selectedCell: {}, selectedCellIndex: 0, showCellDetailModal: false, showLandingModal: false, currentLandedCell: {},
-                showDiceModal: false, isRolling: false, rollingDiceNumber: 1,
-                declForm: { tag: 'FYC', fycAmount: 10000, desc: '' }, isFYCTag: true,
-                declarations: {}, messages: {}, openAdminModal: false, adminAuth: false, adminPassInput: '', adminPassword: 'admin', adminTab: 'approvals',
-                newTagForm: { name: '', isFYC: false, points: 50 },
-                showEditPartnerModal: false, editingPartner: { name: '', rank: '', group: '', fyc: 0, points: 0, diceCount: 0, buffs: [] }, editingKey: null,
-                showDeleteConfirmModal: false, deletingKey: null, deletingTarget: null,
-                settings: { newsTitle: '🏆 競賽大亨雲端版正式開跑！', newsContent: '所有資料秒速同步，隨時隨地輕鬆衝刺！', tickerText: '🎉 賀！雲端雙軌競賽熱血啟動！', tags: [{name:'FYC', isFYC:true, points:0}, {name:'活動邀約', isFYC:false, points:10}, {name:'增員面談', isFYC:false, points:20}], boardCells: [] },
-                rewardsList: {}, showNewsModal: false, showNotificationModal: false, notificationTitle: '', notificationText: '', partners: {},
+                partners: [],
+                declarations: [],
+                messages: [],
+                rewardsList: [],
+                settings: { tickerText: '🎉 賀！競賽大亨雲端同步連線中！', tags: [], boardCells: [] },
+                
+                declForm: { tag: 'FYC', fycAmount: 10000, desc: '' },
+                isFYCTag: true,
+                msgForm: { title: '', content: '', isAnonymous: false },
+                
+                openAdminModal: false,
+                adminAuth: false,
+                adminPassInput: '',
+                adminPassword: 'admin',
+                showNotificationModal: false,
+                notificationTitle: '',
+                notificationText: '',
+                isRolling: false,
 
-                init() {
-                    window.addEventListener('online', () => { this.isOnline = true; });
-                    window.addEventListener('offline', () => { this.isOnline = false; });
-
-                    const updateTaiwanTime = () => {
+                async init() {
+                    // 精準計算台北時間 (UTC+8)
+                    setInterval(() => {
                         const now = new Date();
-                        const formatter = new Intl.DateTimeFormat('zh-TW', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-                        this.ntpTime = formatter.format(now).replace(/\//g, '-');
-                    };
-                    updateTaiwanTime();
-                    setInterval(updateTaiwanTime, 1000);
+                        const taipeiFormatter = new Intl.DateTimeFormat('zh-TW', {
+                            timeZone: 'Asia/Taipei',
+                            year: 'numeric', month: '2-digit', day: '2-digit',
+                            hour: '2-digit', minute: '2-digit', second: '2-digit',
+                            hour12: false
+                        });
+                        this.taipeiTime = taipeiFormatter.format(now).replace(/\//g, '-');
+                    }, 1000);
 
-                    // 雲端資料即時監聽 (Firebase Realtime Database Sync)
-                    db.ref('partners').on('value', snap => { this.partners = snap.val() || {}; this.syncCurrentUser(); });
-                    db.ref('declarations').on('value', snap => { this.declarations = snap.val() || {}; });
-                    db.ref('messages').on('value', snap => { this.messages = snap.val() || {}; });
-                    db.ref('settings').on('value', snap => { if (snap.val()) this.settings = snap.val(); });
-                    db.ref('rewards').on('value', snap => { this.rewardsList = snap.val() || {}; });
+                    // 初次從雲端同步資料
+                    await this.fetchCloudData();
 
-                    if (!this.settings.boardCells || this.settings.boardCells.length !== 30) {
-                        this.initDefaultBoardCells();
-                    }
+                    // 每 5 秒自動與伺服器同步一次，達成多裝置即時更新
+                    setInterval(async () => {
+                        await this.fetchCloudData();
+                    }, 5000);
 
-                    const savedUserEmail = localStorage.getItem('tycoon_user_email');
-                    if (savedUserEmail) {
-                        setTimeout(() => {
-                            const found = Object.values(this.partners).find(p => p.email === savedUserEmail);
-                            if (found) this.currentUser = found;
-                        }, 800);
-                    }
-
-                    setTimeout(() => { this.showNewsModal = true; }, 600);
-                },
-
-                syncCurrentUser() {
-                    if (this.currentUser) {
-                        const found = Object.values(this.partners).find(p => p.email === this.currentUser.email);
-                        if (found) this.currentUser = found;
+                    const savedUser = localStorage.getItem('tycoon_current_user');
+                    if (savedUser) {
+                        this.currentUser = JSON.parse(savedUser);
                     }
                 },
 
-                initDefaultBoardCells() {
-                    const templates = [{ title: '起點', icon: '🚩', type: '獎勵', reward: '獲得 20 點！' }, { title: '幸運星', icon: '⭐', type: '獎勵', reward: '獲得 10 點！' }];
-                    this.settings.boardCells = [];
-                    for (let i = 0; i < 30; i++) {
-                        const t = templates[i % templates.length];
-                        this.settings.boardCells.push({ title: t.title + ' #' + (i+1), icon: t.icon, type: t.type, reward: t.reward });
+                async fetchCloudData() {
+                    try {
+                        const res = await fetch(`${API_BASE}/state`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            this.partners = data.partners || [];
+                            this.declarations = data.declarations || [];
+                            this.messages = data.messages || [];
+                            this.rewardsList = data.rewardsList || [];
+                            if (data.settings) this.settings = data.settings;
+                            this.isOnline = true;
+
+                            // 即時更新當前登入使用者的最新資料
+                            if (this.currentUser) {
+                                const latest = this.partners.find(p => p.email === this.currentUser.email);
+                                if (latest) this.currentUser = latest;
+                            }
+                        } else {
+                            this.isOnline = false;
+                        }
+                    } catch (e) {
+                        this.isOnline = false;
+                    }
+                },
+
+                async syncToServer() {
+                    try {
+                        await fetch(`${API_BASE}/state`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                partners: this.partners,
+                                declarations: this.declarations,
+                                messages: this.messages,
+                                rewardsList: this.rewardsList,
+                                settings: this.settings
+                            })
+                        });
+                    } catch (e) {
+                        this.isOnline = false;
                     }
                 },
 
                 login() {
-                    const list = Object.values(this.partners);
-                    const found = list.find(p => p.email === this.loginForm.account || p.name === this.loginForm.account);
+                    const found = this.partners.find(p => p.email === this.loginForm.account || p.name === this.loginForm.account);
                     if (found && found.password === this.loginForm.password) {
                         this.currentUser = found;
-                        localStorage.setItem('tycoon_user_email', found.email);
-                        playBeep('success');
+                        localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
                         this.showAlert('登入成功', `歡迎回來，${this.currentUser.name}！`);
                     } else {
                         this.showAlert('登入失敗', '帳號或密碼錯誤。');
                     }
                 },
 
-                register() {
-                    const list = Object.values(this.partners);
-                    if (list.some(p => p.email === this.regForm.email)) {
+                async register() {
+                    if (this.partners.some(p => p.email === this.regForm.email)) {
                         this.showAlert('註冊失敗', '此信箱已註冊過！');
                         return;
                     }
-                    const newRef = db.ref('partners').push();
                     const newP = {
-                        id: newRef.key,
                         name: this.regForm.name,
                         email: this.regForm.email,
                         password: this.regForm.password,
@@ -648,22 +518,16 @@
                         avatar: this.regForm.avatar,
                         fyc: 0, points: 0, totalPoints: 0, diceCount: 0, position: 0, buffs: []
                     };
-                    newRef.set(newP);
+                    this.partners.push(newP);
                     this.currentUser = newP;
-                    localStorage.setItem('tycoon_user_email', newP.email);
-                    playBeep('success');
-                    this.showAlert('註冊成功', '已寫入雲端，起始數為 0！');
-                },
-
-                findPassword() {
-                    const list = Object.values(this.partners);
-                    const found = list.find(p => p.name === this.forgotForm.name && p.email === this.forgotForm.email);
-                    this.forgotResult = found ? `您的密碼為：${found.password}` : '找不到符合的紀錄。';
+                    localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
+                    await this.syncToServer();
+                    this.showAlert('註冊成功', '已同步至雲端伺服器！');
                 },
 
                 logout() {
                     this.currentUser = null;
-                    localStorage.removeItem('tycoon_user_email');
+                    localStorage.removeItem('tycoon_current_user');
                 },
 
                 onTagChange() {
@@ -671,136 +535,73 @@
                     this.isFYCTag = selected ? selected.isFYC : false;
                 },
 
-                submitDeclaration() {
-                    if (!this.declForm.desc) { this.showAlert('未填寫', '請填寫任務說明！'); return; }
-                    let pts = this.isFYCTag ? Math.floor((this.declForm.fycAmount || 0) / 1000) : 10;
+                async submitDeclaration() {
+                    if (!this.declForm.desc) {
+                        this.showAlert('欄位未填寫', '請填寫任務說明！');
+                        return;
+                    }
                     const req = {
-                        userName: this.currentUser.name, userEmail: this.currentUser.email,
-                        tag: this.declForm.tag, details: this.declForm.desc + (this.isFYCTag ? ` ($${this.declForm.fycAmount})` : ''),
-                        points: pts, dice: 1, time: new Date().toLocaleString()
+                        userName: this.currentUser.name,
+                        userEmail: this.currentUser.email,
+                        tag: this.declForm.tag,
+                        details: this.declForm.desc + (this.isFYCTag ? ` (FYC: $${this.declForm.fycAmount})` : ''),
+                        points: this.isFYCTag ? Math.floor((this.declForm.fycAmount || 0) / 1000) : 10,
+                        dice: 1,
+                        time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
                     };
-                    db.ref('declarations').push(req);
-                    playBeep('success');
-                    this.showAlert('已送出', '已同步至指揮中心審核！');
+                    this.declarations.push(req);
+                    await this.syncToServer();
+                    this.showAlert('已送出', '案件已送至雲端指揮中心審核！');
                     this.declForm.desc = '';
                 },
 
-                approveDecl(key) {
-                    const req = this.declarations[key];
-                    const entry = Object.entries(this.partners).find(([k, p]) => p.email === req.userEmail);
-                    if (entry) {
-                        const [pKey, pVal] = entry;
-                        db.ref('partners/' + pKey).update({
-                            points: (pVal.points || 0) + req.points,
-                            totalPoints: (pVal.totalPoints || 0) + req.points,
-                            diceCount: (pVal.diceCount || 0) + req.dice,
-                            fyc: req.tag === 'FYC' ? (pVal.fyc || 0) + parseInt(req.details.match(/\$(\d+)/)?.[1] || 0) : pVal.fyc
-                        });
+                async approveDecl(index) {
+                    const req = this.declarations[index];
+                    const p = this.partners.find(x => x.email === req.userEmail);
+                    if (p) {
+                        p.points += req.points;
+                        p.totalPoints += req.points;
+                        p.diceCount += req.dice;
                     }
-                    db.ref('declarations/' + key).remove();
-                    try { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); } catch(e){}
-                    this.showAlert('已通過', '點數已雲端撥發！');
+                    this.declarations.splice(index, 1);
+                    await this.syncToServer();
+                    this.showAlert('審核通過', '已發放點數並同步更新！');
                 },
 
-                rejectDecl(key) {
-                    db.ref('declarations/' + key).remove();
-                    this.showAlert('已拒絕', '已退回申報。');
+                async rejectDecl(index) {
+                    this.declarations.splice(index, 1);
+                    await this.syncToServer();
                 },
 
-                rollDice() {
-                    if (this.currentUser.points < 10) { this.showAlert('點數不足', '每次需要 10 點！'); return; }
-                    const entry = Object.entries(this.partners).find(([k, p]) => p.email === this.currentUser.email);
-                    if (!entry) return;
-                    const [pKey, pVal] = entry;
-
-                    db.ref('partners/' + pKey).update({ points: pVal.points - 10 });
-                    this.isRolling = true; this.showDiceModal = true; playBeep('dice');
-
-                    let rolls = 0;
-                    const interval = setInterval(() => {
-                        this.rollingDiceNumber = Math.floor(Math.random() * 6) + 1;
-                        rolls++;
-                        if (rolls > 10) {
-                            clearInterval(interval);
-                            this.isRolling = false; this.showDiceModal = false;
-                            const newPos = (pVal.position + this.rollingDiceNumber) % 30;
-                            db.ref('partners/' + pKey).update({ position: newPos });
-                            this.currentLandedCell = this.settings.boardCells[newPos];
-                            this.showLandingModal = true;
-                            playBeep('success');
-                        }
-                    }, 100);
-                },
-
-                closeLandingModal() {
-                    this.showLandingModal = false;
-                    db.ref('rewards').push({ userName: this.currentUser.name, reward: '踩中格子獎勵', time: new Date().toLocaleString(), status: '未發放' });
-                },
-
-                openCellModal(cell, index) { this.selectedCell = cell; this.selectedCellIndex = index; this.showCellDetailModal = true; },
-                hasPlayerHere(idx) { return Object.values(this.partners).some(p => p.position === idx); },
-                getPlayersOnCell(idx) { return Object.values(this.partners).filter(p => p.position === idx); },
-                getGroupPartners() { return Object.values(this.partners).filter(p => p.group === this.currentUser?.group); },
-
-                getTotalFYC(partner) {
-                    let total = partner.fyc || 0;
-                    if (partner.buffs) {
-                        partner.buffs.forEach(bName => {
-                            const downline = Object.values(this.partners).find(p => p.name === bName);
-                            if (downline) total += (downline.fyc || 0);
-                        });
-                    }
-                    return total;
-                },
-
-                formatCurrency(num) { return '$' + (num || 0).toLocaleString(); },
-
-                postMessage() {
-                    db.ref('messages').push({ title: this.msgForm.title, content: this.msgForm.content, isAnonymous: this.msgForm.isAnonymous, author: this.msgForm.isAnonymous ? '神秘夥伴' : this.currentUser.name, time: new Date().toLocaleString(), likes: 0 });
-                    this.msgForm.title = ''; this.msgForm.content = '';
-                    this.showAlert('成功', '留言已廣播至雲端！');
-                },
-
-                likeMessage(key) {
-                    const msg = this.messages[key];
-                    db.ref(`messages/${key}`).update({ likes: (msg.likes || 0) + 1 });
+                async postMessage() {
+                    this.messages.unshift({
+                        title: this.msgForm.title,
+                        content: this.msgForm.content,
+                        isAnonymous: this.msgForm.isAnonymous,
+                        author: this.msgForm.isAnonymous ? '神秘夥伴' : this.currentUser.name,
+                        time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
+                    });
+                    await this.syncToServer();
+                    this.msgForm.title = '';
+                    this.msgForm.content = '';
                 },
 
                 verifyAdmin() {
-                    if (this.adminPassInput === this.adminPassword) { this.adminAuth = true; playBeep('success'); }
-                    else { this.showAlert('錯誤', '密碼不正確！'); }
-                },
-
-                editPartner(key) {
-                    this.editingKey = key;
-                    this.editingPartner = JSON.parse(JSON.stringify(this.partners[key]));
-                    if (!this.editingPartner.buffs) this.editingPartner.buffs = [];
-                    this.showEditPartnerModal = true;
-                },
-
-                savePartnerEdit() {
-                    if (this.editingKey) {
-                        db.ref('partners/' + this.editingKey).set(this.editingPartner);
-                        this.showEditPartnerModal = false;
-                        this.showAlert('成功', '夥伴資料已雲端更新！');
-                    }
-                },
-
-                promptDeletePartner(key) {
-                    if (confirm('確定要刪除此夥伴嗎？')) {
-                        db.ref('partners/' + key).remove();
-                        this.showAlert('已刪除', '雲端名單已更新。');
-                    }
-                },
-
-                saveSettings() {
-                    db.ref('settings').set(this.settings);
-                    this.showAlert('成功', '設定已同步至雲端！');
+                    if (this.adminPassInput === this.adminPassword) this.adminAuth = true;
+                    else this.showAlert('錯誤', '密碼不正確');
                 },
 
                 showAlert(title, text) {
-                    this.notificationTitle = title; this.notificationText = text; this.showNotificationModal = true; playBeep('info');
-                }
+                    this.notificationTitle = title;
+                    this.notificationText = text;
+                    this.showNotificationModal = true;
+                },
+
+                getTotalFYC(p) { return p.fyc || 0; },
+                formatCurrency(num) { return '$' + (num || 0).toLocaleString(); },
+                hasPlayerHere(idx) { return this.partners.some(p => p.position === idx); },
+                getPlayersOnCell(idx) { return this.partners.filter(p => p.position === idx); },
+                openCellModal() {}
             }
         }
     </script>
