@@ -3,9 +3,10 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 設定 public 資料夾為靜態資源目錄
+// 強制明確指定靜態資料夾
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 路由明確指向 public 內的 index.html
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
