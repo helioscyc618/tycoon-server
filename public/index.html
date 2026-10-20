@@ -122,10 +122,10 @@
         <div class="marquee-text" id="marquee-content">👑 歡迎登入競賽大亨灰白橘戰情室！</div>
     </div>
 
-    <!-- Main Container (Static Direct Render) -->
+    <!-- Main Container -->
     <div class="container">
         
-        <!-- 1. Auth View (Login / Register) -->
+        <!-- 1. Auth View -->
         <div id="view-auth" style="max-width: 420px; width: 100%; margin: 40px auto;" class="card">
             <div style="text-align: center; margin-bottom: 20px;">
                 <span style="font-size: 42px;">👑</span>
@@ -142,11 +142,11 @@
             <div id="form-login">
                 <div>
                     <label>帳號 / 姓名</label>
-                    <input type="text" id="login-user" class="input-box" placeholder="請輸入帳號或姓名 (管理者請輸入 admin)">
+                    <input type="text" id="login-user" class="input-box" placeholder="請輸入帳號或姓名 (管理員請輸入 admin)">
                 </div>
                 <div>
                     <label>密碼</label>
-                    <input type="password" id="login-pass" class="input-box" placeholder="請輸入密碼">
+                    <input type="password" id="login-pass" class="input-box" placeholder="請輸入密碼 (管理員預設 admin)">
                 </div>
                 <button onclick="handleLogin()" class="btn-orange" style="width: 100%; margin-top: 8px;">進入戰情室</button>
             </div>
@@ -188,7 +188,7 @@
             </div>
         </div>
 
-        <!-- 2. Partner Dashboard View -->
+        <!-- 2. Partner Dashboard View (戰情室) -->
         <div id="view-partner" class="hidden" style="display: flex; flex-direction: column; gap: 20px;">
             <!-- Stats Grid -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
@@ -218,7 +218,7 @@
 
             <!-- Main Grid -->
             <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; align-items: start;">
-                <!-- Submission Form & Group View -->
+                <!-- Left Column: Submission & Shoutbox -->
                 <div style="display: flex; flex-direction: column; gap: 20px;">
                     <div class="card">
                         <h3 style="font-family: 'Noto Serif TC', serif; font-size: 16px; color: #18181b; margin-bottom: 14px;">📝 成績與任務申報</h3>
@@ -241,26 +241,34 @@
                         <button onclick="submitScore()" class="btn-orange" style="width: 100%;">送交指揮中心審核</button>
                     </div>
 
+                    <!-- 嗆蝦留言板 -->
+                    <div class="card">
+                        <h3 style="font-family: 'Noto Serif TC', serif; font-size: 15px; color: #18181b; margin-bottom: 10px;">💬 嗆蝦士氣留言板</h3>
+                        <div id="shoutbox-list" style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;"></div>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="text" id="shout-input" class="input-box" style="margin: 0;" placeholder="發言激勵士氣...">
+                            <button onclick="postShout()" class="btn-orange" style="padding: 0 14px;">發送</button>
+                        </div>
+                    </div>
+
                     <div class="card">
                         <h3 style="font-family: 'Noto Serif TC', serif; font-size: 15px; color: #18181b; margin-bottom: 10px;">👥 同組夥伴狀況 (唯讀)</h3>
-                        <div id="partner-group-list" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
-                            <!-- 動態填充 -->
-                        </div>
+                        <div id="partner-group-list" style="max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;"></div>
                     </div>
                 </div>
 
-                <!-- Monopoly Board -->
+                <!-- Right Column: Monopoly Board (30格直完跳格子) -->
                 <div class="card">
-                    <h3 style="font-family: 'Noto Serif TC', serif; font-size: 16px; color: #18181b; margin-bottom: 6px;">🗺️ 30格大富翁戰場</h3>
-                    <p style="font-size: 11px; color: #71717a; margin-bottom: 14px;">點擊任意格子可查看詳細獎勵與說明</p>
-                    <div id="monopoly-board-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">
-                        <!-- 動態填充 30 格 -->
+                    <h3 style="font-family: 'Noto Serif TC', serif; font-size: 18px; color: #18181b; margin-bottom: 6px;">🗺️ 30格大富翁戰場 (跳格子)</h3>
+                    <p style="font-size: 11px; color: #71717a; margin-bottom: 14px;">點擊任意格子可查看詳細獎勵與說明，即時掌握棋子位置</p>
+                    <div id="monopoly-board-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px;">
+                        <!-- 動態生成 30 格 -->
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 3. Admin Dashboard View -->
+        <!-- 3. Admin Dashboard View (指揮中心) -->
         <div id="view-admin" class="hidden card">
             <h2 style="color: #18181b; font-size: 20px; margin-bottom: 14px; font-family: 'Noto Serif TC', serif;">🛡️ 指揮中心後台管理</h2>
             <p id="admin-summary-text" style="font-size: 13px; color: #71717a; margin-bottom: 20px;">總指揮官已完整登入。</p>
@@ -309,6 +317,9 @@
                     ],
                     pendingSubmissions: [],
                     rewardsLog: [],
+                    shoutbox: [
+                        { name: '總指揮官', text: '各位大亨夥伴衝刺啦！', time: '10:00' }
+                    ],
                     marqueenMessages: ['👑 歡迎登入競賽大亨灰白橘戰情室', '💡 提示：提交 FYC 業績自動換算點數，每次擲骰消耗 10 點！'],
                     notice: { title: '👑 競賽大亨尊榮啟動', content: '歡迎各位菁英夥伴迎向半年期衝刺！', active: true },
                     tiles: defaultTiles,
@@ -386,21 +397,50 @@
 
             // 同組夥伴
             document.getElementById('partner-group-list').innerHTML = groupMembers.map(m => `
-                <div style="background: #fafafa; padding: 8px 12px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; border: 1px solid #e4e4e7;">
+                <div style="background: #fafafa; padding: 6px 10px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; border: 1px solid #e4e4e7;">
                     <span style="font-weight: bold;">${m.name} (${m.role})</span>
                     <span style="color: #ea580c;">FYC: ${m.fyc || 0} | 格: #${m.position || 1}</span>
                 </div>
             `).join('');
 
-            // 30格棋盤
-            document.getElementById('monopoly-board-grid').innerHTML = db.tiles.map(t => `
-                <div onclick="openTileDetail(${t.id})" style="background: #fafafa; border: 1px solid #d4d4d8; padding: 10px 4px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 11px;">
-                    <div style="font-size: 16px;">${t.icon}</div>
-                    <div style="color: #18181b; margin-top: 4px; font-weight: bold;">#${t.id}</div>
+            // 嗆蝦留言板渲染
+            document.getElementById('shoutbox-list').innerHTML = (db.shoutbox || []).map(s => `
+                <div style="background: #fafafa; padding: 6px 10px; border-radius: 8px; font-size: 12px; border: 1px solid #e4e4e7;">
+                    <span style="font-weight: bold; color: #ea580c;">${s.name}</span>: ${s.text} <span style="font-size: 10px; color: #a1a1aa; float: right;">${s.time}</span>
                 </div>
             `).join('');
 
+            // 30格棋盤 (顯示誰在該格)
+            document.getElementById('monopoly-board-grid').innerHTML = db.tiles.map(t => {
+                const occupiers = groupMembers.filter(m => (m.position || 1) === t.id);
+                return `
+                    <div onclick="openTileDetail(${t.id})" style="background: #fafafa; border: 1px solid #d4d4d8; padding: 8px 4px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 11px; position: relative;">
+                        <div style="font-size: 14px;">${t.icon}</div>
+                        <div style="color: #18181b; margin-top: 2px; font-weight: bold;">#${t.id}</div>
+                        <div style="display:flex; justify-content:center; gap:2px; margin-top:2px;">
+                            ${occupiers.map(o => `<span style="background:#ea580c; color:#fff; font-size:9px; padding:1px 4px; border-radius:4px;" title="${o.name}">${o.name[0]}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
             toggleTagInput();
+        }
+
+        function postShout() {
+            const input = document.getElementById('shout-input');
+            const text = input.value.trim();
+            if (!text) return;
+            const db = getDB();
+            if (!db.shoutbox) db.shoutbox = [];
+            db.shoutbox.unshift({
+                name: currentUser.name,
+                text,
+                time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+            });
+            saveDB(db);
+            input.value = '';
+            initApp();
         }
 
         function renderAdminDashboard(db) {
@@ -430,7 +470,7 @@
             } else if (tab === 'users') {
                 el.innerHTML = `<div style="display: flex; flex-direction: column; gap: 10px;">` + db.users.map(u => `
                     <div style="background: #fafafa; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #d4d4d8; font-size: 13px;">
-                        <div><b>${u.name}</b> (${u.username}) | 組別: <span style="color:#ea580c;">${u.group}</span> | 職級: ${u.role}</div>
+                        <div><b>${u.name}</b> (${u.username}) | 組別: <span style="color:#ea580c;">${u.group}</span> | 職級: ${u.role} | 點數: ${u.points}P</div>
                         ${u.username !== 'admin' ? `<button onclick="deleteUser('${u.username}')" style="background: #fee2e2; color: #991b1b; border:none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px;">刪除</button>` : ''}
                     </div>
                 `).join('') + `</div>`;
@@ -450,6 +490,7 @@
                 user.diceCount = (user.diceCount || 0) + 1;
             }
             saveDB(db);
+            try { confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } }); } catch(e){}
             alert('審核通過！');
             initApp();
         }
