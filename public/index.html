@@ -6,8 +6,8 @@
     <title>競賽大亨 - Competition Tycoon</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: MingLiU / Serif styling -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Noto Serif TC -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Canvas Confetti CDN -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
@@ -16,21 +16,22 @@
                 extend: {
                     fontFamily: {
                         serif: ['"Noto Serif TC"', 'serif'],
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                     },
                     colors: {
-                        brand: {
-                            50: '#fdf8f6',
-                            100: '#fbe8e6',
-                            500: '#d9534f',
-                            600: '#c9302c',
-                            700: '#ac2925',
-                            900: '#7c1f1c',
+                        luxury: {
+                            950: '#09090b',
+                            900: '#121216',
+                            800: '#1c1c24',
+                            700: '#272732',
+                            600: '#3f3f50',
                         },
                         gold: {
+                            300: '#fde047',
                             400: '#facc15',
                             500: '#eab308',
                             600: '#ca8a04',
+                            glow: '#fef08a'
                         }
                     }
                 }
@@ -45,39 +46,46 @@
         .animate-marquee {
             display: inline-block;
             white-space: nowrap;
-            animation: marquee 30s linear infinite;
+            animation: marquee 35s linear infinite;
         }
-        .dice-3d {
-            transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .glass-card {
+            background: rgba(28, 28, 36, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(234, 179, 8, 0.15);
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #fef08a 0%, #eab308 50%, #ca8a04 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
-<body class="h-full bg-stone-100 text-stone-800 font-sans antialiased selection:bg-brand-500 selection:text-white flex flex-col">
+<body class="h-full bg-luxury-950 text-stone-200 font-sans antialiased selection:bg-gold-500 selection:text-black flex flex-col">
 
     <!-- Network Status Banner -->
-    <div id="network-banner" class="hidden bg-red-600 text-white text-xs py-1 px-4 text-center font-bold transition-all duration-300 z-50">
-        ⚠️ 目前無網路連線（離線模式），系統將於恢復連線時自動同步！
+    <div id="network-banner" class="hidden bg-red-900/90 text-red-200 text-xs py-1.5 px-4 text-center font-bold border-b border-red-700 z-50">
+        ⚠️ 目前處於離線模式，系統將於恢復連線時自動同步數據。
     </div>
 
-    <!-- Main Application Container -->
+    <!-- Main Container -->
     <div id="app" class="flex-1 flex flex-col h-full overflow-hidden">
         
         <!-- Header -->
-        <header class="bg-stone-900 text-stone-100 shadow-md px-6 py-4 flex items-center justify-between z-40 border-b border-stone-800">
+        <header class="bg-luxury-900/90 backdrop-blur-md shadow-xl px-6 py-4 flex items-center justify-between z-40 border-b border-gold-500/20">
             <div class="flex items-center space-x-3">
-                <span class="text-3xl bg-brand-600 p-2 rounded-xl shadow-inner inline-flex items-center justify-center">🎲</span>
+                <span class="text-3xl bg-gradient-to-br from-gold-400 to-gold-600 p-2.5 rounded-2xl shadow-lg shadow-gold-500/10 inline-flex items-center justify-center text-black font-bold">🎲</span>
                 <div>
-                    <h1 class="text-2xl font-serif font-bold tracking-wider text-gold-400">競賽大亨</h1>
-                    <p class="text-xs text-stone-400">Competition Tycoon (2026/12/14 ~ 2027/06/02)</p>
+                    <h1 class="text-2xl font-serif font-black tracking-widest gold-gradient-text">競賽大亨</h1>
+                    <p class="text-xs text-stone-400 font-mono">COMPETITION TYCOON | 2026.12.14 - 2027.06.02</p>
                 </div>
             </div>
             
             <div id="header-user-info" class="hidden flex items-center space-x-4">
                 <div class="text-right">
-                    <div id="nav-username" class="font-bold text-sm text-gold-400">--</div>
-                    <div id="nav-role-group" class="text-xs text-stone-400">--</div>
+                    <div id="nav-username" class="font-bold text-sm text-gold-300">--</div>
+                    <div id="nav-role-group" class="text-xs text-stone-400 font-mono">--</div>
                 </div>
-                <button onclick="logout()" class="bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs px-3 py-1.5 rounded-lg border border-stone-700 transition">登出</button>
+                <button onclick="logout()" class="bg-luxury-800 hover:bg-luxury-700 text-stone-300 text-xs px-3.5 py-2 rounded-xl border border-stone-700 transition shadow">登出</button>
             </div>
         </header>
 
@@ -88,86 +96,80 @@
     </div>
 
     <!-- Modals -->
-    <!-- Notice Modal -->
-    <div id="modal-notice" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-stone-200">
+    <div id="modal-notice" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl max-w-lg w-full p-8 shadow-2xl border border-gold-500/30">
             <div class="flex justify-between items-center mb-4">
-                <h3 id="notice-title" class="text-xl font-serif font-bold text-stone-900 flex items-center gap-2">📢 最新消息公告</h3>
-                <button onclick="closeModal('modal-notice')" class="text-stone-400 hover:text-stone-600 font-bold text-lg">&times;</button>
+                <h3 id="notice-title" class="text-xl font-serif font-bold text-gold-300 flex items-center gap-2">📢 最新消息公告</h3>
+                <button onclick="closeModal('modal-notice')" class="text-stone-400 hover:text-white font-bold text-xl">&times;</button>
             </div>
-            <div id="notice-content" class="text-stone-600 text-sm leading-relaxed mb-6 bg-stone-50 p-4 rounded-xl border border-stone-100">
+            <div id="notice-content" class="text-stone-300 text-sm leading-relaxed mb-6 bg-luxury-900 p-5 rounded-2xl border border-stone-800">
                 載入中...
             </div>
             <div class="text-right">
-                <button onclick="closeModal('modal-notice')" class="bg-stone-900 hover:bg-stone-800 text-white px-5 py-2 rounded-xl text-sm font-medium transition">我知道了</button>
+                <button onclick="closeModal('modal-notice')" class="bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 text-black px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-gold-500/20 transition">我知道了</button>
             </div>
         </div>
     </div>
 
-    <!-- Tile Detail Modal -->
-    <div id="modal-tile-detail" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-stone-200">
+    <div id="modal-tile-detail" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl max-w-md w-full p-6 shadow-2xl border border-gold-500/30">
             <div class="flex justify-between items-center mb-4">
-                <h3 id="tile-modal-title" class="text-lg font-serif font-bold text-stone-900">格子詳情</h3>
-                <button onclick="closeModal('modal-tile-detail')" class="text-stone-400 hover:text-stone-600 font-bold text-lg">&times;</button>
+                <h3 id="tile-modal-title" class="text-lg font-serif font-bold text-gold-300">格子詳情</h3>
+                <button onclick="closeModal('modal-tile-detail')" class="text-stone-400 hover:text-white font-bold text-xl">&times;</button>
             </div>
-            <div id="tile-modal-body" class="text-stone-600 text-sm space-y-3 mb-6 bg-stone-50 p-4 rounded-xl"></div>
+            <div id="tile-modal-body" class="text-stone-300 text-sm space-y-3 mb-6 bg-luxury-900 p-4 rounded-2xl border border-stone-800"></div>
             <div class="text-right">
-                <button onclick="closeModal('modal-tile-detail')" class="bg-stone-900 hover:bg-stone-800 text-white px-4 py-2 rounded-xl text-sm font-medium">關閉</button>
+                <button onclick="closeModal('modal-tile-detail')" class="bg-stone-800 hover:bg-stone-700 text-white px-5 py-2 rounded-xl text-sm font-medium">關閉</button>
             </div>
         </div>
     </div>
 
-    <!-- Reward / Landing Modal -->
-    <div id="modal-reward-alert" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl text-center border border-stone-200">
-            <div class="text-5xl mb-3 animate-bounce">🎁</div>
-            <h3 class="text-xl font-serif font-bold text-stone-900 mb-2">踩格子戰報</h3>
-            <p id="reward-alert-text" class="text-stone-600 text-sm mb-6">恭喜獲得豐富獎勵！</p>
-            <button onclick="closeModal('modal-reward-alert')" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-xl font-medium transition shadow-md shadow-brand-500/20">太棒了</button>
+    <div id="modal-reward-alert" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl max-w-sm w-full p-8 shadow-2xl text-center border border-gold-500/40">
+            <div class="text-6xl mb-3 animate-bounce">🏆</div>
+            <h3 class="text-2xl font-serif font-bold gold-gradient-text mb-2">踩格子戰報</h3>
+            <p id="reward-alert-text" class="text-stone-300 text-sm mb-6">恭喜獲得豐富大獎！</p>
+            <button onclick="closeModal('modal-reward-alert')" class="w-full bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 text-black py-3 rounded-xl font-bold transition shadow-lg shadow-gold-500/20">太棒了</button>
         </div>
     </div>
 
-    <!-- Approval Notification Modal -->
-    <div id="modal-approval-notify" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl text-center border border-stone-200">
-            <div class="text-5xl mb-3 animate-pulse">🎉</div>
-            <h3 class="text-xl font-serif font-bold text-stone-900 mb-2">審核通過通知！</h3>
-            <p id="approval-notify-text" class="text-stone-600 text-sm mb-6">您的成績申報已通過審核！</p>
-            <button onclick="closeModal('modal-approval-notify')" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-xl font-medium transition">確認收到</button>
+    <div id="modal-approval-notify" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl max-w-sm w-full p-8 shadow-2xl text-center border border-gold-500/40">
+            <div class="text-6xl mb-3 animate-pulse">✨</div>
+            <h3 class="text-2xl font-serif font-bold gold-gradient-text mb-2">審核通過通知</h3>
+            <p id="approval-notify-text" class="text-stone-300 text-sm mb-6">您的成績申報已通過審核！</p>
+            <button onclick="closeModal('modal-approval-notify')" class="w-full bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 text-black py-3 rounded-xl font-bold transition">確認收到</button>
         </div>
     </div>
 
-    <!-- Forgot Password Modal -->
-    <div id="modal-forgot" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-stone-200">
+    <div id="modal-forgot" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl max-w-md w-full p-6 shadow-2xl border border-gold-500/30">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-serif font-bold text-stone-900">🔑 忘記密碼查詢</h3>
-                <button onclick="closeModal('modal-forgot')" class="text-stone-400 hover:text-stone-600 font-bold text-lg">&times;</button>
+                <h3 class="text-lg font-serif font-bold text-gold-300">🔑 忘記密碼查詢</h3>
+                <button onclick="closeModal('modal-forgot')" class="text-stone-400 hover:text-white font-bold text-xl">&times;</button>
             </div>
             <div class="space-y-4 mb-4">
                 <div>
-                    <label class="block text-xs font-medium text-stone-600 mb-1">註冊帳號 / 姓名</label>
-                    <input type="text" id="forgot-username" class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="輸入註冊帳號">
+                    <label class="block text-xs font-medium text-stone-400 mb-1">註冊帳號 / 姓名</label>
+                    <input type="text" id="forgot-username" class="w-full px-4 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm focus:ring-2 focus:ring-gold-500 text-white outline-none" placeholder="輸入註冊帳號">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-stone-600 mb-1">電子信箱</label>
-                    <input type="email" id="forgot-email" class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="your@email.com">
+                    <label class="block text-xs font-medium text-stone-400 mb-1">電子信箱</label>
+                    <input type="email" id="forgot-email" class="w-full px-4 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm focus:ring-2 focus:ring-gold-500 text-white outline-none" placeholder="your@email.com">
                 </div>
-                <div id="forgot-result-box" class="hidden p-3 bg-stone-100 rounded-xl text-sm text-stone-700 font-mono text-center border">
-                    您的密碼為：<span id="forgot-password-display" class="font-bold text-brand-600"></span>
+                <div id="forgot-result-box" class="hidden p-3 bg-luxury-900 rounded-xl text-sm text-gold-300 font-mono text-center border border-gold-500/30">
+                    您的密碼為：<span id="forgot-password-display" class="font-bold text-white"></span>
                 </div>
             </div>
             <div class="flex justify-end space-x-2">
-                <button onclick="closeModal('modal-forgot')" class="px-4 py-2 bg-stone-200 text-stone-700 rounded-xl text-sm font-medium">取消</button>
-                <button onclick="handleForgotPassword()" class="px-4 py-2 bg-stone-900 text-white rounded-xl text-sm font-medium">查詢密碼</button>
+                <button onclick="closeModal('modal-forgot')" class="px-4 py-2 bg-stone-800 text-stone-300 rounded-xl text-sm font-medium">取消</button>
+                <button onclick="handleForgotPassword()" class="px-4 py-2 bg-gold-500 hover:bg-gold-400 text-black rounded-xl text-sm font-bold">查詢密碼</button>
             </div>
         </div>
     </div>
 
-    <!-- Application Script -->
+    <!-- Script -->
     <script>
-        // --- Web Audio API & Sound Effects ---
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(type) {
             if (!audioCtx) return;
@@ -188,9 +190,9 @@
                 osc.stop(now + 0.15);
             } else if (type === 'reward' || type === 'success') {
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(440, now);
-                osc.frequency.setValueAtTime(554.37, now + 0.1);
-                osc.frequency.setValueAtTime(659.25, now + 0.2);
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.1);
+                osc.frequency.setValueAtTime(783.99, now + 0.2);
                 gain.gain.setValueAtTime(0.2, now);
                 gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
                 osc.start(now);
@@ -202,14 +204,13 @@
             if (navigator.vibrate) navigator.vibrate([60, 60, 60]);
         }
 
-        // --- Database Seed & LocalStorage Management ---
         const DEFAULT_TILES = Array.from({ length: 30 }, (_, i) => ({
             id: i + 1,
-            name: i === 0 ? '起點 豐收站' : `第 ${i + 1} 格：業務站`,
+            name: i === 0 ? '起點 尊榮豐收站' : `第 ${i + 1} 格：菁英站`,
             type: i % 5 === 0 ? 'bonus' : (i % 3 === 0 ? 'challenge' : 'normal'),
-            icon: i % 5 === 0 ? '🎁' : (i % 3 === 0 ? '⚡' : '📍'),
-            rewardDesc: `獲得隨機 5~15 點業務積分與實體抽獎券！`,
-            desc: `這是充滿機遇與挑戰的第 ${i + 1} 格，停駐可獲得豐富獎勵與戰力加成。`
+            icon: i % 5 === 0 ? '👑' : (i % 3 === 0 ? '⚡' : '💼'),
+            rewardDesc: `獲得隨機 5~15 點業務積分與尊榮抽獎券！`,
+            desc: `這是充滿機遇與高額獎勵的第 ${i + 1} 格，停駐可獲得豐厚加成。`
         }));
 
         const DEFAULT_TAGS = {
@@ -226,18 +227,18 @@
             if (!db) {
                 db = {
                     users: [
-                        { username: 'admin', password: 'admin', name: '系統管理者', role: '業務經理', group: '指揮中心', email: 'admin@tycoon.com', fyc: 0, points: 100, diceCount: 10, position: 1, upline: '', isAdmin: true }
+                        { username: 'admin', password: 'admin', name: '總指揮官', role: '業務經理', group: '指揮中心', email: 'admin@tycoon.com', fyc: 0, points: 100, diceCount: 10, position: 1, upline: '', buffs: [], isAdmin: true }
                     ],
                     pendingSubmissions: [],
                     rewardsLog: [],
                     marqueenMessages: [
-                        '🔥 歡迎使用競賽大亨 2026/12/14 ~ 2027/06/02 半年期雙軌競賽系統！',
-                        '💡 提示：提交 FYC 業績自動以 1,000 FYC = 1 P 換算點數！',
-                        '🎯 參與大富翁闖關與增員裂變，爭奪團隊大亨寶座！'
+                        '👑 歡迎登入競賽大亨黑金戰情室 (2026/12/14 ~ 2027/06/02)',
+                        '💡 提示：提交 FYC 業績自動以 1,000 FYC = 1 P 換算點數！每次擲骰消耗 10 點！',
+                        '🎯 挑戰大富翁棋盤與增員 Buff 裂變，爭奪年度巔峰大亨寶座！'
                     ],
                     notice: {
-                        title: '🔥 競賽大亨正式啟動公告',
-                        content: '歡迎各位夥伴迎向半年期衝刺！請確實透過下方表單申報業績、邀約與增員面談，並善用每 3 點兌換一次的幸運骰子前進大富翁棋盤！',
+                        title: '👑 競賽大亨尊榮啟動公告',
+                        content: '歡迎各位菁英夥伴迎向半年期衝刺！請確實透過下方表單申報業績、邀約與增員面談，每消耗 10 點可兌換一次幸運骰子前進棋盤！',
                         active: true
                     },
                     tiles: DEFAULT_TILES,
@@ -255,24 +256,18 @@
 
         let currentUser = JSON.parse(sessionStorage.getItem('tycoon_current_user')) || null;
 
-        // --- Network Status Monitor ---
         window.addEventListener('online', updateOnlineStatus);
         window.addEventListener('offline', updateOnlineStatus);
         function updateOnlineStatus() {
             const banner = document.getElementById('network-banner');
-            if (!navigator.onLine) {
-                banner.classList.remove('hidden');
-            } else {
-                banner.classList.add('hidden');
-            }
+            if (!navigator.onLine) banner.classList.remove('hidden');
+            else banner.classList.add('hidden');
         }
         updateOnlineStatus();
 
-        // --- Modal Helpers ---
         function showModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // --- Core Router ---
         function initApp() {
             const container = document.getElementById('view-container');
             const headerUser = document.getElementById('header-user-info');
@@ -283,7 +278,7 @@
             } else {
                 headerUser.classList.remove('hidden');
                 document.getElementById('nav-username').innerText = currentUser.name;
-                document.getElementById('nav-role-group').innerText = `${currentUser.role} | ${currentUser.group}`;
+                document.getElementById('nav-role-group').innerText = `${currentUser.role || '業務專員'} | ${currentUser.group}`;
                 
                 if (currentUser.isAdmin || currentUser.username === 'admin') {
                     renderAdminView(container);
@@ -293,49 +288,48 @@
             }
         }
 
-        // --- Authentication View ---
         function renderAuthView(container) {
             container.innerHTML = `
-                <div class="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-stone-900 via-stone-800 to-stone-900">
-                    <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-stone-200">
+                <div class="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-luxury-950 via-luxury-900 to-black">
+                    <div class="glass-card rounded-3xl max-w-md w-full p-8 shadow-2xl border border-gold-500/35">
                         <div class="text-center mb-6">
-                            <span class="text-4xl bg-brand-50 p-3 rounded-2xl inline-block mb-2 shadow-inner">🎲</span>
-                            <h2 class="text-3xl font-serif font-bold text-stone-900 tracking-wider">競賽大亨</h2>
-                            <p class="text-xs text-stone-500 mt-1">Competition Tycoon 業務開發與增員成長雙軌競賽</p>
+                            <span class="text-5xl bg-luxury-800 p-3.5 rounded-2xl inline-block mb-3 shadow-lg border border-gold-500/20">👑</span>
+                            <h2 class="text-3xl font-serif font-black gold-gradient-text tracking-wider">競賽大亨</h2>
+                            <p class="text-xs text-stone-400 mt-1 font-mono">Competition Tycoon 奢華商戰雙軌競賽</p>
                         </div>
 
-                        <div class="flex rounded-xl bg-stone-100 p-1 mb-6 text-sm font-medium">
-                            <button onclick="switchAuthTab('login')" id="tab-login-btn" class="flex-1 py-2 rounded-lg bg-white shadow-sm text-stone-900 transition">登入系統</button>
-                            <button onclick="switchAuthTab('register')" id="tab-reg-btn" class="flex-1 py-2 rounded-lg text-stone-500 transition">立即註冊</button>
+                        <div class="flex rounded-xl bg-luxury-900 p-1 mb-6 text-sm font-medium border border-stone-800">
+                            <button onclick="switchAuthTab('login')" id="tab-login-btn" class="flex-1 py-2 rounded-lg bg-gold-500 text-black font-bold transition">登入系統</button>
+                            <button onclick="switchAuthTab('register')" id="tab-reg-btn" class="flex-1 py-2 rounded-lg text-stone-400 transition">立即註冊</button>
                         </div>
 
                         <!-- Login Form -->
                         <div id="form-login" class="space-y-4">
                             <div>
-                                <label class="block text-xs font-semibold text-stone-600 mb-1">帳號 / 姓名</label>
-                                <input type="text" id="login-user" class="w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="請輸入帳號">
+                                <label class="block text-xs font-semibold text-stone-400 mb-1">帳號 / 姓名</label>
+                                <input type="text" id="login-user" class="w-full px-4 py-3 bg-luxury-900 border border-stone-700 rounded-xl text-sm focus:ring-2 focus:ring-gold-500 text-white outline-none" placeholder="請輸入帳號">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-stone-600 mb-1">密碼</label>
-                                <input type="password" id="login-pass" class="w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="請輸入密碼">
+                                <label class="block text-xs font-semibold text-stone-400 mb-1">密碼</label>
+                                <input type="password" id="login-pass" class="w-full px-4 py-3 bg-luxury-900 border border-stone-700 rounded-xl text-sm focus:ring-2 focus:ring-gold-500 text-white outline-none" placeholder="請輸入密碼">
                             </div>
                             <div class="flex items-center justify-between text-xs">
-                                <label class="flex items-center text-stone-600"><input type="checkbox" class="mr-1.5 rounded">記住我</label>
-                                <button onclick="showModal('modal-forgot')" type="button" class="text-brand-600 hover:underline">忘記密碼？</button>
+                                <label class="flex items-center text-stone-400"><input type="checkbox" class="mr-1.5 rounded bg-luxury-900 border-stone-700">記住我</label>
+                                <button onclick="showModal('modal-forgot')" type="button" class="text-gold-400 hover:underline">忘記密碼？</button>
                             </div>
-                            <button onclick="handleLogin()" class="w-full bg-stone-900 hover:bg-stone-800 text-white py-3 rounded-xl font-medium shadow-lg transition">進入戰情室 / 指揮中心</button>
+                            <button onclick="handleLogin()" class="w-full bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 text-black py-3.5 rounded-xl font-bold shadow-lg shadow-gold-500/20 transition">進入戰情室</button>
                         </div>
 
                         <!-- Register Form -->
                         <div id="form-register" class="space-y-3.5 hidden">
                             <div>
-                                <label class="block text-xs font-semibold text-stone-600 mb-1">真實姓名</label>
-                                <input type="text" id="reg-name" class="w-full px-3 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="例如：王大明">
+                                <label class="block text-xs font-semibold text-stone-400 mb-1">真實姓名</label>
+                                <input type="text" id="reg-name" class="w-full px-3 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white outline-none focus:ring-2 focus:ring-gold-500" placeholder="例如：王大明">
                             </div>
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block text-xs font-semibold text-stone-600 mb-1">職級</label>
-                                    <select id="reg-role" class="w-full px-3 py-2 border rounded-xl text-sm bg-white outline-none">
+                                    <label class="block text-xs font-semibold text-stone-400 mb-1">職級</label>
+                                    <select id="reg-role" class="w-full px-3 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white outline-none">
                                         <option value="業務專員">業務專員</option>
                                         <option value="業務主任">業務主任</option>
                                         <option value="業務襄理">業務襄理</option>
@@ -343,27 +337,27 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold text-stone-600 mb-1">隸屬組別 (同名自動整併)</label>
-                                    <input type="text" id="reg-group" class="w-full px-3 py-2 border rounded-xl text-sm outline-none" placeholder="例如：A組">
+                                    <label class="block text-xs font-semibold text-stone-400 mb-1">隸屬組別 (同名自動整併)</label>
+                                    <input type="text" id="reg-group" class="w-full px-3 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white outline-none" placeholder="例如：A組">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-stone-600 mb-1">直屬推薦人 (上線，選填)</label>
-                                <input type="text" id="reg-upline" class="w-full px-3 py-2 border rounded-xl text-sm outline-none" placeholder="推薦人姓名">
+                                <label class="block text-xs font-semibold text-stone-400 mb-1">直屬推薦人 (上線，選填)</label>
+                                <input type="text" id="reg-upline" class="w-full px-3 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white outline-none" placeholder="推薦人姓名">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-stone-600 mb-1">註冊帳號</label>
-                                <input type="text" id="reg-username" class="w-full px-3 py-2 border rounded-xl text-sm outline-none" placeholder="設定登入帳號">
+                                <label class="block text-xs font-semibold text-stone-400 mb-1">註冊帳號</label>
+                                <input type="text" id="reg-username" class="w-full px-3 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white outline-none" placeholder="設定登入帳號">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-stone-600 mb-1">電子信箱 (用於尋回密碼)</label>
-                                <input type="email" id="reg-email" class="w-full px-3 py-2 border rounded-xl text-sm outline-none" placeholder="your@email.com">
+                                <label class="block text-xs font-semibold text-stone-400 mb-1">電子信箱 (用於尋回密碼)</label>
+                                <input type="email" id="reg-email" class="w-full px-3 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white outline-none" placeholder="your@email.com">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-stone-600 mb-1">密碼</label>
-                                <input type="password" id="reg-pass" class="w-full px-3 py-2 border rounded-xl text-sm outline-none" placeholder="設定登入密碼">
+                                <label class="block text-xs font-semibold text-stone-400 mb-1">密碼</label>
+                                <input type="password" id="reg-pass" class="w-full px-3 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white outline-none" placeholder="設定登入密碼">
                             </div>
-                            <button onclick="handleRegister()" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3 rounded-xl font-medium shadow-md transition mt-2">完成註冊並登入</button>
+                            <button onclick="handleRegister()" class="w-full bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 text-black py-3.5 rounded-xl font-bold shadow-lg shadow-gold-500/20 transition mt-2">完成註冊並登入</button>
                         </div>
                     </div>
                 </div>
@@ -378,13 +372,13 @@
             if (tab === 'login') {
                 loginForm.classList.remove('hidden');
                 regForm.classList.add('hidden');
-                loginBtn.className = 'flex-1 py-2 rounded-lg bg-white shadow-sm text-stone-900 transition';
-                regBtn.className = 'flex-1 py-2 rounded-lg text-stone-500 transition';
+                loginBtn.className = 'flex-1 py-2 rounded-lg bg-gold-500 text-black font-bold transition';
+                regBtn.className = 'flex-1 py-2 rounded-lg text-stone-400 transition';
             } else {
                 loginForm.classList.add('hidden');
                 regForm.classList.remove('hidden');
-                regBtn.className = 'flex-1 py-2 rounded-lg bg-white shadow-sm text-stone-900 transition';
-                loginBtn.className = 'flex-1 py-2 rounded-lg text-stone-500 transition';
+                regBtn.className = 'flex-1 py-2 rounded-lg bg-gold-500 text-black font-bold transition';
+                loginBtn.className = 'flex-1 py-2 rounded-lg text-stone-400 transition';
             }
         }
 
@@ -394,7 +388,7 @@
             const db = getDB();
 
             if (u === 'admin' && p === db.adminPassword) {
-                currentUser = db.users.find(x => x.username === 'admin') || { username: 'admin', name: '系統管理者', isAdmin: true };
+                currentUser = db.users.find(x => x.username === 'admin') || { username: 'admin', name: '總指揮官', isAdmin: true };
                 sessionStorage.setItem('tycoon_current_user', JSON.stringify(currentUser));
                 initApp();
                 return;
@@ -433,7 +427,7 @@
 
             const newUser = {
                 username, password, name, role, group, upline, email,
-                fyc: 0, points: 5, diceCount: 2, position: 1, isAdmin: false
+                fyc: 0, points: 5, diceCount: 2, position: 1, buffs: [], isAdmin: false
             };
 
             db.users.push(newUser);
@@ -466,25 +460,43 @@
             initApp();
         }
 
-        // --- Partner Dashboard (戰情室) ---
         function renderPartnerView(container) {
             const db = getDB();
             document.getElementById('notice-title').innerText = db.notice.title || '最新消息公告';
             document.getElementById('notice-content').innerText = db.notice.content || '暫無公告';
 
-            // Calculate Group & Downline Performance aggregation
             const myGroup = currentUser.group;
             const groupMembers = db.users.filter(x => x.group === myGroup);
-            // Downlines where upline is currentUser.name
-            const downlines = db.users.filter(x => x.upline === currentUser.name);
-            const downlinesFYC = downlines.reduce((sum, d) => sum + (d.fyc || 0), 0);
-            const totalAggregatedFYC = (currentUser.fyc || 0) + downlinesFYC;
+            
+            // 計算本人 FYC + 透過 Buff 複選增員夥伴的業績總合
+            let buffFYC = 0;
+            if (currentUser.buffs && currentUser.buffs.length > 0) {
+                currentUser.buffs.forEach(buffName => {
+                    const targetUser = db.users.find(u => u.name === buffName || u.username === buffName);
+                    if (targetUser) {
+                        buffFYC += (targetUser.fyc || 0);
+                    }
+                });
+            }
+            const totalAggregatedFYC = (currentUser.fyc || 0) + buffFYC;
             const groupTotalFYC = groupMembers.reduce((sum, m) => sum + (m.fyc || 0), 0);
+
+            // 動態產生 Tag 下拉選單
+            const tagOptions = Object.keys(db.tags).map(tagName => {
+                const tagInfo = db.tags[tagName];
+                let label = tagName;
+                if (tagName === 'FYC') {
+                    label = `FYC 業績 (1,000 FYC = 1 P)`;
+                } else {
+                    label = `${tagName} (${tagInfo.points} 點)`;
+                }
+                return `<option value="${tagName}">${label}</option>`;
+            }).join('');
 
             container.innerHTML = `
                 <!-- Marquee Ticker -->
-                <div class="bg-stone-900 text-gold-400 text-xs py-2 px-4 overflow-hidden whitespace-nowrap border-b border-stone-800 flex items-center">
-                    <span class="font-serif font-bold bg-brand-600 text-white px-2 py-0.5 rounded mr-3 shrink-0">戰報</span>
+                <div class="bg-luxury-900 text-gold-300 text-xs py-2.5 px-4 overflow-hidden whitespace-nowrap border-b border-gold-500/20 flex items-center shadow-inner">
+                    <span class="font-serif font-bold bg-gold-500 text-black px-2.5 py-1 rounded-lg mr-3 shrink-0 shadow">戰報</span>
                     <div class="overflow-hidden relative w-full">
                         <div class="animate-marquee inline-block font-medium">
                             ${db.marqueenMessages.join(' &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ')}
@@ -496,27 +508,27 @@
                     
                     <!-- Stats Grid -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-stone-200">
-                            <p class="text-xs text-stone-500 font-medium">個人業績 (含下線裂變)</p>
-                            <p class="text-2xl font-serif font-bold text-stone-900 mt-1">${totalAggregatedFYC}</p>
-                            <span class="text-[10px] text-stone-400">個人: ${currentUser.fyc || 0} | 下線貢獻: ${downlinesFYC}</span>
+                        <div class="glass-card p-5 rounded-2xl border border-gold-500/20 shadow-xl">
+                            <p class="text-xs text-stone-400 font-medium">個人業績 (含增員 Buff 裂變)</p>
+                            <p class="text-2xl font-serif font-black text-white mt-1">${totalAggregatedFYC}</p>
+                            <span class="text-[10px] text-stone-500">個人: ${currentUser.fyc || 0} | Buff 貢獻: ${buffFYC}</span>
                         </div>
-                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-stone-200">
-                            <p class="text-xs text-stone-500 font-medium">可用點數 / 骰子</p>
-                            <p class="text-2xl font-serif font-bold text-brand-600 mt-1">${currentUser.points || 0} P / <span class="text-gold-600">${currentUser.diceCount || 0} 骰</span></p>
-                            <span class="text-[10px] text-stone-400">每消耗 3 點可擲骰一次</span>
+                        <div class="glass-card p-5 rounded-2xl border border-gold-500/20 shadow-xl">
+                            <p class="text-xs text-stone-400 font-medium">可用點數 / 骰子</p>
+                            <p class="text-2xl font-serif font-black text-gold-400 mt-1">${currentUser.points || 0} P / <span class="text-white">${currentUser.diceCount || 0} 骰</span></p>
+                            <span class="text-[10px] text-stone-500">每消耗 10 點可擲骰一次</span>
                         </div>
-                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-stone-200">
-                            <p class="text-xs text-stone-500 font-medium">團隊總業績 (${myGroup})</p>
-                            <p class="text-2xl font-serif font-bold text-stone-900 mt-1">${groupTotalFYC}</p>
-                            <span class="text-[10px] text-stone-400">同組組員業績總計</span>
+                        <div class="glass-card p-5 rounded-2xl border border-gold-500/20 shadow-xl">
+                            <p class="text-xs text-stone-400 font-medium">團隊總業績 (${myGroup})</p>
+                            <p class="text-2xl font-serif font-black text-white mt-1">${groupTotalFYC}</p>
+                            <span class="text-[10px] text-stone-500">同組組員業績總計</span>
                         </div>
-                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-stone-200 flex flex-col justify-between">
+                        <div class="glass-card p-5 rounded-2xl border border-gold-500/20 shadow-xl flex flex-col justify-between">
                             <div>
-                                <p class="text-xs text-stone-500 font-medium">大富翁目前位置</p>
-                                <p class="text-2xl font-serif font-bold text-stone-900 mt-1">第 ${currentUser.position || 1} 格</p>
+                                <p class="text-xs text-stone-400 font-medium">大富翁目前位置</p>
+                                <p class="text-2xl font-serif font-black text-gold-400 mt-1">第 ${currentUser.position || 1} 格</p>
                             </div>
-                            <button onclick="showModal('modal-notice')" class="text-xs text-brand-600 font-bold hover:underline self-start">查看公告 &rarr;</button>
+                            <button onclick="showModal('modal-notice')" class="text-xs text-gold-400 font-bold hover:underline self-start">查看公告 &rarr;</button>
                         </div>
                     </div>
 
@@ -526,45 +538,40 @@
                         <!-- Left Panel -->
                         <div class="space-y-6">
                             <!-- Submission Form -->
-                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-200">
-                                <h3 class="font-serif font-bold text-lg mb-4 flex items-center gap-2">📝 點數與成績申報</h3>
-                                <div class="space-y-3">
+                            <div class="glass-card p-6 rounded-2xl border border-gold-500/20 shadow-xl">
+                                <h3 class="font-serif font-bold text-lg mb-4 text-gold-300 flex items-center gap-2">📝 點數與成績申報</h3>
+                                <div class="space-y-3.5">
                                     <div>
-                                        <label class="block text-xs font-semibold text-stone-600 mb-1">申報標籤 (Tag)</label>
-                                        <select id="sub-tag" onchange="toggleTagInput()" class="w-full px-3 py-2 border rounded-xl text-sm bg-white outline-none">
-                                            <option value="FYC">FYC 業績 (1,000 FYC = 1 P)</option>
-                                            <option value="活動邀約">活動邀約 (固定點數)</option>
-                                            <option value="增員面談">增員面談 (固定點數)</option>
-                                            <option value="新夥伴公司考">新夥伴公司考 (固定點數)</option>
-                                            <option value="新夥伴外部考">新夥伴外部考 (固定點數)</option>
-                                            <option value="新夥伴報聘">新夥伴報聘 (固定點數)</option>
+                                        <label class="block text-xs font-semibold text-stone-400 mb-1">申報標籤 (Tag / 任務)</label>
+                                        <select id="sub-tag" onchange="toggleTagInput()" class="w-full px-3.5 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white outline-none">
+                                            ${tagOptions}
                                         </select>
                                     </div>
                                     <div id="sub-fyc-box">
-                                        <label class="block text-xs font-semibold text-stone-600 mb-1">輸入 FYC 金額</label>
-                                        <input type="number" id="sub-fyc-val" class="w-full px-3 py-2 border rounded-xl text-sm outline-none" placeholder="例如：10000">
+                                        <label class="block text-xs font-semibold text-stone-400 mb-1">輸入 FYC 金額</label>
+                                        <input type="number" id="sub-fyc-val" class="w-full px-3.5 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white outline-none" placeholder="例如：10000">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-semibold text-stone-600 mb-1">備註說明 / 客戶名稱</label>
-                                        <input type="text" id="sub-desc" class="w-full px-3 py-2 border rounded-xl text-sm outline-none" placeholder="請填寫相關證明或說明">
+                                        <label class="block text-xs font-semibold text-stone-400 mb-1">備註說明 / 客戶名稱</label>
+                                        <input type="text" id="sub-desc" class="w-full px-3.5 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white outline-none" placeholder="請填寫相關證明或說明">
                                     </div>
-                                    <button onclick="submitScoreRequest()" class="w-full bg-stone-900 hover:bg-stone-800 text-white py-2.5 rounded-xl text-sm font-medium shadow transition">送交指揮中心審核</button>
+                                    <button onclick="submitScoreRequest()" class="w-full bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 text-black py-3 rounded-xl text-sm font-bold shadow-lg shadow-gold-500/20 transition">送交指揮中心審核</button>
                                 </div>
                             </div>
 
-                            <!-- Group Team View (Read Only) -->
-                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-200">
-                                <h3 class="font-serif font-bold text-lg mb-3">👥 組內夥伴狀況 (唯讀)</h3>
+                            <!-- Group Team View -->
+                            <div class="glass-card p-6 rounded-2xl border border-gold-500/20 shadow-xl">
+                                <h3 class="font-serif font-bold text-lg mb-3 text-gold-300">👥 組內夥伴狀況 (唯讀)</h3>
                                 <div class="space-y-2 max-h-60 overflow-y-auto pr-1">
                                     ${groupMembers.map(m => `
-                                        <div class="flex justify-between items-center p-2.5 bg-stone-50 rounded-xl text-xs border border-stone-100">
+                                        <div class="flex justify-between items-center p-3 bg-luxury-900/80 rounded-xl text-xs border border-stone-800">
                                             <div>
-                                                <span class="font-bold text-stone-900">${m.name}</span>
-                                                <span class="text-stone-400 ml-1">(${m.role})</span>${m.upline ? `<span class="text-[10px] bg-stone-200 text-stone-600 px-1.5 py-0.5 rounded ml-1">上線: ${m.upline}</span>` : ''}
+                                                <span class="font-bold text-white">${m.name}</span>
+                                                <span class="text-stone-400 ml-1">(${m.role || '業務專員'})</span>
                                             </div>
                                             <div class="text-right">
-                                                <span class="text-brand-600 font-bold">FYC: ${m.fyc || 0}</span>
-                                                <span class="text-stone-500 ml-2">格: #${m.position || 1}</span>
+                                                <span class="text-gold-400 font-bold">FYC: ${m.fyc || 0}</span>
+                                                <span class="text-stone-400 ml-2">格: #${m.position || 1}</span>
                                             </div>
                                         </div>
                                     `).join('')}
@@ -573,15 +580,15 @@
                         </div>
 
                         <!-- Right Panel: Monopoly Board & 3D Dice -->
-                        <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-stone-200 flex flex-col justify-between">
+                        <div class="lg:col-span-2 glass-card p-6 rounded-2xl border border-gold-500/20 shadow-xl flex flex-col justify-between">
                             <div>
                                 <div class="flex justify-between items-center mb-4">
-                                    <h3 class="font-serif font-bold text-xl flex items-center gap-2">🗺️ 30格大富翁棋盤戰場</h3>
-                                    <button onclick="rollDice()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md shadow-brand-500/20 flex items-center gap-1.5 transition">
-                                        🎲 擲骰子 (耗 3 P)
+                                    <h3 class="font-serif font-bold text-xl text-gold-300 flex items-center gap-2">🗺️ 30格大富翁棋盤戰場</h3>
+                                    <button onclick="rollDice()" class="bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 text-black px-5 py-2.5 rounded-xl text-sm font-black shadow-lg shadow-gold-500/25 flex items-center gap-1.5 transition">
+                                        🎲 擲骰子 (耗 10 P)
                                     </button>
                                 </div>
-                                <p class="text-xs text-stone-500 mb-4">點擊任意格子可查看詳細獎勵與說明；棋盤實時展示組內夥伴目前棋子位置。</p>
+                                <p class="text-xs text-stone-400 mb-4">點擊任意格子可查看詳細獎勵與說明；棋盤實時展示組內夥伴目前棋子位置。</p>
                             </div>
 
                             <!-- 30 Tiles Grid -->
@@ -589,14 +596,14 @@
                                 ${db.tiles.map(t => {
                                     const occupiers = groupMembers.filter(m => (m.position || 1) === t.id);
                                     return `
-                                        <div onclick="openTileDetail(${t.id})" class="cursor-pointer bg-stone-50 hover:bg-stone-100 border border-stone-200 p-2 rounded-xl flex flex-col justify-between h-20 relative transition group">
+                                        <div onclick="openTileDetail(${t.id})" class="cursor-pointer bg-luxury-900 hover:bg-luxury-800 border border-stone-800 hover:border-gold-500/50 p-2 rounded-xl flex flex-col justify-between h-20 relative transition group">
                                             <div class="flex justify-between items-start">
-                                                <span class="text-[10px] font-bold text-stone-400">${t.id}</span>
+                                                <span class="text-[10px] font-bold text-stone-500">${t.id}</span>
                                                 <span class="text-sm">${t.icon}</span>
                                             </div>
-                                            <div class="text-[10px] font-medium text-stone-700 truncate">${t.name.split('：')[0]}</div>
+                                            <div class="text-[10px] font-medium text-stone-300 truncate">${t.name.split('：')[0]}</div>
                                             <div class="flex -space-x-1 overflow-hidden mt-1">
-                                                ${occupiers.map(o => `<span class="inline-block w-4 h-4 rounded-full bg-brand-600 text-white text-[9px] font-bold text-center leading-4 ring-2 ring-white" title="${o.name}">${o.name[0]}</span>`).join('')}
+                                                ${occupiers.map(o => `<span class="inline-block w-4 h-4 rounded-full bg-gold-500 text-black text-[9px] font-bold text-center leading-4 ring-2 ring-luxury-950" title="${o.name}">${o.name[0]}</span>`).join('')}
                                             </div>
                                         </div>
                                     `;
@@ -604,25 +611,25 @@
                             </div>
 
                             <!-- Floating 3D Dice Container -->
-                            <div id="dice-container" class="hidden my-4 p-6 bg-stone-900 rounded-2xl text-center text-white">
+                            <div id="dice-container" class="hidden my-4 p-6 bg-black rounded-2xl text-center border border-gold-500/40">
                                 <div id="dice-visual" class="text-6xl mb-2 dice-3d inline-block">🎲</div>
-                                <div id="dice-result-text" class="text-lg font-serif font-bold text-gold-400">正在擲骰子...</div>
+                                <div id="dice-result-text" class="text-lg font-serif font-bold text-gold-300">正在擲骰子...</div>
                             </div>
                         </div>
 
                     </div>
                 </div>
             `;
+            toggleTagInput();
         }
 
         function toggleTagInput() {
-            const tag = document.getElementById('sub-tag').value;
+            const tagSelect = document.getElementById('sub-tag');
+            if (!tagSelect) return;
+            const tag = tagSelect.value;
             const fycBox = document.getElementById('sub-fyc-box');
-            if (tag === 'FYC') {
-                fycBox.classList.remove('hidden');
-            } else {
-                fycBox.classList.add('hidden');
-            }
+            if (tag === 'FYC') fycBox.classList.remove('hidden');
+            else fycBox.classList.add('hidden');
         }
 
         function submitScoreRequest() {
@@ -657,7 +664,7 @@
 
             document.getElementById('tile-modal-title').innerText = `第 ${tile.id} 格：${tile.name}`;
             document.getElementById('tile-modal-body').innerHTML = `
-                <p><strong>格子類型：</strong> <span class="text-brand-600 font-bold">${tile.type}</span></p>
+                <p><strong>格子類型：</strong> <span class="text-gold-400 font-bold">${tile.type}</span></p>
                 <p><strong>格子圖示：</strong> ${tile.icon}</p>
                 <p><strong>獎勵說明：</strong> ${tile.rewardDesc}</p>
                 <p><strong>詳細介紹：</strong> ${tile.desc}</p>
@@ -666,14 +673,14 @@
         }
 
         function rollDice() {
-            if ((currentUser.points || 0) < 3) {
-                alert('可用點數不足 3 點，無法擲骰子！');
+            if ((currentUser.points || 0) < 10) {
+                alert('可用點數不足 10 點，無法擲骰子！');
                 return;
             }
 
             const db = getDB();
             const userIdx = db.users.findIndex(x => x.username === currentUser.username);
-            db.users[userIdx].points -= 3;
+            db.users[userIdx].points -= 10;
             currentUser = db.users[userIdx];
             saveDB(db);
             initApp();
@@ -683,7 +690,6 @@
 
             const diceBox = document.getElementById('dice-container');
             const visual = document.getElementById('dice-visual');
-            const resultText = document.getElementById('dice-result-text');
             diceBox.classList.remove('hidden');
 
             let count = 0;
@@ -704,11 +710,11 @@
                     currentUser.position = newPos;
                     db.users[userIdx].position = newPos;
 
-                    const rewardPoints = finalRoll * 3;
+                    const rewardPoints = finalRoll * 5;
                     currentUser.points += rewardPoints;
                     db.users[userIdx].points = currentUser.points;
 
-                    const rewardText = `踩中第 ${newPos} 格，獲得 ${rewardPoints} 點與實體抽獎券！`;
+                    const rewardText = `踩中第 ${newPos} 格，獲得 ${rewardPoints} 點與尊榮抽獎券！`;
                     db.rewardsLog.push({
                         username: currentUser.username,
                         name: currentUser.name,
@@ -727,24 +733,23 @@
             }, 100);
         }
 
-        // --- Command Center (指揮中心 Admin) ---
         let adminTab = 'approval';
         function renderAdminView(container) {
             const db = getDB();
 
             container.innerHTML = `
-                <div class="bg-stone-900 text-white border-b border-stone-800 px-6 py-3 flex items-center justify-between">
+                <div class="bg-luxury-900 text-white border-b border-gold-500/20 px-6 py-3 flex items-center justify-between">
                     <div class="flex items-center space-x-2">
-                        <span class="bg-brand-600 px-3 py-1 rounded-lg text-xs font-bold">指揮中心後台</span>
+                        <span class="bg-gold-500 text-black px-3 py-1 rounded-lg text-xs font-bold shadow">指揮中心後台</span>
                         <span class="text-xs text-stone-400">營運中樞與自動組別整併</span>
                     </div>
                     <div class="flex space-x-2 text-xs font-medium overflow-x-auto">
-                        <button onclick="setAdminTab('approval')" class="px-3 py-1.5 rounded-lg transition ${adminTab==='approval'?'bg-white text-stone-900':'bg-stone-800 text-stone-300'}">點數審核 (${db.pendingSubmissions.filter(x=>x.status==='pending').length})</button>
-                        <button onclick="setAdminTab('users')" class="px-3 py-1.5 rounded-lg transition ${adminTab==='users'?'bg-white text-stone-900':'bg-stone-800 text-stone-300'}">夥伴管理</button>
-                        <button onclick="setAdminTab('settings')" class="px-3 py-1.5 rounded-lg transition ${adminTab==='settings'?'bg-white text-stone-900':'bg-stone-800 text-stone-300'}">遊戲設定</button>
-                        <button onclick="setAdminTab('rewards')" class="px-3 py-1.5 rounded-lg transition ${adminTab==='rewards'?'bg-white text-stone-900':'bg-stone-800 text-stone-300'}">獎勵統整</button>
-                        <button onclick="setAdminTab('update')" class="px-3 py-1.5 rounded-lg transition ${adminTab==='update'?'bg-white text-stone-900':'bg-stone-800 text-stone-300'}">版本熱更新與公告</button>
-                        <button onclick="setAdminTab('sandbox')" class="px-3 py-1.5 rounded-lg transition ${adminTab==='sandbox'?'bg-white text-stone-900':'bg-stone-800 text-stone-300'}">Sandbox 預覽</button>
+                        <button onclick="setAdminTab('approval')" class="px-3.5 py-1.5 rounded-lg transition ${adminTab==='approval'?'bg-gold-500 text-black font-bold':'bg-luxury-800 text-stone-300'}">點數審核 (${db.pendingSubmissions.filter(x=>x.status==='pending').length})</button>
+                        <button onclick="setAdminTab('users')" class="px-3.5 py-1.5 rounded-lg transition ${adminTab==='users'?'bg-gold-500 text-black font-bold':'bg-luxury-800 text-stone-300'}">夥伴管理</button>
+                        <button onclick="setAdminTab('settings')" class="px-3.5 py-1.5 rounded-lg transition ${adminTab==='settings'?'bg-gold-500 text-black font-bold':'bg-luxury-800 text-stone-300'}">遊戲與Tag設定</button>
+                        <button onclick="setAdminTab('rewards')" class="px-3.5 py-1.5 rounded-lg transition ${adminTab==='rewards'?'bg-gold-500 text-black font-bold':'bg-luxury-800 text-stone-300'}">獎勵統整</button>
+                        <button onclick="setAdminTab('update')" class="px-3.5 py-1.5 rounded-lg transition ${adminTab==='update'?'bg-gold-500 text-black font-bold':'bg-luxury-800 text-stone-300'}">版本熱更新與公告</button>
+                        <button onclick="setAdminTab('sandbox')" class="px-3.5 py-1.5 rounded-lg transition ${adminTab==='sandbox'?'bg-gold-500 text-black font-bold':'bg-luxury-800 text-stone-300'}">Sandbox 預覽</button>
                     </div>
                 </div>
 
@@ -767,31 +772,31 @@
         function renderAdminApproval(db) {
             const pending = db.pendingSubmissions.filter(x => x.status === 'pending');
             if (pending.length === 0) {
-                return `<div class="bg-white p-12 rounded-2xl text-center text-stone-400 border border-stone-200">目前沒有等待審核的申報案件。</div>`;
+                return `<div class="glass-card p-12 rounded-2xl text-center text-stone-400 border border-stone-800">目前沒有等待審核的申報案件。</div>`;
             }
             return `
                 <div class="space-y-4">
-                    <h3 class="font-serif font-bold text-lg mb-2">待審核申報案件</h3>
-                    <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
+                    <h3 class="font-serif font-bold text-lg mb-2 text-gold-300">待審核申報案件</h3>
+                    <div class="glass-card rounded-2xl shadow-xl border border-gold-500/20 overflow-hidden">
                         <table class="w-full text-left text-sm">
-                            <thead class="bg-stone-50 border-b text-stone-500 text-xs">
+                            <thead class="bg-luxury-900 border-b border-stone-800 text-stone-400 text-xs">
                                 <tr>
                                     <th class="p-4">夥伴 / 組別</th>
-                                    <th class="p-4">申報 Tag</th>
+                                    <th class="p-4">申報 Tag / 任務</th>
                                     <th class="p-4">內容 / 金額</th>
                                     <th class="p-4">時間</th>
                                     <th class="p-4 text-right">操作</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-stone-100">
+                            <tbody class="divide-y divide-stone-800">
                                 ${pending.map(s => `
                                     <tr>
-                                        <td class="p-4 font-bold">${s.name} <span class="text-xs text-stone-400 font-normal">(${s.group})</span></td>
-                                        <td class="p-4"><span class="bg-brand-50 text-brand-600 px-2.5 py-1 rounded-lg text-xs font-bold">${s.tag}</span></td>
-                                        <td class="p-4">${s.tag === 'FYC' ? 'FYC: ' + s.fycVal + ' (換算 ' + Math.floor(s.fycVal/1000) + ' P)' : s.desc || '-'}</td>
-                                        <td class="p-4 text-xs text-stone-400">${s.time}</td>
+                                        <td class="p-4 font-bold text-white">${s.name} <span class="text-xs text-stone-400 font-normal">(${s.group})</span></td>
+                                        <td class="p-4"><span class="bg-luxury-800 text-gold-300 px-2.5 py-1 rounded-lg text-xs font-bold border border-gold-500/30">${s.tag}</span></td>
+                                        <td class="p-4 text-stone-300">${s.tag === 'FYC' ? 'FYC: ' + s.fycVal + ' (換算 ' + Math.floor(s.fycVal/1000) + ' P)' : s.desc || '-'}</td>
+                                        <td class="p-4 text-xs text-stone-500">${s.time}</td>
                                         <td class="p-4 text-right">
-                                            <button onclick="approveSubmission('${s.id}')" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-xl text-xs font-medium shadow transition">通過並撥發</button>
+                                            <button onclick="approveSubmission('${s.id}')" class="bg-green-600 hover:bg-green-500 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow transition">通過並撥發</button>
                                         </td>
                                     </tr>
                                 `).join('')}
@@ -823,10 +828,10 @@
             }
 
             sub.status = 'approved';
-            db.marqueenMessages.unshift(`🎉 恭喜 ${sub.name} 通過 ${sub.tag} 審核獲得點數！`);
+            db.marqueenMessages.unshift(`👑 恭喜 ${sub.name} 通過 ${sub.tag} 審核獲得尊榮點數！`);
             saveDB(db);
 
-            confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+            confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
             playSound('success');
             
             document.getElementById('approval-notify-text').innerText = `您的 ${sub.tag} 申報已通過！獲得點數與骰子機會！`;
@@ -835,7 +840,6 @@
         }
 
         function renderAdminUsers(db) {
-            // Group aggregation mapping
             const groupMap = {};
             db.users.forEach(u => {
                 if (!groupMap[u.group]) groupMap[u.group] = { totalFYC: 0, count: 0 };
@@ -846,44 +850,53 @@
             return `
                 <div class="space-y-6">
                     <div class="flex justify-between items-center">
-                        <h3 class="font-serif font-bold text-lg">夥伴管理與同名組別自動整併</h3>
+                        <h3 class="font-serif font-bold text-lg text-gold-300">夥伴管理與同名組別自動整併</h3>
                     </div>
 
-                    <!-- Group Summary Cards -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         ${Object.keys(groupMap).map(gName => `
-                            <div class="bg-white p-4 rounded-2xl border border-stone-200">
-                                <p class="text-xs text-stone-500 font-bold">組別：${gName}</p>
-                                <p class="text-xl font-serif font-bold text-stone-900 mt-1">${groupMap[gName].totalFYC} FYC</p>
-                                <span class="text-[10px] text-stone-400">總人數: ${groupMap[gName].count} 人</span>
+                            <div class="glass-card p-4 rounded-2xl border border-gold-500/20">
+                                <p class="text-xs text-stone-400 font-bold">組別：${gName}</p>
+                                <p class="text-xl font-serif font-black text-white mt-1">${groupMap[gName].totalFYC} FYC</p>
+                                <span class="text-[10px] text-stone-500">總人數: ${groupMap[gName].count} 人</span>
                             </div>
                         `).join('')}
                     </div>
 
-                    <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
+                    <div class="glass-card rounded-2xl shadow-xl border border-gold-500/20 overflow-hidden">
                         <table class="w-full text-left text-sm">
-                            <thead class="bg-stone-50 border-b text-stone-500 text-xs">
+                            <thead class="bg-luxury-900 border-b border-stone-800 text-stone-400 text-xs">
                                 <tr>
                                     <th class="p-4">姓名 / 帳號</th>
-                                    <th class="p-4">職級 / 組別 / 上線</th>
-                                    <th class="p-4">FYC 總額</th>
+                                    <th class="p-4">職級 / 組別</th>
+                                    <th class="p-4">FYC 總額 (含Buff)</th>
                                     <th class="p-4">點數 / 骰子</th>
                                     <th class="p-4 text-right">操作</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-stone-100">
-                                ${db.users.map(u => `
-                                    <tr>
-                                        <td class="p-4 font-bold">${u.name} <span class="text-xs text-stone-400 font-normal">(${u.username})</span></td>
-                                        <td class="p-4">${u.role} <span class="text-xs bg-stone-100 px-2 py-0.5 rounded ml-1">${u.group}</span>${u.upline ? '<span class="text-[10px] text-stone-500">上線:'+u.upline+'</span>' : ''}</td>
-                                        <td class="p-4 font-serif text-brand-600 font-bold">${u.fyc || 0}</td>
-                                        <td class="p-4">${u.points \vert{}\vert{} 0} P / ${u.diceCount || 0} 骰</td>
-                                        <td class="p-4 text-right space-x-2">
-                                            <button onclick="editUser('${u.username}')" class="bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1 rounded-lg text-xs font-medium">編輯/調分</button>
-                                            ${u.username !== 'admin' ? `<button onclick="deleteUser('${u.username}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1 rounded-lg text-xs font-medium">刪除</button>` : ''}
-                                        </td>
-                                    </tr>
-                                `).join('')}
+                            <tbody class="divide-y divide-stone-800">
+                                ${db.users.map(u => {
+                                    let buffTotal = 0;
+                                    if (u.buffs) {
+                                        u.buffs.forEach(bName => {
+                                            const tUser = db.users.find(x => x.name === bName || x.username === bName);
+                                            if (tUser) buffTotal += (tUser.fyc || 0);
+                                        });
+                                    }
+                                    const totalDisplayFYC = (u.fyc || 0) + buffTotal;
+                                    return `
+                                        <tr>
+                                            <td class="p-4 font-bold text-white">${u.name} <span class="text-xs text-stone-400 font-normal">(${u.username})</span></td>
+                                            <td class="p-4 text-stone-300">${u.role || '業務專員'} <span class="text-xs bg-luxury-800 text-gold-300 px-2 py-0.5 rounded ml-1 border border-gold-500/20">${u.group}</span></td>
+                                            <td class="p-4 font-serif text-gold-400 font-bold">${totalDisplayFYC} <span class="text-[10px] text-stone-400 font-normal">(個人:${u.fyc\vert{}\vert{}0}+Buff:${buffTotal})</span></td>
+                                            <td class="p-4 text-stone-300">${u.points \vert{}\vert{} 0} P / ${u.diceCount || 0} 骰</td>
+                                            <td class="p-4 text-right space-x-2">
+                                                <button onclick="editUser('${u.username}')" class="bg-luxury-800 hover:bg-luxury-700 text-stone-200 px-3 py-1 rounded-lg text-xs font-medium border border-stone-700">編輯/Buff</button>
+                                                ${u.username !== 'admin' ? `<button onclick="deleteUser('${u.username}')" class="bg-red-950 hover:bg-red-900 text-red-300 px-3 py-1 rounded-lg text-xs font-medium border border-red-800">刪除</button>` : ''}
+                                            </td>
+                                        </tr>
+                                    `;
+                                }).join('')}
                             </tbody>
                         </table>
                     </div>
@@ -895,43 +908,162 @@
             const db = getDB();
             const u = db.users.find(x => x.username === username);
             if (!u) return;
-            const newPoints = prompt(`調整 ${u.name} 的可用點數：`, u.points || 0);
-            const newFYC = prompt(`調整 ${u.name} 的 FYC 業績：`, u.fyc || 0);
-            if (newPoints !== null && newFYC !== null) {
-                u.points = parseInt(newPoints) || 0;
-                u.fyc = parseInt(newFYC) || 0;
+
+            // 建立一個進階彈窗來處理編輯（姓名、組別、職級、FYC、可用點數、骰子數、以及業績Buff複選）
+            const allUsers = db.users.filter(x => x.username !== username);
+            const currentBuffs = u.buffs || [];
+
+            let modalHtml = `
+                <div id="modal-edit-user" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+                    <div class="glass-card rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-gold-500/40 max-h-[90vh] overflow-y-auto">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-serif font-bold text-gold-300">⚙️ 編輯夥伴資料與業績 Buff</h3>
+                            <button onclick="document.getElementById('modal-edit-user').remove()" class="text-stone-400 hover:text-white font-bold text-xl">&times;</button>
+                        </div>
+                        <div class="space-y-4 text-sm">
+                            <div>
+                                <label class="block text-xs font-semibold text-stone-400 mb-1">真實姓名</label>
+                                <input type="text" id="edit-name" value="${u.name}" class="w-full px-3 py-2 bg-luxury-900 border border-stone-700 rounded-xl text-white">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-stone-400 mb-1">職級</label>
+                                    <select id="edit-role" class="w-full px-3 py-2 bg-luxury-900 border border-stone-700 rounded-xl text-white">
+                                        <option value="業務專員" ${u.role==='業務專員'?'selected':''}>業務專員</option>
+                                        <option value="業務主任" ${u.role==='業務主任'?'selected':''}>業務主任</option>
+                                        <option value="業務襄理" ${u.role==='業務襄理'?'selected':''}>業務襄理</option>
+                                        <option value="業務經理" ${u.role==='業務經理'?'selected':''}>業務經理</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-stone-400 mb-1">組別</label>
+                                    <input type="text" id="edit-group" value="${u.group}" class="w-full px-3 py-2 bg-luxury-900 border border-stone-700 rounded-xl text-white">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-stone-400 mb-1">FYC 總額</label>
+                                    <input type="number" id="edit-fyc" value="${u.fyc || 0}" class="w-full px-3 py-2 bg-luxury-900 border border-stone-700 rounded-xl text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-stone-400 mb-1">可用點數</label>
+                                    <input type="number" id="edit-points" value="${u.points || 0}" class="w-full px-3 py-2 bg-luxury-900 border border-stone-700 rounded-xl text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-stone-400 mb-1">骰子數</label>
+                                    <input type="number" id="edit-dice" value="${u.diceCount || 0}" class="w-full px-3 py-2 bg-luxury-900 border border-stone-700 rounded-xl text-white">
+                                </div>
+                            </div>
+                            
+                            <!-- 業績 Buff 複選區域 -->
+                            <div class="border-t border-stone-800 pt-3">
+                                <label class="block text-xs font-bold text-gold-300 mb-2">⚡ 業績 Buff (勾選被增員夥伴，其業績將同步加入此人)</label>
+                                <div class="space-y-1.5 max-h-40 overflow-y-auto bg-luxury-900 p-3 rounded-xl border border-stone-800">
+                                    ${allUsers.length === 0 ? '<p class="text-xs text-stone-500">目前沒有其他夥伴可供勾選</p>' : allUsers.map(au => `
+                                        <label class="flex items-center space-x-2 text-xs text-stone-300 cursor-pointer hover:text-white">
+                                            <input type="checkbox" name="buff-user" value="${au.name}" ${currentBuffs.includes(au.name)?'checked':''} class="rounded bg-luxury-800 border-stone-700 text-gold-500 focus:ring-gold-500">
+                                            <span>${au.name} (${au.group} / FYC:${au.fyc || 0})</span>
+                                        </label>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="flex justify-end space-x-2 mt-6">
+                            <button onclick="document.getElementById('modal-edit-user').remove()" class="px-4 py-2 bg-stone-800 text-stone-300 rounded-xl text-sm">取消</button>
+                            <button onclick="saveEditedUser('${username}')" class="px-5 py-2 bg-gold-500 hover:bg-gold-400 text-black rounded-xl text-sm font-bold shadow">儲存變更</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        function saveEditedUser(username) {
+            const db = getDB();
+            const u = db.users.find(x => x.username === username);
+            if (!u) return;
+
+            u.name = document.getElementById('edit-name').value.trim();
+            u.role = document.getElementById('edit-role').value;
+            u.group = document.getElementById('edit-group').value.trim();
+            u.fyc = parseInt(document.getElementById('edit-fyc').value) || 0;
+            u.points = parseInt(document.getElementById('edit-points').value) || 0;
+            u.diceCount = parseInt(document.getElementById('edit-dice').value) || 0;
+
+            // 收集勾選的 Buff 夥伴名單
+            const checkboxes = document.querySelectorAll('input[name="buff-user"]:checked');
+            u.buffs = Array.from(checkboxes).map(cb => cb.value);
+
+            saveDB(db);
+            document.getElementById('modal-edit-user').remove();
+            alert('夥伴資料與業績 Buff 更新成功！');
+            initApp();
+        }
+
+        function deleteUser(username) {
+            const db = getDB();
+            const target = db.users.find(x => x.username === username);
+            const targetName = target ? target.name : username;
+
+            if (confirm(`確定要刪除夥伴「${targetName}」嗎？刪除後無法復原。`)) {
+                db.users = db.users.filter(x => x.username !== username);
                 saveDB(db);
-                alert('夥伴資料已更新！');
+                alert('夥伴名單已成功刪除！');
                 initApp();
             }
         }
 
-        function deleteUser(username) {
-            const action = prompt('請選擇刪除模式：\n1. 轉移下線至團隊管理者\n2. 直接解除掛載並刪除', '2');
-            if (!action) return;
-            const db = getDB();
-            db.users = db.users.filter(x => x.username !== username);
-            saveDB(db);
-            alert('夥伴帳號已安全刪除！');
-            initApp();
-        }
-
         function renderAdminSettings(db) {
             return `
-                <div class="space-y-6 max-w-3xl">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200 space-y-4">
-                        <h3 class="font-serif font-bold text-lg">遊戲與 Tag 點數設定</h3>
+                <div class="space-y-6 max-w-4xl">
+                    <!-- 基本遊戲設定 -->
+                    <div class="glass-card p-6 rounded-2xl border border-gold-500/25 shadow-xl space-y-4">
+                        <h3 class="font-serif font-bold text-lg text-gold-300">🎮 遊戲核心點數設定</h3>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-semibold text-stone-600 mb-1">FYC 換算比例 (多少 FYC = 1 P)</label>
-                                <input type="number" id="setting-fyc-rate" value="${db.tags['FYC'].rate}" class="w-full px-3 py-2 border rounded-xl text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-stone-600 mb-1">活動邀約固定點數</label>
-                                <input type="number" id="setting-tag-1" value="${db.tags['活動邀約'].points}" class="w-full px-3 py-2 border rounded-xl text-sm">
+                                <label class="block text-xs font-semibold text-stone-400 mb-1">FYC 換算比例 (多少 FYC = 1 P)</label>
+                                <input type="number" id="setting-fyc-rate" value="${db.tags['FYC'].rate}" class="w-full px-3.5 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white">
                             </div>
                         </div>
-                        <button onclick="saveAdminSettings()" class="bg-stone-900 text-white px-4 py-2 rounded-xl text-sm font-medium">儲存設定</button>
+                        <button onclick="saveAdminSettings()" class="bg-gold-500 hover:bg-gold-400 text-black px-5 py-2.5 rounded-xl text-sm font-bold shadow">儲存核心設定</button>
+                    </div>
+
+                    <!-- 新增或管理獲點方式/Tag 任務 -->
+                    <div class="glass-card p-6 rounded-2xl border border-gold-500/25 shadow-xl space-y-4">
+                        <h3 class="font-serif font-bold text-lg text-gold-300">➕ 新增獲點方式 / 任務 Tag</h3>
+                        <p class="text-xs text-stone-400">在此新增自定義任務或項目，設定其固定點數，夥伴端申報選單將同步更新。</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-stone-400 mb-1">任務名稱 (Tag)</label>
+                                <input type="text" id="new-tag-name" placeholder="例如：直播分享" class="w-full px-3.5 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-stone-400 mb-1">換算點數 / 固定點數</label>
+                                <input type="number" id="new-tag-points" placeholder="例如：5" class="w-full px-3.5 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white">
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="addNewTag()" class="w-full bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 text-black py-2.5 rounded-xl text-sm font-bold shadow">新增任務 Tag</button>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 border-t border-stone-800 pt-4">
+                            <h4 class="text-xs font-bold text-stone-300 mb-2">現有任務清單</h4>
+                            <div class="space-y-2 max-h-48 overflow-y-auto">
+                                ${Object.keys(db.tags).map(tagName => {
+                                    const t = db.tags[tagName];
+                                    return `
+                                        <div class="flex justify-between items-center p-2.5 bg-luxury-900 rounded-xl text-xs border border-stone-800">
+                                            <div>
+                                                <span class="font-bold text-gold-400">${tagName}</span>
+                                                <span class="text-stone-400 ml-2">${tagName === 'FYC' ? '比例: 1000 FYC = 1 P' : '固定點數: ' + t.points + ' 點'}</span>
+                                            </div>
+                                            ${tagName !== 'FYC' ? `<button onclick="deleteTag('${tagName}')" class="text-red-400 hover:text-red-300 text-xs">刪除</button>` : ''}
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
@@ -940,30 +1072,53 @@
         function saveAdminSettings() {
             const db = getDB();
             db.tags['FYC'].rate = parseInt(document.getElementById('setting-fyc-rate').value) || 1000;
-            db.tags['活動邀約'].points = parseInt(document.getElementById('setting-tag-1').value) || 2;
             saveDB(db);
-            alert('遊戲設定儲存成功！');
+            alert('核心遊戲設定儲存成功！');
+        }
+
+        function addNewTag() {
+            const name = document.getElementById('new-tag-name').value.trim();
+            const points = parseInt(document.getElementById('new-tag-points').value) || 0;
+
+            if (!name) {
+                alert('請輸入任務名稱！');
+                return;
+            }
+
+            const db = getDB();
+            db.tags[name] = { name: name, points: points, desc: '每次申報固定點數' };
+            saveDB(db);
+            alert(`成功新增任務 Tag：「${name}」（固定 ${points} 點）！`);
+            setAdminTab('settings');
+        }
+
+        function deleteTag(tagName) {
+            const db = getDB();
+            delete db.tags[tagName];
+            saveDB(db);
+            alert('任務 Tag 已刪除！');
+            setAdminTab('settings');
         }
 
         function renderAdminRewards(db) {
             return `
                 <div class="space-y-4">
-                    <h3 class="font-serif font-bold text-lg">使用者獎勵與踩格紀錄統整</h3>
-                    <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
+                    <h3 class="font-serif font-bold text-lg text-gold-300">使用者獎勵與踩格紀錄統整</h3>
+                    <div class="glass-card rounded-2xl shadow-xl border border-gold-500/20 overflow-hidden">
                         <table class="w-full text-left text-sm">
-                            <thead class="bg-stone-50 border-b text-stone-500 text-xs">
+                            <thead class="bg-luxury-900 border-b border-stone-800 text-stone-400 text-xs">
                                 <tr>
                                     <th class="p-4">夥伴姓名</th>
                                     <th class="p-4">獲得獎勵與實體贈品</th>
                                     <th class="p-4">時間</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-stone-100">
+                            <tbody class="divide-y divide-stone-800">
                                 ${db.rewardsLog.map(r => `
                                     <tr>
-                                        <td class="p-4 font-bold">${r.name}</td>
-                                        <td class="p-4 text-brand-600 font-medium">${r.reward}</td>
-                                        <td class="p-4 text-xs text-stone-400">${r.time}</td>
+                                        <td class="p-4 font-bold text-white">${r.name}</td>
+                                        <td class="p-4 text-gold-400 font-medium">${r.reward}</td>
+                                        <td class="p-4 text-xs text-stone-500">${r.time}</td>
                                     </tr>
                                 `).join('')}
                             </tbody>
@@ -976,21 +1131,21 @@
         function renderAdminUpdate(db) {
             return `
                 <div class="space-y-6 max-w-3xl">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200 space-y-4">
-                        <h3 class="font-serif font-bold text-lg">📢 公告與戰報跑馬燈編輯</h3>
+                    <div class="glass-card p-6 rounded-2xl border border-gold-500/20 shadow-xl space-y-4">
+                        <h3 class="font-serif font-bold text-lg text-gold-300">📢 公告與戰報跑馬燈編輯</h3>
                         <div>
-                            <label class="block text-xs font-semibold text-stone-600 mb-1">最新消息公告標題</label>
-                            <input type="text" id="admin-notice-title" value="${db.notice.title || ''}" class="w-full px-3 py-2 border rounded-xl text-sm">
+                            <label class="block text-xs font-semibold text-stone-400 mb-1">最新消息公告標題</label>
+                            <input type="text" id="admin-notice-title" value="${db.notice.title || ''}" class="w-full px-3.5 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-stone-600 mb-1">公告詳細內容</label>
-                            <textarea id="admin-notice-content" rows="4" class="w-full px-3 py-2 border rounded-xl text-sm">${db.notice.content || ''}</textarea>
+                            <label class="block text-xs font-semibold text-stone-400 mb-1">公告詳細內容</label>
+                            <textarea id="admin-notice-content" rows="4" class="w-full px-3.5 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white">${db.notice.content || ''}</textarea>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-stone-600 mb-1">跑馬燈戰報訊息 (每行一條)</label>
-                            <textarea id="admin-marquee-content" rows="3" class="w-full px-3 py-2 border rounded-xl text-sm">${db.marqueenMessages.join('\n')}</textarea>
+                            <label class="block text-xs font-semibold text-stone-400 mb-1">跑馬燈戰報訊息 (每行一條)</label>
+                            <textarea id="admin-marquee-content" rows="3" class="w-full px-3.5 py-2.5 bg-luxury-900 border border-stone-700 rounded-xl text-sm text-white">${db.marqueenMessages.join('\n')}</textarea>
                         </div>
-                        <button onclick="saveNoticeAndMarquee()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium shadow">發布更新並同步所有使用者</button>
+                        <button onclick="saveNoticeAndMarquee()" class="bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 text-black px-5 py-3 rounded-xl text-sm font-bold shadow-lg shadow-gold-500/20">發布更新並同步所有使用者</button>
                     </div>
                 </div>
             `;
@@ -1009,16 +1164,14 @@
         function renderAdminSandbox(db) {
             return `
                 <div class="space-y-4">
-                    <h3 class="font-serif font-bold text-lg">Sandbox 程式碼預覽與測試</h3>
-                    <div class="bg-stone-900 text-gold-400 p-4 rounded-2xl font-mono text-xs overflow-x-auto">
-                        <p>// 當前版本運行狀態：穩定運行中 (Single-file Web App)</p>
-                        <p>// 啟用模組：Web Audio API、Canvas Confetti、LocalStorage 狀態同步、多層級增員裂變</p>
+                    <h3 class="font-serif font-bold text-lg text-gold-300">Sandbox 程式碼預覽與測試</h3>
+                    <div class="bg-black text-gold-400 p-5 rounded-2xl font-mono text-xs overflow-x-auto border border-gold-500/30 shadow-inner">
+                        <p>// 當前版本運行狀態：黑金奢華版 (含業績 Buff 複選與任務 Tag 自定義) 穩定運行中</p>
                     </div>
                 </div>
             `;
         }
 
-        // Initialize on load
         window.onload = function() {
             initApp();
             const db = getDB();

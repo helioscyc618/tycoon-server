@@ -3,12 +3,11 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 設定靜態檔案資料階層
-app.use(express.static(path.join(__dirname)));
+// 設定 public 資料夾為靜態資源目錄
+app.use(express.static(path.join(__dirname, 'public')));
 
-// 路由設定：根目錄指向 index.html
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(PORT, () => {
