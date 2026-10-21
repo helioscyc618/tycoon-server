@@ -1,104 +1,145 @@
 const express = require('express');
-const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const cors = require('cors');
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+const DATA_FILE = path.join(__dirname, 'database.json');
 
-// 設定跨域與較大的資料傳輸限制（以支援大型 HTML 原始碼與 JSON 備份）
+// Middleware
 app.use(cors());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// 靜態檔案託管
+// 靜態檔案託管 (若您的前端 HTML/JS 放在 public 資料夾下)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 預設記憶體狀態儲存
-let appState = {
-    partners: [],
-    declarations: [],
-    messages: [],
-    rewardsList: [],
-    settings: {
-        newsTitle: '🏆 競賽大亨正式開跑！',
-        newsContent: '歡迎各位頂尖業務菁英加入競賽大亨！請透過每日拜訪、增員與 FYC 申報賺取點數，解鎖 30 格大富翁棋盤豐富獎勵！',
-        startDate: '2026/12/14',
-        endDate: '2027/06/02',
-        ticker1: '🎉 賀！競賽大亨雙軌競賽熱血啟動！所有申報請確實填寫任務說明！',
-        ticker2: '🔥 團隊夥伴衝刺中，每日拜訪與增員點數即時同步雲端！',
-        ticker3: '⭐ 恭喜各組菁英挑戰機會命運大富翁棋盤豐富大獎！',
-        primaryColor: '#f97316',
-        headerColor: '#0f172a',
-        bgColor: '#FAFAFA',
-        tags: [
-            { name: 'FYC', isFYC: true, points: 0 },
-            { name: '活動邀約', isFYC: false, points: 10 },
-            { name: '增員面談', isFYC: false, points: 20 },
-            { name: '新夥伴公司考', isFYC: false, points: 30 },
-            { name: '新夥伴外部考', isFYC: false, points: 30 },
-            { name: '新夥伴報聘', isFYC: false, points: 50 }
-        ],
-        boardCells: []
-    }
-};
-
-// 1. 取得全系統狀態 API
-app.get('/api/state', (req, res) => {
-    res.json(appState);
-});
-
-// 2. 更新全系統狀態 API
-app.post('/api/state', (req, res) => {
-    if (req.body) {
-        appState = req.body;
-    }
-    res.json({ success: true });
-});
-
-// 3. 後台動態更新前端編碼 API (寫入 root 與 public/index.html)
-app.post('/api/update-code', (req, res) => {
-    const { htmlCode } = req.body;
-    if (!htmlCode) return res.status(400).json({ error: '缺少編碼內容' });
+// -----------------------------------------------------------------
+// 資料讀寫防護機制 (避免併發寫入造成資料毀損或被初始檔覆寫)
+// -----------------------------------------------------------------
+function readDB() {
     try {
-        // 寫入根目錄 index.html
-        fs.writeFileSync(path.join(__dirname, 'index.html'), htmlCode, 'utf8');
-        
-        // 寫入 public/index.html
-        const publicPath = path.join(__dirname, 'public');
-        if (!fs.existsSync(publicPath)) {
-            fs.mkdirSync(publicPath, { recursive: true });
+        if (!fs.existsSync(DATA_FILE)) {
+            // 初始化預設資料庫結構
+            const initialData = {
+                users: [
+                    { 
+                        name: '王大明', 
+                        email: 'ming@mail.com', 
+                        password: '123', 
+                        rank: '業務經理', 
+                        group: '第一組', 
+                        avatar: '🦁', 
+                        points: 120, 
+                        totalPoints: 200, 
+                        diceCount: 5, 
+                        position: 0, 
+                        fyc: 150000, 
+                        iosPush: true, 
+                        androidPush: false 
+                    }
+                ],
+                declarations: [],
+                messages: [
+                    { 
+                        title: '歡迎加入競賽大亨！', 
+                        content: '各位夥伴好，新賽季已經展開，後端資料庫已成功啟動並支援多裝置即時同步！', 
+                        author: '系統管理員', 
+                        time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false }), 
+                        isAnonymous: false, 
+                        likes: 5, 
+                        replies: [] 
+                    }
+                ],
+                settings: {
+                    primaryColor: '#f97316',
+                    headerColor: '#0f172a',
+                    bgColor: '#FAFAFA',
+                    startDate: '2026/12/14',
+                    endDate: '2027/06/02'
+                }
+            };
+            fs.writeFileSync(DATA_FILE, JSON.stringify(initialData, null, 2), 'utf-8');
+            return initialData;
         }
-        fs.writeFileSync(path.join(publicPath, 'index.html'), htmlCode, 'utf8');
-
-        res.json({ success: true, message: '前端編碼已成功更新並寫入伺服器！' });
-    } catch (e) {
-        res.status(500).json({ error: e.message });
+        const data = fs.readFileSync(DATA_FILE, 'utf-8');
+        return JSON.parse(data);
+    } catch (err) {
+        console.error('讀取資料庫發生錯誤:', err);
+        return { users: [], declarations: [], messages: [], settings: {} };
     }
-});
+}
 
-// 4. JSON 指令即時匯入與雲端同步 API
-app.post('/api/restore-json', (req, res) => {
-    const { jsonData } = req.body;
+function writeDB(data) {
     try {
-        const parsed = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
-        appState = parsed;
-        res.json({ success: true, message: 'JSON 指令已成功執行並同步至雲端！' });
-    } catch (e) {
-        res.status(400).json({ error: 'JSON 格式錯誤，無法解析' });
+        // 採用同步寫入確保多裝置請求不會同時覆寫造成 Race Condition
+        fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+        return true;
+    } catch (err) {
+        console.error('寫入資料庫發生錯誤:', err);
+        return false;
     }
+}
+
+// -----------------------------------------------------------------
+// API 路由
+// -----------------------------------------------------------------
+
+// 1. 取得完整資料 (供前端初始化同步)
+app.get('/api/data', (req, res) => {
+    const db = readDB();
+    res.json({ success: true, data: db });
 });
 
-// 根目錄路由
-app.get('/', (req, res) => {
-    const indexPath = path.join(__dirname, 'public', 'index.html');
-    if (fs.existsSync(indexPath)) {
-        res.sendFile(indexPath);
+// 2. 更新或同步整體資料 (防覆寫寫入)
+app.post('/api/sync', (req, res) => {
+    const { users, declarations, messages, settings } = req.body;
+    const db = readDB();
+
+    if (users) db.users = users;
+    if (declarations) db.declarations = declarations;
+    if (messages) db.messages = messages;
+    if (settings) db.settings = settings;
+
+    const success = writeDB(db);
+    if (success) {
+        res.json({ success: true, message: '資料已成功同步至伺服器端！', data: db });
     } else {
-        res.send('Competition Tycoon Server is Running.');
+        res.status(500).json({ success: false, message: '伺服器寫入失敗' });
     }
 });
 
-const PORT = process.env.PORT || 10000;
+// 3. 會員登入 API
+app.post('/api/login', (req, res) => {
+    const { account, password } = req.body;
+    const db = readDB();
+    
+    const user = db.users.find(u => (u.email === account || u.name === account) && u.password === password);
+    if (user) {
+        res.json({ success: true, user });
+    } else {
+        res.status(401).json({ success: false, message: '帳號或密碼錯誤' });
+    }
+});
+
+// 4. 會員註冊 API
+app.post('/api/register', (req, res) => {
+    const newUser = req.body;
+    const db = readDB();
+
+    if (db.users.some(u => u.email === newUser.email)) {
+        return res.status(400).json({ success: false, message: '此 Email 已經被註冊過了！' });
+    }
+
+    db.users.push(newUser);
+    writeDB(db);
+    res.json({ success: true, user: newUser });
+});
+
+// -----------------------------------------------------------------
+// 啟動伺服器
+// -----------------------------------------------------------------
 app.listen(PORT, () => {
-    console.log(`Competition Tycoon server running on port ${PORT}`);
+    console.log(`🚀 競賽大亨後端伺服器已在 http://localhost:${PORT} 啟動`);
 });
