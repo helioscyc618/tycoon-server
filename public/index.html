@@ -1,17 +1,15 @@
-<!DOCTYPE html>
-<html lang="zh-TW" class="h-full">
-<head>
+<html lang="zh-TW" class="h-full"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>競賽大亨 | Competition Tycoon</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer="" src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -52,8 +50,9 @@
         <div class="flex items-center space-x-3">
             <span class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium" :class="isOnline ? 'bg-slate-800 text-green-400 border border-green-500' : 'bg-red-900/80 text-red-200 border border-red-500 animate-pulse'">
                 <i class="fas" :class="isOnline ? 'fa-wifi' : 'fa-triangle-exclamation'"></i>
-                <span x-text="isOnline ? '雲端同步連線中 (Online)' : '離線警告 (Offline)'"></span>
+                <span x-text="isOnline ? '雲端同步連線中 (Online)' : '離線警告 (Offline)'">雲端同步連線中 (Online)</span>
             </span>
+
             <span class="hidden md:inline-flex items-center text-slate-300">
                 <i class="fas fa-clock mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 台北時間: <span class="font-mono ml-1 font-bold text-white" x-text="taipeiTime"></span>
             </span>
@@ -63,6 +62,7 @@
                 <i class="fas fa-dice mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 競賽期間: <span x-text="settings.startDate || '2026/12/14'"></span> ~ <span x-text="settings.endDate || '2027/06/02'"></span> 
                 <span class="ml-2 bg-orange-500/20 text-orange-300 px-2 py-0.5 rounded border border-orange-500/40 text-xs font-bold" x-text="'⏳ 倒數 ' + getCountdownDays() + ' 天'"></span>
             </span>
+
             <template x-if="currentUser">
                 <div class="flex items-center space-x-2 bg-slate-800 px-3 py-1 rounded-full border border-orange-500/40">
                     <span x-text="currentUser.avatar" class="text-base"></span>
@@ -78,10 +78,10 @@
         </div>
     </header>
 
-    <!-- OFFLINE WARNING -->
+    <!-- OFFLINE WARNING BANNER -->
     <div x-show="!isOnline" x-transition class="bg-red-600 text-white px-4 py-2 text-center text-xs font-bold flex items-center justify-center space-x-2 shadow-inner">
         <i class="fas fa-exclamation-triangle text-white text-base animate-bounce"></i>
-        <span>【警告】目前偵測無網路連線！請檢查您的網路狀態。</span>
+        <span>【警告】目前偵測無網路連線或雲端同步異常！請檢查您的網路狀態。</span>
     </div>
 
     <!-- RUNNING TICKER -->
@@ -171,11 +171,7 @@
                                 <label class="block text-xs font-bold text-slate-700 mb-1">選擇個人頭貼 Icon (10選1)</label>
                                 <div class="grid grid-cols-5 gap-2 mt-1">
                                     <template x-for="av in avatarList" :key="av">
-                                        <button type="button" @click="regForm.avatar = av" 
-                                            class="p-2 text-2xl rounded-xl border text-center transition flex items-center justify-center bg-slate-50"
-                                            :class="regForm.avatar === av ? 'bg-orange-50 ring-2 scale-105' : 'border-slate-200 hover:bg-slate-100'"
-                                            :style="regForm.avatar === av ? 'border-color: ' + (settings.primaryColor || '#f97316') + '; color: ' + (settings.primaryColor || '#f97316') : ''"
-                                            x-text="av">
+                                        <button type="button" @click="regForm.avatar = av" class="p-2 text-2xl rounded-xl border text-center transition flex items-center justify-center bg-slate-50" :class="regForm.avatar === av ? 'bg-orange-50 ring-2 scale-105' : 'border-slate-200 hover:bg-slate-100'" :style="regForm.avatar === av ? 'border-color: ' + (settings.primaryColor || '#f97316') + '; color: ' + (settings.primaryColor || '#f97316') : ''" x-text="av">
                                         </button>
                                     </template>
                                 </div>
@@ -254,7 +250,7 @@
                     <!-- LEFT -->
                     <div class="lg:col-span-5 space-y-6">
                         
-                        <!-- 1. 個人資訊管理卡片 (含推播開關) -->
+                        <!-- 1. 個人資訊管理卡片 -->
                         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
                             <h3 class="text-base font-bold text-slate-900 ming-title flex items-center justify-between">
                                 <span class="flex items-center"><i class="fas fa-id-card mr-2" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 個人資訊與推播設定</span>
@@ -269,17 +265,11 @@
                                     <div class="flex justify-between"><span class="text-slate-400">個人 FYC 業績:</span><span class="font-bold text-slate-900" x-text="formatCurrency(currentUser.fyc || 0)"></span></div>
                                     <div class="flex justify-between"><span class="text-slate-400">整組總業績 (含Buff):</span><span class="font-bold" :style="'color: ' + (settings.primaryColor || '#f97316')" x-text="formatCurrency(getTotalFYC(currentUser))"></span></div>
                                     <div class="flex justify-between items-center pt-2 border-t border-slate-200">
-                                        <span class="font-bold text-slate-800"><i class="fas fa-bell mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 手機推播通知：</span>
-                                        <div class="flex space-x-3">
-                                            <label class="flex items-center space-x-1 cursor-pointer">
-                                                <input type="checkbox" x-model="currentUser.iosPush" @change="savePushSettings()" class="rounded text-orange-500">
-                                                <span>iOS 通知</span>
-                                            </label>
-                                            <label class="flex items-center space-x-1 cursor-pointer">
-                                                <input type="checkbox" x-model="currentUser.androidPush" @change="savePushSettings()" class="rounded text-orange-500">
-                                                <span>Android 通知</span>
-                                            </label>
-                                        </div>
+                                        <span class="font-bold text-slate-800"><i class="fas fa-bell mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 推播通知開關：</span>
+                                        <label class="flex items-center space-x-1.5 cursor-pointer">
+                                            <input type="checkbox" x-model="currentUser.pushEnabled" @change="savePushSettings()" class="rounded text-orange-500 w-4 h-4">
+                                            <span class="font-bold" x-text="currentUser.pushEnabled ? '已開啟 (' + getDeviceOS() + ')' : '已關閉'"></span>
+                                        </label>
                                     </div>
                                 </div>
                             </template>
@@ -405,7 +395,7 @@
                                                 <span x-text="msg.likes || 0"></span>
                                             </button>
                                         </div>
-                                        <template x-if="msg.replies && msg.replies.length > 0">
+                                        <template x-if="msg.replies &amp;&amp; msg.replies.length &gt; 0">
                                             <div class="space-y-1.5 pl-3 border-l-2 mt-2" :style="'border-color: ' + (settings.primaryColor || '#f97316')">
                                                 <template x-for="rep in msg.replies" :key="rep.time">
                                                     <div class="bg-white p-2 rounded-lg border border-slate-200 text-[11px]">
@@ -443,8 +433,7 @@
                                     <span class="block text-[10px]" :style="'color: ' + (settings.primaryColor || '#f97316')">目前位置</span>
                                     <span class="text-base font-bold text-white font-mono" x-text="'第 ' + (currentUser.position + 1) + ' 格'"></span>
                                 </div>
-                                <button @click="rollDice()" :disabled="currentUser.points < 10 || isRolling" 
-                                    class="text-white font-bold px-6 py-3 rounded-xl shadow-lg transform active:scale-95 transition disabled:opacity-50 flex items-center space-x-2 text-sm" :style="'background-color: ' + (settings.primaryColor || '#f97316')">
+                                <button @click="rollDice()" :disabled="currentUser.points &lt; 10 || isRolling" class="text-white font-bold px-6 py-3 rounded-xl shadow-lg transform active:scale-95 transition disabled:opacity-50 flex items-center space-x-2 text-sm" :style="'background-color: ' + (settings.primaryColor || '#f97316')">
                                     <i class="fas fa-dice-five text-base"></i>
                                     <span x-text="isRolling ? '滾動中...' : '立即擲骰 (10點)'"></span>
                                 </button>
@@ -459,10 +448,7 @@
                             </div>
                             <div class="grid grid-cols-6 sm:grid-cols-10 gap-2">
                                 <template x-for="(cell, index) in settings.boardCells" :key="index">
-                                    <div @click="openCellModal(cell, index)" 
-                                        class="relative p-2 rounded-xl border flex flex-col items-center justify-center cursor-pointer transition transform hover:scale-105 h-20 text-center shadow-xs"
-                                        :class="hasPlayerHere(index) ? 'bg-orange-50 ring-2' : 'border-slate-200 bg-slate-50 hover:bg-orange-50/50'"
-                                        :style="hasPlayerHere(index) ? 'border-color: ' + (settings.primaryColor || '#f97316') + '; --tw-ring-color: ' + (settings.primaryColor || '#f97316') : ''">
+                                    <div @click="openCellModal(cell, index)" class="relative p-2 rounded-xl border flex flex-col items-center justify-center cursor-pointer transition transform hover:scale-105 h-20 text-center shadow-xs" :class="hasPlayerHere(index) ? 'bg-orange-50 ring-2' : 'border-slate-200 bg-slate-50 hover:bg-orange-50/50'" :style="hasPlayerHere(index) ? 'border-color: ' + (settings.primaryColor || '#f97316') + '; --tw-ring-color: ' + (settings.primaryColor || '#f97316') + '' : ''">
                                         <span class="absolute top-1 left-1 text-[9px] font-bold text-slate-400 font-mono" x-text="index + 1"></span>
                                         <span class="text-lg mb-1" x-text="cell.icon"></span>
                                         <span class="text-[10px] font-bold text-slate-800 line-clamp-1" x-text="cell.title"></span>
@@ -485,7 +471,7 @@
     </main>
 
     <!-- MODALS -->
-    <div x-show="showNewsModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition>
+    <div x-show="showNewsModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition style="display: none;">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative">
             <div class="w-12 h-12 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 shadow text-xl" :style="'background-color: ' + (settings.primaryColor || '#f97316')">
                 <i class="fas fa-bullhorn"></i>
@@ -499,7 +485,7 @@
         </div>
     </div>
 
-    <div x-show="showCellDetailModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition>
+    <div x-show="showCellDetailModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition style="display: none;">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative text-center space-y-3">
             <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto shadow text-3xl border" :style="'background-color: ' + (settings.primaryColor || '#f97316') + '20; color: ' + (settings.primaryColor || '#f97316') + '; border-color: ' + (settings.primaryColor || '#f97316') + '50'" x-text="selectedCell.icon"></div>
             <span class="text-xs px-2.5 py-1 rounded-full font-bold" :style="'background-color: ' + (settings.primaryColor || '#f97316') + '20; color: ' + (settings.primaryColor || '#f97316')">第 <span x-text="selectedCellIndex + 1"></span> 格 (<span x-text="selectedCell.type || '普通'"></span>)</span>
@@ -522,7 +508,7 @@
         </div>
     </div>
 
-    <div x-show="showLandingModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition>
+    <div x-show="showLandingModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition style="display: none;">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-center">
             <div class="text-4xl mb-2">🎉</div>
             <h3 class="text-xl font-bold text-slate-900 ming-title">踩格子戰報！</h3>
@@ -541,7 +527,7 @@
         </div>
     </div>
 
-    <div x-show="showDiceModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4" x-transition>
+    <div x-show="showDiceModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4" x-transition style="display: none;">
         <div class="bg-white rounded-2xl max-w-xs w-full p-6 shadow-2xl border border-slate-200 text-center">
             <h3 class="text-lg font-bold text-slate-900 ming-title mb-4">🎲 正在擲骰中...</h3>
             <div class="dice-container mx-auto my-6 flex justify-center">
@@ -551,22 +537,8 @@
         </div>
     </div>
 
-    <!-- 最高層級通知視窗 z-[100] -->
-    <div x-show="showNotificationModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4" x-transition>
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border-2 text-center space-y-3" :style="'border-color: ' + (settings.primaryColor || '#f97316')">
-            <div class="w-14 h-14 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center mx-auto shadow text-2xl">
-                <i class="fas fa-bell"></i>
-            </div>
-            <h3 class="text-lg font-bold text-slate-900 ming-title" x-text="notificationTitle"></h3>
-            <p class="text-sm text-slate-600 whitespace-pre-line" x-text="notificationText"></p>
-            <button @click="showNotificationModal = false" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl transition text-sm shadow">
-                確定
-            </button>
-        </div>
-    </div>
-
     <!-- COMMAND CENTER (指揮中心後台 z-30) -->
-    <div x-show="openAdminModal" class="fixed inset-0 z-30 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-2 sm:p-4" x-transition>
+    <div x-show="openAdminModal" class="fixed inset-0 z-30 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-2 sm:p-4" x-transition style="display: none;">
         <div class="bg-white rounded-2xl max-w-6xl w-full h-[90vh] overflow-hidden shadow-2xl border border-slate-200 flex flex-col">
             <!-- Header -->
             <div class="bg-slate-900 p-4 text-white flex justify-between items-center border-b-2" :style="'border-color: ' + (settings.primaryColor || '#f97316')">
@@ -847,10 +819,7 @@
                                                     <td class="p-3 text-slate-700" x-text="rw.reward"></td>
                                                     <td class="p-3 text-slate-400 font-mono" x-text="rw.time"></td>
                                                     <td class="p-3">
-                                                        <button @click="toggleRewardStatus(rwIdx)" 
-                                                            class="px-3 py-1.5 rounded-xl font-bold text-[11px] transition shadow-xs"
-                                                            :class="rw.status === '已發放' ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-orange-100 text-orange-700 border border-orange-300'"
-                                                            x-text="rw.status">
+                                                        <button @click="toggleRewardStatus(rwIdx)" class="px-3 py-1.5 rounded-xl font-bold text-[11px] transition shadow-xs" :class="rw.status === '已發放' ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-orange-100 text-orange-700 border border-orange-300'" x-text="rw.status">
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -913,9 +882,9 @@
                                     <label class="block text-xs font-bold text-slate-700 mb-1">系統原始碼 (HTML / JS)</label>
                                     <textarea x-model="systemRawCode" rows="12" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono bg-slate-900 text-green-400" placeholder="在此檢視或貼上更新編碼..."></textarea>
                                 </div>
-                                <div class="flex space-x-2">
+                                <div class="flex flex-wrap gap-2">
                                     <button @click="loadCurrentCode()" class="bg-slate-800 text-white font-bold py-2 px-4 rounded-xl text-xs shadow">載入目前頁面編碼</button>
-                                    <button @click="saveRawCode()" class="text-white font-bold py-2 px-5 rounded-xl text-xs shadow" :style="'background-color: ' + (settings.primaryColor || '#f97316')">下載更新檔案</button>
+                                    <button @click="saveRawCode()" class="text-white font-bold py-2 px-5 rounded-xl text-xs shadow" :style="'background-color: ' + (settings.primaryColor || '#f97316')"><i class="fas fa-file-code mr-1"></i> 匯出目前修復編碼檔案 (HTML)</button>
                                 </div>
                             </div>
                         </template>
@@ -967,7 +936,7 @@
     </div>
 
     <!-- MODAL: PARTNER EDIT -->
-    <div x-show="showEditPartnerModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4" x-transition>
+    <div x-show="showEditPartnerModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4" x-transition style="display: none;">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 overflow-y-auto max-h-[90vh]">
             <h3 class="text-xl font-bold text-slate-900 ming-title mb-4">編輯夥伴資料與業績 Buff</h3>
             <form @submit.prevent="savePartnerEdit()" class="space-y-3 text-xs">
@@ -1027,7 +996,7 @@
     </div>
 
     <!-- MODAL: SECURE DELETE CONFIRMATION -->
-    <div x-show="showDeleteConfirmModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4" x-transition>
+    <div x-show="showDeleteConfirmModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4" x-transition style="display: none;">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 text-center space-y-4">
             <div class="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow">
                 <i class="fas fa-triangle-exclamation"></i>
@@ -1076,7 +1045,7 @@
                 currentUser: null,
                 
                 loginForm: { account: '', password: '' },
-                regForm: { name: '', email: '', password: '', rank: '業務專員', group: 'OO組', avatar: '👨‍💼', iosPush: true, androidPush: true },
+                regForm: { name: '', email: '', password: '', rank: '業務專員', group: 'OO組', avatar: '👨‍💼', pushEnabled: true },
                 forgotForm: { name: '', email: '' },
                 forgotResult: '',
                 avatarList: ['👨‍💼', '👩‍💼', '🧑‍💼', '👨‍💻', '👩‍💻', '🧑‍🎨', '👨‍🎓', '👩‍🎓', '🦸‍♂️', '🦸‍♀️'],
@@ -1165,7 +1134,6 @@
                     window.addEventListener('online', () => { this.isOnline = true; });
                     window.addEventListener('offline', () => { 
                         this.isOnline = false; 
-                        this.showAlert('離線警告', '偵測到網際網路已斷線，部分資料同步可能延遲。');
                     });
 
                     setInterval(() => {
@@ -1188,15 +1156,14 @@
 
                     setInterval(async () => {
                         await this.fetchCloudData();
-                    }, 4000);
+                    }, 15000);
 
                     const savedUser = localStorage.getItem('tycoon_current_user');
                     const activeSession = sessionStorage.getItem('tycoon_active_session');
                     if (savedUser && activeSession) {
                         this.currentUser = JSON.parse(savedUser);
                         this.lastKnownPoints = this.currentUser.points || 0;
-                        if (this.currentUser.iosPush === undefined) this.currentUser.iosPush = true;
-                        if (this.currentUser.androidPush === undefined) this.currentUser.androidPush = true;
+                        if (this.currentUser.pushEnabled === undefined) this.currentUser.pushEnabled = true;
                         this.initProfileForm();
                     } else {
                         this.currentUser = null;
@@ -1204,6 +1171,13 @@
                     }
 
                     setTimeout(() => { this.showNewsModal = true; }, 500);
+                },
+
+                getDeviceOS() {
+                    const ua = navigator.userAgent || navigator.vendor || window.opera;
+                    if (/android/i.test(ua)) return 'Android';
+                    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) return 'iOS';
+                    return '網頁版';
                 },
 
                 initProfileForm() {
@@ -1232,7 +1206,7 @@
 
                 async fetchCloudData() {
                     try {
-                        const res = await fetch(`${API_BASE}/state`);
+                        const res = await fetch(`${API_BASE}/state`, { cache: 'no-store' });
                         if (res.ok) {
                             const data = await res.json();
                             const newPartners = data.partners || [];
@@ -1248,12 +1222,10 @@
                             if (this.currentUser) {
                                 const matched = newPartners.find(p => p.email === this.currentUser.email);
                                 if (matched) {
-                                    // 偵測點數增加（指揮中心審核通過核發 FYC 點數或獎勵）
                                     if (matched.points > this.lastKnownPoints) {
                                         const diff = matched.points - this.lastKnownPoints;
                                         const winMsg = `🎉 恭喜獲點！指揮中心已通過您的申報，成功獲得 +${diff} 點與對應骰子！`;
                                         this.showAlert('🏆 戰情室捷報', winMsg);
-                                        // 同步更新跑馬燈最新戰況
                                         this.settings.ticker1 = `🔥 最新戰報：${matched.name} 申報審核通過，成功獲得 +${diff} 點！`;
                                     }
                                     this.lastKnownPoints = matched.points;
@@ -1281,11 +1253,11 @@
                             if (!this.settings.boardCells || this.settings.boardCells.length !== 30) {
                                 this.initDefaultBoardCells();
                             }
-                        } else {
-                            this.isOnline = false;
                         }
                     } catch(e) {
-                        this.isOnline = false;
+                        if (!navigator.onLine) {
+                            this.isOnline = false;
+                        }
                     }
                 },
 
@@ -1303,6 +1275,7 @@
                                 settings: this.settings
                             })
                         });
+                        this.isOnline = true;
                     } catch(e) {
                         this.isOnline = false;
                     }
@@ -1333,8 +1306,7 @@
                     if (found && found.password === this.loginForm.password) {
                         this.currentUser = found;
                         this.lastKnownPoints = this.currentUser.points || 0;
-                        if (this.currentUser.iosPush === undefined) this.currentUser.iosPush = true;
-                        if (this.currentUser.androidPush === undefined) this.currentUser.androidPush = true;
+                        if (this.currentUser.pushEnabled === undefined) this.currentUser.pushEnabled = true;
                         localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
                         sessionStorage.setItem('tycoon_active_session', 'active');
                         this.initProfileForm();
@@ -1357,8 +1329,7 @@
                         rank: this.regForm.rank,
                         group: this.regForm.group || 'OO組',
                         avatar: this.regForm.avatar,
-                        iosPush: true,
-                        androidPush: true,
+                        pushEnabled: true,
                         fyc: 0, points: 0, totalPoints: 0, diceCount: 0, position: 0, buffs: []
                     };
                     this.partners.push(newP);
@@ -1368,7 +1339,6 @@
                     sessionStorage.setItem('tycoon_active_session', 'active');
                     this.initProfileForm();
                     
-                    // 廣播跑馬燈：新夥伴報聘與註冊
                     this.settings.ticker2 = `🎉 新夥伴報聘捷報：熱烈歡迎 ${newP.name} (${newP.rank}) 加入 ${newP.group}！`;
                     await this.syncToServer();
                     playBeep('success');
@@ -1414,12 +1384,10 @@
                     if (!this.currentUser) return;
                     const idx = this.partners.findIndex(p => p.email === this.currentUser.email);
                     if (idx !== -1) {
-                        this.partners[idx].iosPush = this.currentUser.iosPush;
-                        this.partners[idx].androidPush = this.currentUser.androidPush;
+                        this.partners[idx].pushEnabled = this.currentUser.pushEnabled;
                     }
                     localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
                     await this.syncToServer();
-                    this.showAlert('推播設定已更新', `iOS 通知: ${this.currentUser.iosPush ? '開啟' : '關閉'} | Android 通知: ${this.currentUser.androidPush ? '開啟' : '關閉'}`);
                 },
 
                 onTagChange() {
@@ -1460,8 +1428,6 @@
                         time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
                     };
                     this.declarations.push(req);
-
-                    // 即時更新跑馬燈廣報最新戰況
                     this.settings.ticker3 = `🔥 最新任務提交：${this.currentUser.name} 提交了【${req.tag}】申報，正等待指揮中心審核！`;
 
                     await this.syncToServer();
@@ -1495,7 +1461,7 @@
                     await this.syncToServer();
                     try { confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } }); } catch(e) {}
                     playBeep('success');
-                    this.showAlert('審核通過', `已成功撥發 ${req.points} 點與 ${req.dice} 顆骰子給 ${req.userName}（直屬增員者已同步獲點）！`);
+                    this.showAlert('審核通過', `已成功撥發 ${req.points} 點與 ${req.dice} 顆骰子給 ${req.userName}！`);
                 },
 
                 async rejectDecl(index) {
@@ -1509,7 +1475,6 @@
                         this.showAlert('點數不足', '每次擲骰需要 10 點點數！');
                         return;
                     }
-                    // 立即在前端扣點並同步至全域 partners 陣列
                     this.currentUser.points -= 10;
                     this.lastKnownPoints = this.currentUser.points;
                     const pIdx = this.partners.findIndex(p => p.email === this.currentUser.email);
@@ -1536,38 +1501,45 @@
                             let landed = this.settings.boardCells[nextPos];
 
                             if (landed.type === '傳送') {
-                                let randomPos;
-                                do {
-                                    randomPos = Math.floor(Math.random() * 30);
-                                } while (randomPos === nextPos);
-                                nextPos = randomPos;
+                                nextPos = Math.floor(Math.random() * 30);
                                 landed = this.settings.boardCells[nextPos];
                             }
 
                             this.currentUser.position = nextPos;
-                            this.currentLandedCell = landed;
-                            this.showLandingModal = true;
-
-                            if (landed.type === '獎勵') {
-                                const newReward = {
-                                    userName: this.currentUser.name,
-                                    reward: `[第 ${nextPos + 1} 格] ${landed.title}：${landed.reward}`,
-                                    time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }),
-                                    status: '未發放'
-                                };
-                                this.rewardsList.push(newReward);
-                                this.settings.ticker1 = `🎉 捷報！恭喜夥伴【${this.currentUser.name}】在大富翁踩中【${landed.title}】獲得豐富獎勵！`;
+                            const uIdx = this.partners.findIndex(p => p.email === this.currentUser.email);
+                            if (uIdx !== -1) {
+                                this.partners[uIdx].position = nextPos;
                             }
 
+                            if (landed.type === '獎勵') {
+                                this.rewardsList.push({
+                                    userName: this.currentUser.name,
+                                    reward: `踩中 #${nextPos + 1} ${landed.title}：${landed.reward}`,
+                                    time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }),
+                                    status: '待發放'
+                                });
+                            }
+
+                            localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
                             await this.syncToServer();
+
+                            this.currentLandedCell = landed;
+                            this.showLandingModal = true;
                             playBeep('success');
                         }
                     }, 100);
                 },
 
-                async closeLandingModal() {
+                closeLandingModal() {
                     this.showLandingModal = false;
-                    await this.syncToServer();
+                },
+
+                hasPlayerHere(index) {
+                    return this.partners.some(p => (p.position || 0) === index);
+                },
+
+                getPlayersOnCell(index) {
+                    return this.partners.filter(p => (p.position || 0) === index);
                 },
 
                 openCellModal(cell, index) {
@@ -1576,12 +1548,21 @@
                     this.showCellDetailModal = true;
                 },
 
-                hasPlayerHere(cellIndex) {
-                    return this.partners.some(p => p.position === cellIndex);
+                getTotalFYC(p) {
+                    let base = p.fyc || 0;
+                    if (p.buffs && p.buffs.length > 0) {
+                        p.buffs.forEach(bName => {
+                            const subP = this.partners.find(x => x.name === bName);
+                            if (subP) {
+                                base += (subP.fyc || 0);
+                            }
+                        });
+                    }
+                    return base;
                 },
 
-                getPlayersOnCell(cellIndex) {
-                    return this.partners.filter(p => p.position === cellIndex);
+                formatCurrency(val) {
+                    return '$' + Number(val || 0).toLocaleString();
                 },
 
                 getGroupPartners() {
@@ -1589,162 +1570,108 @@
                     return this.partners.filter(p => p.group === this.currentUser.group);
                 },
 
-                getTotalFYC(partner) {
-                    let total = partner.fyc || 0;
-                    if (partner.buffs && partner.buffs.length > 0) {
-                        partner.buffs.forEach(bName => {
-                            const downline = this.partners.find(p => p.name === bName);
-                            if (downline) {
-                                total += (downline.fyc || 0);
-                            }
-                        });
-                    }
-                    return total;
-                },
-
-                formatCurrency(num) {
-                    return '$' + (num || 0).toLocaleString();
-                },
-
                 async postMessage() {
-                    const authorName = this.msgForm.isAnonymous ? '神秘夥伴' : this.currentUser.name;
-                    this.messages.unshift({
+                    if (!this.msgForm.title || !this.msgForm.content) return;
+                    const newMsg = {
                         title: this.msgForm.title,
                         content: this.msgForm.content,
+                        author: this.currentUser.name,
                         isAnonymous: this.msgForm.isAnonymous,
-                        author: authorName,
                         time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }),
                         likes: 0,
                         replies: []
-                    });
-                    await this.syncToServer();
+                    };
+                    this.messages.unshift(newMsg);
                     this.msgForm.title = '';
                     this.msgForm.content = '';
-                    this.showAlert('發布成功', '士氣留言已送出，全體夥伴即時收到通知！');
-                },
-
-                async postReply(mIndex) {
-                    const replyText = this.replyTexts[mIndex];
-                    if (!replyText || replyText.trim() === '') return;
-
-                    if (!this.messages[mIndex].replies) {
-                        this.messages[mIndex].replies = [];
-                    }
-
-                    this.messages[mIndex].replies.push({
-                        author: this.currentUser.name,
-                        content: replyText,
-                        time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
-                    });
-
-                    this.replyTexts[mIndex] = '';
+                    this.msgForm.isAnonymous = false;
                     await this.syncToServer();
-                    this.showAlert('回覆成功', '留言回覆已同步更新！');
+                    playBeep('success');
+                    this.showAlert('發布成功', '士氣留言已同步至全體夥伴看板！');
                 },
 
                 async likeMessage(index) {
-                    this.messages[index].likes = (this.messages[index].likes || 0) + 1;
+                    if (!this.messages[index].likes) this.messages[index].likes = 0;
+                    this.messages[index].likes++;
+                    await this.syncToServer();
+                },
+
+                async postReply(index) {
+                    const text = this.replyTexts[index];
+                    if (!text || text.trim() === '') return;
+                    if (!this.messages[index].replies) this.messages[index].replies = [];
+                    this.messages[index].replies.push({
+                        author: this.currentUser.name,
+                        content: text,
+                        time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
+                    });
+                    this.replyTexts[index] = '';
                     await this.syncToServer();
                 },
 
                 verifyAdmin() {
                     if (this.adminPassInput === this.adminPassword) {
                         this.adminAuth = true;
-                        playBeep('success');
+                        this.adminPassInput = '';
                     } else {
-                        this.showAlert('密碼錯誤', '指揮中心密碼不正確！');
+                        this.showAlert('驗證失敗', '管理者密碼錯誤！');
                     }
                 },
 
+                async saveSettings() {
+                    await this.syncToServer();
+                    this.showAlert('儲存成功', '系統設定與外觀已全面更新並同步！');
+                },
+
                 editPartner(p) {
-                    const idx = this.partners.findIndex(x => x.email === p.email);
-                    this.editingPartnerIndex = idx;
                     this.editingPartner = JSON.parse(JSON.stringify(p));
                     if (!this.editingPartner.buffs) this.editingPartner.buffs = [];
                     this.showEditPartnerModal = true;
                 },
 
                 async savePartnerEdit() {
-                    if (this.editingPartnerIndex !== -1) {
-                        this.partners[this.editingPartnerIndex] = JSON.parse(JSON.stringify(this.editingPartner));
+                    const idx = this.partners.findIndex(p => p.email === this.editingPartner.email);
+                    if (idx !== -1) {
+                        this.partners[idx] = JSON.parse(JSON.stringify(this.editingPartner));
                         if (this.currentUser && this.currentUser.email === this.editingPartner.email) {
-                            this.currentUser = this.partners[this.editingPartnerIndex];
+                            this.currentUser = JSON.parse(JSON.stringify(this.editingPartner));
+                            localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
                         }
-                        await this.syncToServer();
-                        this.showEditPartnerModal = false;
-                        this.showAlert('更新成功', '夥伴資料與業績 Buff 已成功同步至雲端！');
                     }
+                    this.showEditPartnerModal = false;
+                    await this.syncToServer();
+                    this.showAlert('更新成功', '夥伴資料與 Buff 已順利更新！');
                 },
 
-                promptDeletePartner(index) {
-                    this.deletingPartnerIndex = index;
-                    this.deletingPartnerTarget = this.partners[index];
+                promptDeletePartner(idx) {
+                    this.deletingPartnerIndex = idx;
+                    this.deletingPartnerTarget = this.partners[idx];
                     this.showDeleteConfirmModal = true;
                 },
 
                 async executeDeletePartner() {
                     if (this.deletingPartnerIndex !== -1) {
-                        const targetEmail = this.deletingPartnerTarget.email;
-                        const targetName = this.deletingPartnerTarget.name;
-
                         this.partners.splice(this.deletingPartnerIndex, 1);
-                        this.partners.forEach(p => {
-                            if (p.buffs && p.buffs.includes(targetName)) {
-                                p.buffs = p.buffs.filter(n => n !== targetName);
-                            }
-                        });
-
-                        await this.syncToServer();
                         this.showDeleteConfirmModal = false;
-                        this.deletingPartnerIndex = -1;
-                        this.deletingPartnerTarget = null;
-
-                        if (this.currentUser && this.currentUser.email === targetEmail) {
-                            this.logout();
-                        }
-                        this.showAlert('刪除成功', '該名夥伴已自系統中安全移除。');
+                        await this.syncToServer();
+                        this.showAlert('刪除成功', '該夥伴帳號已被安全移除。');
                     }
                 },
 
-                async addTag() {
+                addTag() {
                     if (!this.newTagForm.name) return;
                     this.settings.tags.push({
                         name: this.newTagForm.name,
                         isFYC: this.newTagForm.isFYC,
                         points: this.newTagForm.points || 10
                     });
-                    await this.syncToServer();
                     this.newTagForm.name = '';
-                    this.showAlert('已新增', '新的獲點方式 Tag 已成功加入！');
+                    this.newTagForm.isFYC = false;
+                    this.newTagForm.points = 50;
                 },
 
-                async removeTag(index) {
-                    this.settings.tags.splice(index, 1);
-                    await this.syncToServer();
-                },
-
-                async saveSettings() {
-                    this.isEditingSettings = false;
-                    await this.syncToServer();
-                    this.showAlert('儲存成功', '指揮中心與競賽日期倒數設定已即時更新！');
-                },
-
-                async toggleRewardStatus(index) {
-                    this.rewardsList[index].status = this.rewardsList[index].status === '已發放' ? '未發放' : '已發放';
-                    await this.syncToServer();
-                },
-
-                exportRewards() {
-                    let csv = '夥伴姓名,獲得獎勵內容,獲得時間,發放狀態\n';
-                    this.rewardsList.forEach(r => {
-                        csv += `"${r.userName}","${r.reward}","${r.time}","${r.status}"\n`;
-                    });
-                    const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = '競賽大亨_獎勵統整清單.csv';
-                    a.click();
+                removeTag(idx) {
+                    this.settings.tags.splice(idx, 1);
                 },
 
                 async updateAdminPassword() {
@@ -1753,94 +1680,99 @@
                     this.settings.adminPassword = this.newAdminPassword;
                     this.newAdminPassword = '';
                     await this.syncToServer();
-                    this.showAlert('修改成功', '指揮中心密碼已成功更新並同步至雲端！');
+                    this.showAlert('密碼變更成功', '指揮中心管理者密碼已更新！');
+                },
+
+                async toggleRewardStatus(idx) {
+                    this.rewardsList[idx].status = this.rewardsList[idx].status === '已發放' ? '待發放' : '已發放';
+                    await this.syncToServer();
+                },
+
+                async resetAllPositions() {
+                    this.partners.forEach(p => p.position = 0);
+                    if (this.currentUser) this.currentUser.position = 0;
+                    await this.syncToServer();
+                    this.showAlert('重設成功', '所有夥伴已全數歸回起始點 (第1格)。');
+                },
+
+                async resetAllPoints() {
+                    this.partners.forEach(p => { p.points = 0; p.totalPoints = 0; });
+                    if (this.currentUser) { this.currentUser.points = 0; this.currentUser.totalPoints = 0; }
+                    await this.syncToServer();
+                    this.showAlert('重設成功', '所有夥伴點數已歸零。');
+                },
+
+                async resetAllDice() {
+                    this.partners.forEach(p => p.diceCount = 0);
+                    if (this.currentUser) this.currentUser.diceCount = 0;
+                    await this.syncToServer();
+                    this.showAlert('重設成功', '所有夥伴骰子數已歸零。');
+                },
+
+                async factoryResetSystem() {
+                    if (confirm('確定要將系統還原至預設狀態嗎？')) {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        location.reload();
+                    }
                 },
 
                 loadCurrentCode() {
                     this.systemRawCode = document.documentElement.outerHTML;
-                    this.showAlert('載入成功', '目前前端編碼已載入至編輯框中！');
+                    this.showAlert('載入成功', '目前頁面編碼已載入至檢視框。');
                 },
 
                 saveRawCode() {
-                    if (!this.systemRawCode) return;
-                    const blob = new Blob([this.systemRawCode], { type: 'text/html;charset=utf-8;' });
+                    const blob = new Blob([this.systemRawCode || document.documentElement.outerHTML], { type: 'text/html;charset=utf-8' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'index.html';
+                    a.download = 'competition_tycoon_fixed.html';
                     a.click();
-                    this.showAlert('下載成功', '最新編碼檔案已下載，可直接覆蓋至專案！');
-                },
-
-                async resetAllPositions() {
-                    if (confirm('確定要將所有人的一鍵回到起始點（第 1 格）嗎？')) {
-                        this.partners.forEach(p => p.position = 0);
-                        await this.syncToServer();
-                        this.showAlert('重置成功', '所有夥伴的棋盤位置已歸零至起始點！');
-                    }
-                },
-
-                async resetAllPoints() {
-                    if (confirm('確定要將所有人的點數與累積點數一鍵全部歸零嗎？')) {
-                        this.partners.forEach(p => { p.points = 0; p.totalPoints = 0; });
-                        await this.syncToServer();
-                        this.showAlert('歸零成功', '全體夥伴的點數已全部歸零！');
-                    }
-                },
-
-                async resetAllDice() {
-                    if (confirm('確定要將所有人的骰子數一鍵全部歸零嗎？')) {
-                        this.partners.forEach(p => p.diceCount = 0);
-                        await this.syncToServer();
-                        this.showAlert('歸零成功', '全體夥伴的骰子數已全部歸零！');
-                    }
-                },
-
-                async factoryResetSystem() {
-                    if (confirm('【高風險警告】確定要將系統一鍵還原至預設狀態嗎？這會重置棋盤與設定！')) {
-                        this.initDefaultBoardCells();
-                        await this.syncToServer();
-                        this.showAlert('系統還原', '系統基本設定與棋盤已還原至預設值！');
-                    }
-                },
-
-                autoBackupData() {
-                    const backupData = {
-                        date: new Date().toISOString(),
-                        partners: this.partners,
-                        declarations: this.declarations,
-                        messages: this.messages,
-                        rewardsList: this.rewardsList,
-                        settings: this.settings
-                    };
-                    const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    console.log('自動備份已於 22:00 完成建檔。');
+                    URL.revokeObjectURL(url);
+                    this.showAlert('下載成功', '已成功打包下載最新修復後的 HTML 檔案！');
                 },
 
                 downloadBackup() {
-                    const backupData = {
-                        date: new Date().toISOString(),
+                    const dataObj = {
                         partners: this.partners,
                         declarations: this.declarations,
                         messages: this.messages,
                         rewardsList: this.rewardsList,
-                        settings: this.settings
+                        settings: this.settings,
+                        backupTime: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
                     };
-                    const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+                    const blob = new Blob([JSON.stringify(dataObj, null, 2)], { type: 'application/json;charset=utf-8' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = `競賽大亨_系統備份_${new Date().toISOString().slice(0,10)}.json`;
+                    a.download = `tycoon_backup_${new Date().toISOString().slice(0,10)}.json`;
                     a.click();
-                    this.showAlert('備份成功', '系統資料備份檔已順利下載！');
+                    URL.revokeObjectURL(url);
+                },
+
+                autoBackupData() {
+                    this.downloadBackup();
+                },
+
+                exportRewards() {
+                    let csv = '夥伴姓名,獲得獎勵內容,獲得時間,發放狀態\n';
+                    this.rewardsList.forEach(r => {
+                        csv += `"${r.userName}","${r.reward}","${r.time}","${r.status}"\n`;
+                    });
+                    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'rewards_summary.csv';
+                    a.click();
+                    URL.revokeObjectURL(url);
                 },
 
                 showAlert(title, text) {
                     this.notificationTitle = title;
                     this.notificationText = text;
                     this.showNotificationModal = true;
-                    playBeep('success');
                 }
             }
         }
