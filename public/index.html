@@ -700,7 +700,7 @@
                             </div>
                         </template>
 
-                        <!-- TAB 3: 遊戲與 Tag 設定 (包含競賽日期與倒數日設定) -->
+                        <!-- TAB 3: 遊戲與 Tag 設定 -->
                         <template x-if="adminTab === 'settings'">
                             <div class="space-y-6">
                                 <h3 class="text-lg font-bold text-slate-900 ming-title">遊戲設定與 Tag 點數規則</h3>
@@ -917,16 +917,16 @@
                                     <p class="text-xs text-slate-600">以下操作將會直接影響全體夥伴資料，請謹慎使用：</p>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <button @click="resetAllPositions()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow">
-                                            <i class="fas fa-map-pin mr-1"></i> 一鍵所有人回起始點
+                                            <i class="fas fa-map-pin mr-1"></i> 一鍵所有人回起始點[cite: 3]
                                         </button>
                                         <button @click="resetAllPoints()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow">
-                                            <i class="fas fa-coins mr-1"></i> 點數一鍵全部歸零
+                                            <i class="fas fa-coins mr-1"></i> 點數一鍵全部歸零[cite: 3]
                                         </button>
                                         <button @click="resetAllDice()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow">
-                                            <i class="fas fa-dice mr-1"></i> 骰子數一鍵全部歸零
+                                            <i class="fas fa-dice mr-1"></i> 骰子數一鍵全部歸零[cite: 3]
                                         </button>
                                         <button @click="factoryResetSystem()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow">
-                                            <i class="fas fa-rotate-left mr-1"></i> 系統一鍵還原至預設
+                                            <i class="fas fa-rotate-left mr-1"></i> 系統一鍵還原至預設[cite: 3]
                                         </button>
                                     </div>
                                 </div>
@@ -941,9 +941,9 @@
 
                                 <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3 max-w-md">
                                     <h4 class="font-bold text-slate-900 text-sm"><i class="fas fa-database mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 系統資料備份與下載 (每晚22:00自動存檔)</h4>
-                                    <p class="text-xs text-slate-500">系統已完整強化資料常駐防護，並提供每晚台北時間 22:00 自動備份檔下載，防止任何資料遺失。</p>
+                                    <p class="text-xs text-slate-500">系統已完整強化資料常駐防護，並提供每晚台北時間 22:00 自動備份檔下載，防止任何資料遺失[cite: 3]。</p>
                                     <button @click="downloadBackup()" class="text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow" :style="'background-color: ' + (settings.primaryColor || '#f97316')">
-                                        <i class="fas fa-download mr-1"></i> 下載最新系統備份檔 (JSON)
+                                        <i class="fas fa-download mr-1"></i> 下載最新系統備份檔 (JSON)[cite: 3]
                                     </button>
                                 </div>
                             </div>
@@ -1115,7 +1115,7 @@
                     newsContent: '歡迎各位頂尖業務菁英加入競賽大亨！請透過每日拜訪、增員與 FYC 申報賺取點數，解鎖 30 格大富翁棋盤豐富獎勵！',
                     startDate: '2026/12/14',
                     endDate: '2027/06/02',
-                    ticker1: '🎉 賀！競賽大亨雙軌競賽熱血啟動！所有申報請確實填寫任務說明！',
+                    ticker1: '🎉 賀 ! 競賽大亨雙軌競賽熱血啟動！所有申報請確實填寫任務說明！',
                     ticker2: '🔥 團隊夥伴衝刺中，每日拜訪與增員點數即時同步雲端！',
                     ticker3: '⭐ 恭喜各組菁英挑戰機會命運大富翁棋盤豐富大獎！',
                     primaryColor: '#f97316',
