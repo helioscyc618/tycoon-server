@@ -2,81 +2,103 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+
 const app = express();
 
+// 設定跨域與較大的資料傳輸限制（以支援大型 HTML 原始碼與 JSON 備份）
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// 資料持久化儲存檔案路徑
-const DB_FILE = path.join(__dirname, 'database.json');
+// 靜態檔案託管
+app.use(express.static(path.join(__dirname, 'public')));
 
-// 初始化載入或預設資料結構
-let cloudState = {
-    partners: [
-        { name: '王大亨', email: 'admin@tycoon.com', password: 'admin', rank: '業務經理', group: '菁英組', avatar: '👨‍💼', fyc: 150000, points: 100, totalPoints: 150, diceCount: 5, position: 0, buffs: [] }
-    ],
+// 預設記憶體狀態儲存
+let appState = {
+    partners: [],
     declarations: [],
     messages: [],
     rewardsList: [],
     settings: {
         newsTitle: '🏆 競賽大亨正式開跑！',
-        newsContent: '歡迎各位夥伴！',
-        ticker1: '🎉 賀！競賽大亨雲端永久同步版正式啟動！',
-        ticker2: '🔥 團隊夥伴衝刺中，資料已安全永久儲存！',
-        ticker3: '⭐ 祝各位挑戰機會命運大富翁棋盤大獎！',
+        newsContent: '歡迎各位頂尖業務菁英加入競賽大亨！請透過每日拜訪、增員與 FYC 申報賺取點數，解鎖 30 格大富翁棋盤豐富獎勵！',
+        startDate: '2026/12/14',
+        endDate: '2027/06/02',
+        ticker1: '🎉 賀！競賽大亨雙軌競賽熱血啟動！所有申報請確實填寫任務說明！',
+        ticker2: '🔥 團隊夥伴衝刺中，每日拜訪與增員點數即時同步雲端！',
+        ticker3: '⭐ 恭喜各組菁英挑戰機會命運大富翁棋盤豐富大獎！',
         primaryColor: '#f97316',
         headerColor: '#0f172a',
         bgColor: '#FAFAFA',
-        adminPassword: 'admin',
         tags: [
             { name: 'FYC', isFYC: true, points: 0 },
             { name: '活動邀約', isFYC: false, points: 10 },
             { name: '增員面談', isFYC: false, points: 20 },
+            { name: '新夥伴公司考', isFYC: false, points: 30 },
+            { name: '新夥伴外部考', isFYC: false, points: 30 },
             { name: '新夥伴報聘', isFYC: false, points: 50 }
         ],
-        boardCells: Array(30).fill({ title: '活力充沛格', icon: '🚩', type: '獎勵', reward: '獲得 20 點積分！' })
+        boardCells: []
     }
 };
 
-// 伺服器啟動時，若存在備份檔案則讀取進來，確保重啟不歸零
-if (fs.existsSync(DB_FILE)) {
-    try {
-        const rawData = fs.readFileSync(DB_FILE, 'utf8');
-        const savedData = JSON.parse(rawData);
-        if (savedData && savedData.partners) {
-            cloudState = savedData;
-            console.log('成功從永久檔案載入歷史資料！');
-        }
-    } catch (e) {
-        console.log('讀取永久資料庫檔案失敗，使用預設結構。');
-    }
-}
-
-// 取得雲端狀態
+// 1. 取得全系統狀態 API
 app.get('/api/state', (req, res) => {
-    res.json(cloudState);
+    res.json(appState);
 });
 
-// 更新雲端狀態（多裝置同步寫入並立即寫入硬碟檔案）
+// 2. 更新全系統狀態 API
 app.post('/api/state', (req, res) => {
-    const { partners, declarations, messages, rewardsList, settings } = req.body;
-    if (partners) cloudState.partners = partners;
-    if (declarations) cloudState.declarations = declarations;
-    if (messages) cloudState.messages = messages;
-    if (rewardsList) cloudState.rewardsList = rewardsList;
-    if (settings) cloudState.settings = settings;
-
-    // 立即將最新狀態寫入持久化檔案
-    try {
-        fs.writeFileSync(DB_FILE, JSON.stringify(cloudState, null, 2), 'utf8');
-    } catch (e) {
-        console.error('寫入永久檔案失敗：', e);
+    if (req.body) {
+        appState = req.body;
     }
-
-    res.json({ success: true, serverTime: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }) });
+    res.json({ success: true });
 });
 
-const PORT = process.env.PORT || 3000;
+// 3. 後台動態更新前端編碼 API (寫入 root 與 public/index.html)
+app.post('/api/update-code', (req, res) => {
+    const { htmlCode } = req.body;
+    if (!htmlCode) return res.status(400).json({ error: '缺少編碼內容' });
+    try {
+        // 寫入根目錄 index.html
+        fs.writeFileSync(path.join(__dirname, 'index.html'), htmlCode, 'utf8');
+        
+        // 寫入 public/index.html
+        const publicPath = path.join(__dirname, 'public');
+        if (!fs.existsSync(publicPath)) {
+            fs.mkdirSync(publicPath, { recursive: true });
+        }
+        fs.writeFileSync(path.join(publicPath, 'index.html'), htmlCode, 'utf8');
+
+        res.json({ success: true, message: '前端編碼已成功更新並寫入伺服器！' });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// 4. JSON 指令即時匯入與雲端同步 API
+app.post('/api/restore-json', (req, res) => {
+    const { jsonData } = req.body;
+    try {
+        const parsed = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
+        appState = parsed;
+        res.json({ success: true, message: 'JSON 指令已成功執行並同步至雲端！' });
+    } catch (e) {
+        res.status(400).json({ error: 'JSON 格式錯誤，無法解析' });
+    }
+});
+
+// 根目錄路由
+app.get('/', (req, res) => {
+    const indexPath = path.join(__dirname, 'public', 'index.html');
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+    } else {
+        res.send('Competition Tycoon Server is Running.');
+    }
+});
+
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-    console.log(`Competition Tycoon Server running on port ${PORT}`);
+    console.log(`Competition Tycoon server running on port ${PORT}`);
 });
