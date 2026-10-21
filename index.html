@@ -87,7 +87,7 @@
     <!-- RUNNING TICKER -->
     <div class="bg-slate-800 py-2.5 px-3 overflow-hidden whitespace-nowrap border-b border-orange-500/30 relative flex items-center shadow-inner" :style="'color: ' + (settings.primaryColor || '#f97316')">
         <div class="text-white font-bold px-2.5 py-0.5 rounded text-xs mr-3 z-10 flex items-center shadow" :style="'background-color: ' + (settings.primaryColor || '#f97316')">
-            <i class="fas fa-bullhorn mr-1"></i> 戰報
+            <i class="fas fa-bullhorn mr-1"></i> 最新戰報
         </div>
         <div class="overflow-hidden w-full relative">
             <div class="animate-marquee inline-block text-xs sm:text-sm font-medium tracking-wide text-slate-200">
@@ -254,10 +254,10 @@
                     <!-- LEFT -->
                     <div class="lg:col-span-5 space-y-6">
                         
-                        <!-- 1. 個人資訊管理卡片 -->
+                        <!-- 1. 個人資訊管理卡片 (含推播開關) -->
                         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
                             <h3 class="text-base font-bold text-slate-900 ming-title flex items-center justify-between">
-                                <span class="flex items-center"><i class="fas fa-id-card mr-2" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 個人資訊管理</span>
+                                <span class="flex items-center"><i class="fas fa-id-card mr-2" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 個人資訊與推播設定</span>
                                 <button @click="showProfileEdit = !showProfileEdit; if(showProfileEdit) initProfileForm();" class="text-xs hover:underline font-semibold" :style="'color: ' + (settings.primaryColor || '#f97316')" x-text="showProfileEdit ? '取消編輯' : '編輯資料'"></button>
                             </h3>
 
@@ -268,7 +268,19 @@
                                     <div class="flex justify-between"><span class="text-slate-400">Email:</span><span class="font-mono text-slate-800" x-text="currentUser.email"></span></div>
                                     <div class="flex justify-between"><span class="text-slate-400">個人 FYC 業績:</span><span class="font-bold text-slate-900" x-text="formatCurrency(currentUser.fyc || 0)"></span></div>
                                     <div class="flex justify-between"><span class="text-slate-400">整組總業績 (含Buff):</span><span class="font-bold" :style="'color: ' + (settings.primaryColor || '#f97316')" x-text="formatCurrency(getTotalFYC(currentUser))"></span></div>
-                                    <div class="flex justify-between"><span class="text-slate-400">直屬業務夥伴 (Buff):</span><span class="font-medium text-slate-800" x-text="currentUser.buffs && currentUser.buffs.length > 0 ? currentUser.buffs.join(', ') : '無'"></span></div>
+                                    <div class="flex justify-between items-center pt-2 border-t border-slate-200">
+                                        <span class="font-bold text-slate-800"><i class="fas fa-bell mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 手機推播通知：</span>
+                                        <div class="flex space-x-3">
+                                            <label class="flex items-center space-x-1 cursor-pointer">
+                                                <input type="checkbox" x-model="currentUser.iosPush" @change="savePushSettings()" class="rounded text-orange-500">
+                                                <span>iOS 通知</span>
+                                            </label>
+                                            <label class="flex items-center space-x-1 cursor-pointer">
+                                                <input type="checkbox" x-model="currentUser.androidPush" @change="savePushSettings()" class="rounded text-orange-500">
+                                                <span>Android 通知</span>
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </template>
 
@@ -310,7 +322,7 @@
                                     <label class="block text-xs font-bold text-slate-700 mb-1">選擇任務 / Tag 類型</label>
                                     <select x-model="declForm.tag" @change="onTagChange()" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm bg-white">
                                         <template x-for="t in settings.tags" :key="t.name">
-                                            <option :value="t.name" x-text="t.name + (t.isFYC ? ' (FYC原始輸入與千位進位換算)' : ' (固定點數: ' + t.points + '點)')"></option>
+                                            <option :value="t.name" x-text="t.name + (t.isFYC ? ' (FYC原始輸入與千位進位換算)' : ' (固定點数: ' + t.points + '點)')"></option>
                                         </template>
                                     </select>
                                 </div>
@@ -705,7 +717,6 @@
                             <div class="space-y-6">
                                 <h3 class="text-lg font-bold text-slate-900 ming-title">遊戲設定與 Tag 點數規則</h3>
                                 
-                                <!-- 競賽期間日期設定 -->
                                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
                                     <h4 class="font-bold text-slate-900 text-sm"><i class="fas fa-calendar-days mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 競賽期間與倒數日設定</h4>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -917,16 +928,16 @@
                                     <p class="text-xs text-slate-600">以下操作將會直接影響全體夥伴資料，請謹慎使用：</p>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <button @click="resetAllPositions()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow">
-                                            <i class="fas fa-map-pin mr-1"></i> 一鍵所有人回起始點[cite: 3]
+                                            <i class="fas fa-map-pin mr-1"></i> 一鍵所有人回起始點
                                         </button>
                                         <button @click="resetAllPoints()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow">
-                                            <i class="fas fa-coins mr-1"></i> 點數一鍵全部歸零[cite: 3]
+                                            <i class="fas fa-coins mr-1"></i> 點數一鍵全部歸零
                                         </button>
                                         <button @click="resetAllDice()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow">
-                                            <i class="fas fa-dice mr-1"></i> 骰子數一鍵全部歸零[cite: 3]
+                                            <i class="fas fa-dice mr-1"></i> 骰子數一鍵全部歸零
                                         </button>
                                         <button @click="factoryResetSystem()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow">
-                                            <i class="fas fa-rotate-left mr-1"></i> 系統一鍵還原至預設[cite: 3]
+                                            <i class="fas fa-rotate-left mr-1"></i> 系統一鍵還原至預設
                                         </button>
                                     </div>
                                 </div>
@@ -941,9 +952,9 @@
 
                                 <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3 max-w-md">
                                     <h4 class="font-bold text-slate-900 text-sm"><i class="fas fa-database mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 系統資料備份與下載 (每晚22:00自動存檔)</h4>
-                                    <p class="text-xs text-slate-500">系統已完整強化資料常駐防護，並提供每晚台北時間 22:00 自動備份檔下載，防止任何資料遺失[cite: 3]。</p>
+                                    <p class="text-xs text-slate-500">系統已完整強化資料常駐防護，並提供每晚台北時間 22:00 自動備份檔下載，防止任何資料遺失。</p>
                                     <button @click="downloadBackup()" class="text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow" :style="'background-color: ' + (settings.primaryColor || '#f97316')">
-                                        <i class="fas fa-download mr-1"></i> 下載最新系統備份檔 (JSON)[cite: 3]
+                                        <i class="fas fa-download mr-1"></i> 下載最新系統備份檔 (JSON)
                                     </button>
                                 </div>
                             </div>
@@ -1065,7 +1076,7 @@
                 currentUser: null,
                 
                 loginForm: { account: '', password: '' },
-                regForm: { name: '', email: '', password: '', rank: '業務專員', group: 'OO組', avatar: '👨‍💼' },
+                regForm: { name: '', email: '', password: '', rank: '業務專員', group: 'OO組', avatar: '👨‍💼', iosPush: true, androidPush: true },
                 forgotForm: { name: '', email: '' },
                 forgotResult: '',
                 avatarList: ['👨‍💼', '👩‍💼', '🧑‍💼', '👨‍💻', '👩‍💻', '🧑‍🎨', '👨‍🎓', '👩‍🎓', '🦸‍♂️', '🦸‍♀️'],
@@ -1115,7 +1126,7 @@
                     newsContent: '歡迎各位頂尖業務菁英加入競賽大亨！請透過每日拜訪、增員與 FYC 申報賺取點數，解鎖 30 格大富翁棋盤豐富獎勵！',
                     startDate: '2026/12/14',
                     endDate: '2027/06/02',
-                    ticker1: '🎉 賀 ! 競賽大亨雙軌競賽熱血啟動！所有申報請確實填寫任務說明！',
+                    ticker1: '🎉 賀！競賽大亨雙軌競賽熱血啟動！所有申報請確實填寫任務說明！',
                     ticker2: '🔥 團隊夥伴衝刺中，每日拜訪與增員點數即時同步雲端！',
                     ticker3: '⭐ 恭喜各組菁英挑戰機會命運大富翁棋盤豐富大獎！',
                     primaryColor: '#f97316',
@@ -1139,6 +1150,8 @@
                 notificationText: '',
                 partners: [],
                 lastMsgCount: 0,
+                lastKnownPoints: 0,
+                lastDeclCount: 0,
 
                 async init() {
                     window.addEventListener('beforeunload', () => {
@@ -1181,6 +1194,9 @@
                     const activeSession = sessionStorage.getItem('tycoon_active_session');
                     if (savedUser && activeSession) {
                         this.currentUser = JSON.parse(savedUser);
+                        this.lastKnownPoints = this.currentUser.points || 0;
+                        if (this.currentUser.iosPush === undefined) this.currentUser.iosPush = true;
+                        if (this.currentUser.androidPush === undefined) this.currentUser.androidPush = true;
                         this.initProfileForm();
                     } else {
                         this.currentUser = null;
@@ -1232,8 +1248,17 @@
                             if (this.currentUser) {
                                 const matched = newPartners.find(p => p.email === this.currentUser.email);
                                 if (matched) {
-                                    // 完美修復：僅安靜同步最新狀態，徹底杜絕擲骰誤判獲點通知與隨意加點
+                                    // 偵測點數增加（指揮中心審核通過核發 FYC 點數或獎勵）
+                                    if (matched.points > this.lastKnownPoints) {
+                                        const diff = matched.points - this.lastKnownPoints;
+                                        const winMsg = `🎉 恭喜獲點！指揮中心已通過您的申報，成功獲得 +${diff} 點與對應骰子！`;
+                                        this.showAlert('🏆 戰情室捷報', winMsg);
+                                        // 同步更新跑馬燈最新戰況
+                                        this.settings.ticker1 = `🔥 最新戰報：${matched.name} 申報審核通過，成功獲得 +${diff} 點！`;
+                                    }
+                                    this.lastKnownPoints = matched.points;
                                     this.currentUser = matched;
+                                    localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
                                 }
                             }
 
@@ -1307,6 +1332,9 @@
                     const found = this.partners.find(p => p.email === this.loginForm.account || p.name === this.loginForm.account);
                     if (found && found.password === this.loginForm.password) {
                         this.currentUser = found;
+                        this.lastKnownPoints = this.currentUser.points || 0;
+                        if (this.currentUser.iosPush === undefined) this.currentUser.iosPush = true;
+                        if (this.currentUser.androidPush === undefined) this.currentUser.androidPush = true;
                         localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
                         sessionStorage.setItem('tycoon_active_session', 'active');
                         this.initProfileForm();
@@ -1329,13 +1357,19 @@
                         rank: this.regForm.rank,
                         group: this.regForm.group || 'OO組',
                         avatar: this.regForm.avatar,
+                        iosPush: true,
+                        androidPush: true,
                         fyc: 0, points: 0, totalPoints: 0, diceCount: 0, position: 0, buffs: []
                     };
                     this.partners.push(newP);
                     this.currentUser = newP;
+                    this.lastKnownPoints = 0;
                     localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
                     sessionStorage.setItem('tycoon_active_session', 'active');
                     this.initProfileForm();
+                    
+                    // 廣播跑馬燈：新夥伴報聘與註冊
+                    this.settings.ticker2 = `🎉 新夥伴報聘捷報：熱烈歡迎 ${newP.name} (${newP.rank}) 加入 ${newP.group}！`;
                     await this.syncToServer();
                     playBeep('success');
                     this.showAlert('註冊成功', '已同步至雲端伺服器！起始點數皆為 0。');
@@ -1376,6 +1410,18 @@
                     this.showAlert('修改成功', '個人資訊與密碼已成功更新並同步至雲端！');
                 },
 
+                async savePushSettings() {
+                    if (!this.currentUser) return;
+                    const idx = this.partners.findIndex(p => p.email === this.currentUser.email);
+                    if (idx !== -1) {
+                        this.partners[idx].iosPush = this.currentUser.iosPush;
+                        this.partners[idx].androidPush = this.currentUser.androidPush;
+                    }
+                    localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
+                    await this.syncToServer();
+                    this.showAlert('推播設定已更新', `iOS 通知: ${this.currentUser.iosPush ? '開啟' : '關閉'} | Android 通知: ${this.currentUser.androidPush ? '開啟' : '關閉'}`);
+                },
+
                 onTagChange() {
                     const selected = this.settings.tags.find(t => t.name === this.declForm.tag);
                     this.isFYCTag = selected ? selected.isFYC : false;
@@ -1414,6 +1460,10 @@
                         time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
                     };
                     this.declarations.push(req);
+
+                    // 即時更新跑馬燈廣報最新戰況
+                    this.settings.ticker3 = `🔥 最新任務提交：${this.currentUser.name} 提交了【${req.tag}】申報，正等待指揮中心審核！`;
+
                     await this.syncToServer();
                     playBeep('success');
                     this.showAlert('申報已送出', '您的案件已提交至雲端指揮中心審核！');
@@ -1459,7 +1509,15 @@
                         this.showAlert('點數不足', '每次擲骰需要 10 點點數！');
                         return;
                     }
+                    // 立即在前端扣點並同步至全域 partners 陣列
                     this.currentUser.points -= 10;
+                    this.lastKnownPoints = this.currentUser.points;
+                    const pIdx = this.partners.findIndex(p => p.email === this.currentUser.email);
+                    if (pIdx !== -1) {
+                        this.partners[pIdx].points = this.currentUser.points;
+                    }
+                    localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
+                    
                     this.isRolling = true;
                     this.showDiceModal = true;
                     playBeep('dice');
