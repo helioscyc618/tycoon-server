@@ -1102,12 +1102,10 @@
                 lastMsgCount: 0,
 
                 async init() {
-                    // 安全機制：使用 sessionStorage 確保關閉網頁或分頁時立刻強制登出
                     window.addEventListener('beforeunload', () => {
                         sessionStorage.removeItem('tycoon_active_session');
                     });
 
-                    // 檢查是否有有效階段工作階段，若無則強制登出清理
                     if (!sessionStorage.getItem('tycoon_active_session')) {
                         localStorage.removeItem('tycoon_current_user');
                     }
@@ -1195,10 +1193,7 @@
                             if (this.currentUser) {
                                 const matched = newPartners.find(p => p.email === this.currentUser.email);
                                 if (matched) {
-                                    if (matched.points > this.currentUser.points) {
-                                        const diff = matched.points - this.currentUser.points;
-                                        this.showAlert('🎉 恭喜獲點！', `指揮中心已通過您的申報，成功獲得 +${diff} 點與對應骰子！`);
-                                    }
+                                    // 已修正：移除誤判彈窗，安靜同步最新點數狀態
                                     this.currentUser = matched;
                                 }
                             }

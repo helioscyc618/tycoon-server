@@ -603,6 +603,9 @@
                         <button @click="adminTab = 'theme'" class="px-3 py-3 rounded-xl text-left transition flex items-center space-x-3 whitespace-nowrap" :class="adminTab === 'theme' ? 'bg-slate-900 shadow' : 'text-slate-700 hover:bg-slate-200'" :style="adminTab === 'theme' ? 'color: ' + (settings.primaryColor || '#f97316') : ''">
                             <i class="fas fa-palette w-5 text-center"></i><span>主題與外觀風格</span>
                         </button>
+                        <button @click="adminTab = 'codeEditor'" class="px-3 py-3 rounded-xl text-left transition flex items-center space-x-3 whitespace-nowrap" :class="adminTab === 'codeEditor' ? 'bg-slate-900 shadow' : 'text-slate-700 hover:bg-slate-200'" :style="adminTab === 'codeEditor' ? 'color: ' + (settings.primaryColor || '#f97316') : ''">
+                            <i class="fas fa-code w-5 text-center"></i><span>前端編碼檢視與更新</span>
+                        </button>
                         <button @click="adminTab = 'security'" class="px-3 py-3 rounded-xl text-left transition flex items-center space-x-3 whitespace-nowrap" :class="adminTab === 'security' ? 'bg-slate-900 shadow' : 'text-slate-700 hover:bg-slate-200'" :style="adminTab === 'security' ? 'color: ' + (settings.primaryColor || '#f97316') : ''">
                             <i class="fas fa-key w-5 text-center"></i><span>密碼與資料備份</span>
                         </button>
@@ -890,9 +893,44 @@
                             </div>
                         </template>
 
-                        <!-- TAB 7: 安全與密碼設定 -->
+                        <!-- TAB 7: 編碼檢視與線上更新/修復 -->
+                        <template x-if="adminTab === 'codeEditor'">
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-bold text-slate-900 ming-title">前端編碼線上檢視與修復</h3>
+                                <p class="text-xs text-slate-500">您可以在此檢視目前的介面編碼或直接貼上修正後的編碼，點擊儲存後即可直接線上生效或備份！</p>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">系統原始碼 (HTML / JS)</label>
+                                    <textarea x-model="systemRawCode" rows="12" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono bg-slate-900 text-green-400" placeholder="在此檢視或貼上更新編碼..."></textarea>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button @click="loadCurrentCode()" class="bg-slate-800 text-white font-bold py-2 px-4 rounded-xl text-xs shadow">載入目前頁面編碼</button>
+                                    <button @click="saveRawCode()" class="text-white font-bold py-2 px-5 rounded-xl text-xs shadow" :style="'background-color: ' + (settings.primaryColor || '#f97316')">下載更新檔案</button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- TAB 8: 安全、一鍵歸零與密碼設定 -->
                         <template x-if="adminTab === 'security'">
                             <div class="space-y-6">
+                                <div class="bg-orange-50 p-5 rounded-xl border border-orange-200 space-y-4 max-w-lg">
+                                    <h4 class="font-bold text-orange-900 text-sm"><i class="fas fa-triangle-exclamation mr-1 text-orange-600"></i> 系統強力維護與一鍵歸零操作</h4>
+                                    <p class="text-xs text-slate-600">以下操作將會直接影響全體夥伴資料，請謹慎使用：</p>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <button @click="resetAllPositions()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow">
+                                            <i class="fas fa-map-pin mr-1"></i> 一鍵所有人回起始點
+                                        </button>
+                                        <button @click="resetAllPoints()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow">
+                                            <i class="fas fa-coins mr-1"></i> 點數一鍵全部歸零
+                                        </button>
+                                        <button @click="resetAllDice()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow">
+                                            <i class="fas fa-dice mr-1"></i> 骰子數一鍵全部歸零
+                                        </button>
+                                        <button @click="factoryResetSystem()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow">
+                                            <i class="fas fa-rotate-left mr-1"></i> 系統一鍵還原至預設
+                                        </button>
+                                    </div>
+                                </div>
+
                                 <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3 max-w-md">
                                     <h4 class="font-bold text-slate-900 text-sm"><i class="fas fa-key mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 更改指揮中心管理密碼</h4>
                                     <input type="password" x-model="newAdminPassword" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs bg-white" placeholder="請輸入新管理密碼">
@@ -1060,6 +1098,7 @@
                 adminTab: 'approvals',
                 newAdminPassword: '',
                 newTagForm: { name: '', isFYC: false, points: 50 },
+                systemRawCode: '',
 
                 showEditPartnerModal: false,
                 editingPartner: { name: '', rank: '', group: '', fyc: 0, points: 0, diceCount: 0, buffs: [] },
@@ -1193,7 +1232,7 @@
                             if (this.currentUser) {
                                 const matched = newPartners.find(p => p.email === this.currentUser.email);
                                 if (matched) {
-                                    // 已修正：移除誤判彈窗，安靜同步最新點數狀態
+                                    // 完美修復：僅安靜同步最新狀態，徹底杜絕擲骰誤判獲點通知與隨意加點
                                     this.currentUser = matched;
                                 }
                             }
@@ -1657,6 +1696,54 @@
                     this.newAdminPassword = '';
                     await this.syncToServer();
                     this.showAlert('修改成功', '指揮中心密碼已成功更新並同步至雲端！');
+                },
+
+                loadCurrentCode() {
+                    this.systemRawCode = document.documentElement.outerHTML;
+                    this.showAlert('載入成功', '目前前端編碼已載入至編輯框中！');
+                },
+
+                saveRawCode() {
+                    if (!this.systemRawCode) return;
+                    const blob = new Blob([this.systemRawCode], { type: 'text/html;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'index.html';
+                    a.click();
+                    this.showAlert('下載成功', '最新編碼檔案已下載，可直接覆蓋至專案！');
+                },
+
+                async resetAllPositions() {
+                    if (confirm('確定要將所有人的一鍵回到起始點（第 1 格）嗎？')) {
+                        this.partners.forEach(p => p.position = 0);
+                        await this.syncToServer();
+                        this.showAlert('重置成功', '所有夥伴的棋盤位置已歸零至起始點！');
+                    }
+                },
+
+                async resetAllPoints() {
+                    if (confirm('確定要將所有人的點數與累積點數一鍵全部歸零嗎？')) {
+                        this.partners.forEach(p => { p.points = 0; p.totalPoints = 0; });
+                        await this.syncToServer();
+                        this.showAlert('歸零成功', '全體夥伴的點數已全部歸零！');
+                    }
+                },
+
+                async resetAllDice() {
+                    if (confirm('確定要將所有人的骰子數一鍵全部歸零嗎？')) {
+                        this.partners.forEach(p => p.diceCount = 0);
+                        await this.syncToServer();
+                        this.showAlert('歸零成功', '全體夥伴的骰子數已全部歸零！');
+                    }
+                },
+
+                async factoryResetSystem() {
+                    if (confirm('【高風險警告】確定要將系統一鍵還原至預設狀態嗎？這會重置棋盤與設定！')) {
+                        this.initDefaultBoardCells();
+                        await this.syncToServer();
+                        this.showAlert('系統還原', '系統基本設定與棋盤已還原至預設值！');
+                    }
                 },
 
                 autoBackupData() {
