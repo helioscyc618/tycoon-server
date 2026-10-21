@@ -456,7 +456,7 @@
                                 <span class="text-xs text-slate-400 font-medium">點擊格子可檢視詳細獎勵與目前停留成員</span>
                             </div>
                             <div class="grid grid-cols-6 sm:grid-cols-10 gap-2">
-                                <template x-for="(cell, index) in settings.boardCells" :key="index">
+                                <template x-for="(cell, index) in (settings.boardCells || [])" :key="index">
                                     <div @click="openCellModal(cell, index)" class="relative p-2 rounded-xl border flex flex-col items-center justify-center cursor-pointer transition transform hover:scale-105 h-20 text-center shadow-xs" :class="hasPlayerHere(index) ? 'bg-orange-50 ring-2' : 'border-slate-200 bg-slate-50 hover:bg-orange-50/50'" :style="hasPlayerHere(index) ? 'border-color: ' + (settings.primaryColor || '#f97316') + '; --tw-ring-color: ' + (settings.primaryColor || '#f97316') : ''">
                                         <span class="absolute top-1 left-1 text-[9px] font-bold text-slate-400 font-mono" x-text="index + 1"></span>
                                         <span class="text-lg mb-1" x-text="cell.icon"></span>
@@ -789,7 +789,7 @@
                                     </button>
                                 </div>
                                 <div class="space-y-2.5 max-h-[60vh] overflow-y-auto pr-2">
-                                    <template x-for="(cell, cIdx) in settings.boardCells" :key="cIdx">
+                                    <template x-for="(cell, cIdx) in (settings.boardCells || [])" :key="cIdx">
                                         <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-12 gap-2 items-center text-xs">
                                             <div class="sm:col-span-1 font-bold text-slate-900 font-mono text-center bg-white py-2 rounded border border-slate-200">
                                                 <span x-text="'#' + (cIdx + 1)"></span>
@@ -900,14 +900,20 @@
                         <template x-if="adminTab === 'codeEditor'">
                             <div class="space-y-4">
                                 <h3 class="text-lg font-bold text-slate-900 ming-title">前端編碼線上檢視與修復</h3>
-                                <p class="text-xs text-slate-500">您可以在此檢視目前的介面編碼或直接貼上修正後的編碼，點擊儲存後即可直接線上生效或備份！</p>
+                                <p class="text-xs text-slate-500">您可以在此檢視目前的介面編碼、匯出檔案，或透過「匯入並同步執行」上傳新 HTML 檔直接在線上替換與同步！</p>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-700 mb-1">系統原始碼 (HTML / JS)</label>
-                                    <textarea x-model="systemRawCode" rows="12" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono bg-slate-900 text-green-400" placeholder="在此檢視或貼上更新編碼..."></textarea>
+                                    <textarea x-model="systemRawCode" rows="10" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono bg-slate-900 text-green-400" placeholder="在此檢視或貼上更新編碼..."></textarea>
                                 </div>
-                                <div class="flex flex-wrap gap-2">
+                                <div class="flex flex-wrap items-center gap-2 pt-2">
                                     <button @click="loadCurrentCode()" class="bg-slate-800 text-white font-bold py-2 px-4 rounded-xl text-xs shadow">載入目前頁面編碼</button>
-                                    <button @click="saveRawCode()" class="text-white font-bold py-2 px-5 rounded-xl text-xs shadow" :style="'background-color: ' + (settings.primaryColor || '#f97316')"><i class="fas fa-file-code mr-1"></i> 匯出目前修復編碼檔案 (HTML)</button>
+                                    <button @click="saveRawCode()" class="text-white font-bold py-2 px-4 rounded-xl text-xs shadow" :style="'background-color: ' + (settings.primaryColor || '#f97316')"><i class="fas fa-file-code mr-1"></i> 匯出目前修復編碼檔案 (HTML)</button>
+                                    
+                                    <!-- 新增：匯入並同步執行按鈕與隱藏檔案 input -->
+                                    <input type="file" id="importHtmlFile" class="hidden" accept=".html,.htm" @change="importAndExecuteCode($event)">
+                                    <button @click="document.getElementById('importHtmlFile').click()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-xl text-xs shadow transition flex items-center space-x-1">
+                                        <i class="fas fa-file-import mr-1"></i> <span>匯入並同步執行 (HTML)</span>
+                                    </button>
                                 </div>
                             </div>
                         </template>
@@ -1072,7 +1078,6 @@
                 forgotForm: { name: '', email: '' },
                 forgotResult: '',
                 
-                // 20種頭貼：10人（含白/黃皮膚） + 10動物
                 avatarList: [
                     '👨‍💼', '👩‍💼', '🧑‍💼', '👨‍💻', '👩‍💻', '👱‍♂️', '👱‍♀️', '🧑‍🎨', '👨‍🎓', '👩‍🎓', 
                     '🦁', '🐯', '🦊', '🐼', '🐨', '🐰', '🐶', '🐱', '🦄', '🐲'
@@ -1289,6 +1294,10 @@
                             this.isOnline = false;
                         }
                     }
+
+                    if (!this.settings.boardCells || this.settings.boardCells.length !== 30) {
+                        this.initDefaultBoardCells();
+                    }
                 },
 
                 async syncToServer() {
@@ -1331,7 +1340,6 @@
                     }
                 },
 
-                // 修復登入邏輯：比對 email 或 name，確保輸入正確即可登入
                 login() {
                     const query = (this.loginForm.account || '').trim();
                     const pwd = (this.loginForm.password || '').trim();
@@ -1769,6 +1777,25 @@
                     a.click();
                     URL.revokeObjectURL(url);
                     this.showAlert('下載成功', '已成功打包下載最新修復後的 HTML 檔案！');
+                },
+
+                // 新增：匯入並同步執行功能
+                importAndExecuteCode(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        const content = e.target.result;
+                        this.systemRawCode = content;
+                        await this.syncToServer();
+                        this.showAlert('匯入並同步成功', '已成功載入並同步執行上傳的 HTML 檔案！頁面即將重新整理以套用。');
+                        setTimeout(() => {
+                            document.open();
+                            document.write(content);
+                            document.close();
+                        }, 1500);
+                    };
+                    reader.readAsText(file);
                 },
 
                 downloadBackup() {
