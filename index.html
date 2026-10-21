@@ -664,7 +664,9 @@
                             <div class="space-y-4">
                                 <div class="flex justify-between items-center">
                                     <h3 class="text-lg font-bold text-slate-900 ming-title">夥伴管理與業績 Buff 設定</h3>
-                                    <span class="text-xs text-slate-400">（夥伴透過前台註冊自動加入）</span>
+                                    <button @click="fetchCloudData()" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">
+                                        <i class="fas fa-sync mr-1"></i> 強制重新整理雲端資料
+                                    </button>
                                 </div>
                                 <div class="overflow-x-auto rounded-xl border border-slate-200">
                                     <table class="w-full text-left text-xs border-collapse">
@@ -909,7 +911,6 @@
                                     <button @click="loadCurrentCode()" class="bg-slate-800 text-white font-bold py-2 px-4 rounded-xl text-xs shadow">載入目前頁面編碼</button>
                                     <button @click="saveRawCode()" class="text-white font-bold py-2 px-4 rounded-xl text-xs shadow" :style="'background-color: ' + (settings.primaryColor || '#f97316')"><i class="fas fa-file-code mr-1"></i> 匯出目前修復編碼檔案 (HTML)</button>
                                     
-                                    <!-- 新增：匯入並同步執行按鈕與隱藏檔案 input -->
                                     <input type="file" id="importHtmlFile" class="hidden" accept=".html,.htm" @change="importAndExecuteCode($event)">
                                     <button @click="document.getElementById('importHtmlFile').click()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-xl text-xs shadow transition flex items-center space-x-1">
                                         <i class="fas fa-file-import mr-1"></i> <span>匯入並同步執行 (HTML)</span>
@@ -1186,7 +1187,7 @@
 
                     setInterval(async () => {
                         await this.fetchCloudData();
-                    }, 15000);
+                    }, 10000);
 
                     const savedUser = localStorage.getItem('tycoon_current_user');
                     const activeSession = sessionStorage.getItem('tycoon_active_session');
@@ -1284,10 +1285,6 @@
                             }
 
                             this.isOnline = true;
-
-                            if (!this.settings.boardCells || this.settings.boardCells.length !== 30) {
-                                this.initDefaultBoardCells();
-                            }
                         }
                     } catch(e) {
                         if (!navigator.onLine) {
@@ -1303,7 +1300,7 @@
                 async syncToServer() {
                     try {
                         this.settings.adminPassword = this.adminPassword;
-                        await fetch(`${API_BASE}/state`, {
+                        const res = await fetch(`${API_BASE}/state`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
@@ -1314,7 +1311,9 @@
                                 settings: this.settings
                             })
                         });
-                        this.isOnline = true;
+                        if (res.ok) {
+                            this.isOnline = true;
+                        }
                     } catch(e) {
                         this.isOnline = false;
                     }
@@ -1340,7 +1339,10 @@
                     }
                 },
 
-                login() {
+                async login() {
+                    // 登入前先從雲端重新抓取最新夥伴名單，確保跨裝置同步
+                    await this.fetchCloudData();
+
                     const query = (this.loginForm.account || '').trim();
                     const pwd = (this.loginForm.password || '').trim();
                     
@@ -1361,6 +1363,9 @@
                 },
 
                 async register() {
+                    // 註冊前先抓取雲端最新資料，避免重複或覆蓋
+                    await this.fetchCloudData();
+
                     if (this.partners.some(p => p.email === this.regForm.email)) {
                         this.showAlert('註冊失敗', '此電子信箱已經註冊過帳號！');
                         return;
@@ -1384,9 +1389,11 @@
                     this.initProfileForm();
                     
                     this.settings.ticker2 = `🎉 新夥伴報聘捷報：熱烈歡迎 ${newP.name} (${newP.rank}) 加入 ${newP.group}！`;
+                    
+                    // 立即同步至雲端伺服器
                     await this.syncToServer();
                     playBeep('success');
-                    this.showAlert('註冊成功', '已同步至雲端伺服器！起始點數皆為 0。');
+                    this.showAlert('註冊成功', '已成功註冊並同步至雲端指揮中心！');
                 },
 
                 findPassword() {
@@ -1779,7 +1786,6 @@
                     this.showAlert('下載成功', '已成功打包下載最新修復後的 HTML 檔案！');
                 },
 
-                // 新增：匯入並同步執行功能
                 importAndExecuteCode(event) {
                     const file = event.target.files[0];
                     if (!file) return;
