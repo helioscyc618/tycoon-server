@@ -168,10 +168,10 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">選擇個人頭貼 Icon (10選1)</label>
-                                <div class="grid grid-cols-5 gap-2 mt-1">
+                                <label class="block text-xs font-bold text-slate-700 mb-1">選擇個人頭貼 Icon (20種：10人10動物，含白/黃皮膚)</label>
+                                <div class="grid grid-cols-5 gap-2 mt-1 max-h-40 overflow-y-auto p-1 border border-slate-200 rounded-xl bg-slate-50">
                                     <template x-for="av in avatarList" :key="av">
-                                        <button type="button" @click="regForm.avatar = av" class="p-2 text-2xl rounded-xl border text-center transition flex items-center justify-center bg-slate-50" :class="regForm.avatar === av ? 'bg-orange-50 ring-2 scale-105' : 'border-slate-200 hover:bg-slate-100'" :style="regForm.avatar === av ? 'border-color: ' + (settings.primaryColor || '#f97316') + '; color: ' + (settings.primaryColor || '#f97316') : ''" x-text="av">
+                                        <button type="button" @click="regForm.avatar = av" class="p-2 text-2xl rounded-xl border text-center transition flex items-center justify-center bg-white" :class="regForm.avatar === av ? 'bg-orange-50 ring-2 scale-105' : 'border-slate-200 hover:bg-slate-100'" :style="regForm.avatar === av ? 'border-color: ' + (settings.primaryColor || '#f97316') + '; color: ' + (settings.primaryColor || '#f97316') : ''" x-text="av">
                                         </button>
                                     </template>
                                 </div>
@@ -293,11 +293,20 @@
                                         <label class="block font-bold text-slate-700 mb-1">Email (帳號)</label>
                                         <input type="email" x-model="profileForm.email" class="w-full px-3 py-2 border rounded-xl bg-white" required>
                                     </div>
+                                    <div>
+                                        <label class="block font-bold text-slate-700 mb-1">更換頭貼 Icon (20種選擇)</label>
+                                        <div class="grid grid-cols-5 gap-1.5 mt-1 max-h-36 overflow-y-auto p-1.5 border border-slate-200 rounded-xl bg-slate-50">
+                                            <template x-for="av in avatarList" :key="av">
+                                                <button type="button" @click="profileForm.avatar = av" class="p-1.5 text-xl rounded-xl border text-center transition flex items-center justify-center bg-white" :class="profileForm.avatar === av ? 'bg-orange-50 ring-2 scale-105' : 'border-slate-200 hover:bg-slate-100'" :style="profileForm.avatar === av ? 'border-color: ' + (settings.primaryColor || '#f97316') + '; color: ' + (settings.primaryColor || '#f97316') : ''" x-text="av">
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
                                     <div class="pt-2 border-t">
                                         <label class="block font-bold text-slate-700 mb-1">變更密碼 (留空則不修改)</label>
                                         <input type="password" x-model="profileForm.newPassword" class="w-full px-3 py-2 border rounded-xl bg-white" placeholder="輸入新密碼">
                                     </div>
-                                    <button type="submit" class="w-full text-white font-bold py-2 rounded-xl shadow transition" :style="'background-color: ' + (settings.primaryColor || '#f97316')">儲存個人資訊</button>
+                                    <button type="submit" class="w-full text-white font-bold py-2 rounded-xl shadow transition" :style="'background-color: ' + (settings.primaryColor || '#f97316')">儲存個人資訊與頭貼</button>
                                 </form>
                             </template>
                         </div>
@@ -448,7 +457,7 @@
                             </div>
                             <div class="grid grid-cols-6 sm:grid-cols-10 gap-2">
                                 <template x-for="(cell, index) in settings.boardCells" :key="index">
-                                    <div @click="openCellModal(cell, index)" class="relative p-2 rounded-xl border flex flex-col items-center justify-center cursor-pointer transition transform hover:scale-105 h-20 text-center shadow-xs" :class="hasPlayerHere(index) ? 'bg-orange-50 ring-2' : 'border-slate-200 bg-slate-50 hover:bg-orange-50/50'" :style="hasPlayerHere(index) ? 'border-color: ' + (settings.primaryColor || '#f97316') + '; --tw-ring-color: ' + (settings.primaryColor || '#f97316') + '' : ''">
+                                    <div @click="openCellModal(cell, index)" class="relative p-2 rounded-xl border flex flex-col items-center justify-center cursor-pointer transition transform hover:scale-105 h-20 text-center shadow-xs" :class="hasPlayerHere(index) ? 'bg-orange-50 ring-2' : 'border-slate-200 bg-slate-50 hover:bg-orange-50/50'" :style="hasPlayerHere(index) ? 'border-color: ' + (settings.primaryColor || '#f97316') + '; --tw-ring-color: ' + (settings.primaryColor || '#f97316') : ''">
                                         <span class="absolute top-1 left-1 text-[9px] font-bold text-slate-400 font-mono" x-text="index + 1"></span>
                                         <span class="text-lg mb-1" x-text="cell.icon"></span>
                                         <span class="text-[10px] font-bold text-slate-800 line-clamp-1" x-text="cell.title"></span>
@@ -534,6 +543,20 @@
                 <div class="dice-cube flex items-center justify-center text-4xl border-2 rounded-2xl shadow-xl w-24 h-24 font-bold" :style="'background-color: ' + (settings.primaryColor || '#f97316') + '20; border-color: ' + (settings.primaryColor || '#f97316') + '; color: ' + (settings.primaryColor || '#f97316')" x-text="rollingDiceNumber"></div>
             </div>
             <p class="text-xs text-slate-400 animate-pulse">命運骰子轉動中...</p>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION MODAL -->
+    <div x-show="showNotificationModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4" x-transition style="display: none;">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 text-center space-y-4">
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow" :style="'background-color: ' + (settings.primaryColor || '#f97316') + '20; color: ' + (settings.primaryColor || '#f97316')">
+                <i class="fas fa-bell"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 ming-title" x-text="notificationTitle"></h3>
+            <p class="text-xs text-slate-600 whitespace-pre-line" x-text="notificationText"></p>
+            <button @click="showNotificationModal = false" class="w-full text-white font-bold py-2.5 rounded-xl text-xs shadow transition" :style="'background-color: ' + (settings.primaryColor || '#f97316')">
+                確定
+            </button>
         </div>
     </div>
 
@@ -1048,10 +1071,15 @@
                 regForm: { name: '', email: '', password: '', rank: '業務專員', group: 'OO組', avatar: '👨‍💼', pushEnabled: true },
                 forgotForm: { name: '', email: '' },
                 forgotResult: '',
-                avatarList: ['👨‍💼', '👩‍💼', '🧑‍💼', '👨‍💻', '👩‍💻', '🧑‍🎨', '👨‍🎓', '👩‍🎓', '🦸‍♂️', '🦸‍♀️'],
+                
+                // 20種頭貼：10人（含白/黃皮膚） + 10動物
+                avatarList: [
+                    '👨‍💼', '👩‍💼', '🧑‍💼', '👨‍💻', '👩‍💻', '👱‍♂️', '👱‍♀️', '🧑‍🎨', '👨‍🎓', '👩‍🎓', 
+                    '🦁', '🐯', '🦊', '🐼', '🐨', '🐰', '🐶', '🐱', '🦄', '🐲'
+                ],
 
                 showProfileEdit: false,
-                profileForm: { name: '', rank: '', email: '', newPassword: '' },
+                profileForm: { name: '', rank: '', email: '', avatar: '👨‍💼', newPassword: '' },
 
                 selectedCell: {},
                 selectedCellIndex: 0,
@@ -1120,7 +1148,6 @@
                 partners: [],
                 lastMsgCount: 0,
                 lastKnownPoints: 0,
-                lastDeclCount: 0,
 
                 async init() {
                     window.addEventListener('beforeunload', () => {
@@ -1132,9 +1159,7 @@
                     }
 
                     window.addEventListener('online', () => { this.isOnline = true; });
-                    window.addEventListener('offline', () => { 
-                        this.isOnline = false; 
-                    });
+                    window.addEventListener('offline', () => { this.isOnline = false; });
 
                     setInterval(() => {
                         const now = new Date();
@@ -1161,10 +1186,14 @@
                     const savedUser = localStorage.getItem('tycoon_current_user');
                     const activeSession = sessionStorage.getItem('tycoon_active_session');
                     if (savedUser && activeSession) {
-                        this.currentUser = JSON.parse(savedUser);
-                        this.lastKnownPoints = this.currentUser.points || 0;
-                        if (this.currentUser.pushEnabled === undefined) this.currentUser.pushEnabled = true;
-                        this.initProfileForm();
+                        try {
+                            this.currentUser = JSON.parse(savedUser);
+                            this.lastKnownPoints = this.currentUser.points || 0;
+                            if (this.currentUser.pushEnabled === undefined) this.currentUser.pushEnabled = true;
+                            this.initProfileForm();
+                        } catch(e) {
+                            this.currentUser = null;
+                        }
                     } else {
                         this.currentUser = null;
                         localStorage.removeItem('tycoon_current_user');
@@ -1185,6 +1214,7 @@
                         this.profileForm.name = this.currentUser.name;
                         this.profileForm.rank = this.currentUser.rank;
                         this.profileForm.email = this.currentUser.email;
+                        this.profileForm.avatar = this.currentUser.avatar || '👨‍💼';
                         this.profileForm.newPassword = '';
                     }
                 },
@@ -1301,19 +1331,24 @@
                     }
                 },
 
+                // 修復登入邏輯：比對 email 或 name，確保輸入正確即可登入
                 login() {
-                    const found = this.partners.find(p => p.email === this.loginForm.account || p.name === this.loginForm.account);
-                    if (found && found.password === this.loginForm.password) {
+                    const query = (this.loginForm.account || '').trim();
+                    const pwd = (this.loginForm.password || '').trim();
+                    
+                    const found = this.partners.find(p => p.email === query || p.name === query);
+                    if (found && found.password === pwd) {
                         this.currentUser = found;
                         this.lastKnownPoints = this.currentUser.points || 0;
                         if (this.currentUser.pushEnabled === undefined) this.currentUser.pushEnabled = true;
+                        
                         localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
                         sessionStorage.setItem('tycoon_active_session', 'active');
                         this.initProfileForm();
                         playBeep('success');
                         this.showAlert('登入成功', `歡迎回來，${this.currentUser.name} 業務大亨！`);
                     } else {
-                        this.showAlert('登入失敗', '帳號或密碼錯誤，請重新確認。');
+                        this.showAlert('登入失敗', '帳號（姓名或 Email）或密碼錯誤，請重新確認。');
                     }
                 },
 
@@ -1328,13 +1363,14 @@
                         password: this.regForm.password,
                         rank: this.regForm.rank,
                         group: this.regForm.group || 'OO組',
-                        avatar: this.regForm.avatar,
+                        avatar: this.regForm.avatar || '👨‍💼',
                         pushEnabled: true,
                         fyc: 0, points: 0, totalPoints: 0, diceCount: 0, position: 0, buffs: []
                     };
                     this.partners.push(newP);
                     this.currentUser = newP;
                     this.lastKnownPoints = 0;
+                    
                     localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
                     sessionStorage.setItem('tycoon_active_session', 'active');
                     this.initProfileForm();
@@ -1365,6 +1401,8 @@
                     this.currentUser.name = this.profileForm.name;
                     this.currentUser.rank = this.profileForm.rank;
                     this.currentUser.email = this.profileForm.email;
+                    this.currentUser.avatar = this.profileForm.avatar;
+                    
                     if (this.profileForm.newPassword && this.profileForm.newPassword.trim() !== '') {
                         this.currentUser.password = this.profileForm.newPassword;
                     }
@@ -1377,7 +1415,7 @@
                     localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
                     await this.syncToServer();
                     this.showProfileEdit = false;
-                    this.showAlert('修改成功', '個人資訊與密碼已成功更新並同步至雲端！');
+                    this.showAlert('修改成功', '個人資訊、頭貼與密碼已成功更新並同步至雲端！');
                 },
 
                 async savePushSettings() {
