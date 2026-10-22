@@ -1,50 +1,60 @@
-// ==========================================
-// API 基礎網址自動切換設定
-// ==========================================
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:3000'
-    : 'https://competition-tycoon.onrender.com';
+const express = require('express');
+const cors = require('cors');
+const { MongoClient } = require('mongodb');
 
-// ==========================================
-// 從雲端資料庫讀取整體狀態
-// ==========================================
-async function loadServerState() {
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// 從 Render 的環境變數讀取 MongoDB 連線字串
+const uri = process.env.MONGODB_URI;
+const client = new MongoClient(uri);
+
+let db, statesCollection;
+
+async function startServer() {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/state`);
-        const result = await response.json();
-        
-        if (result && result.partners) {
-            console.log("成功從雲端載入競賽大亨資料！");
-            return result; // 回傳雲端的完整 state 物件
-        }
-    } catch (error) {
-        console.error("無法連線至雲端後端，請檢查網路或 Render 狀態:", error);
+        await client.connect();
+        db = client.db('competition_tycoon'); // 資料庫名稱
+        statesCollection = db.collection('states'); // 集合名稱
+        console.log("✅ You successfully connected to MongoDB!");
+    } catch (err) {
+        console.error("❌ MongoDB 連線失敗:", err);
     }
-    return null;
+
+    const PORT = process.env.PORT || 10000;
+    app.listen(PORT, () => {
+        console.log(`🚀 競賽大亨後端伺服器已在 http://localhost:${PORT} 啟動`);
+    });
 }
 
+startServer();
+
 // ==========================================
-// 將整體狀態同步儲存至雲端資料庫
+// API 路由設定
 // ==========================================
-async function saveServerState(stateData) {
+
+// 1. 取得遊戲狀態 (GET)
+app.get('/api/state', async (req, res) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/state`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(stateData)
-        });
-        
-        const result = await response.json();
-        if (result.success) {
-            console.log("資料已成功同步至 MongoDB 雲端！");
-            return true;
-        } else {
-            console.error("雲端儲存失敗:", result.message);
-        }
-    } catch (error) {
-        console.error("發送同步請求發生錯誤:", error);
+        const state = await statesCollection.findOne({ type: 'global_state' });
+        res.json(state ? state.data : { partners: [] });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
     }
-    return false;
-}
+});
+
+// 2. 儲存/更新遊戲狀態 (POST)
+app.post('/api/state', async (req, res) => {
+    try {
+        const newData = req.body;
+        await statesCollection.updateOne(
+            { type: 'global_state' },
+            { $set: { data: newData } },
+            { upsert: true }
+        );
+        res.json({ success: true, message: '資料已成功儲存至雲端' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
