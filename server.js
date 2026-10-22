@@ -1,60 +1,81 @@
 const express = require('express');
-const cors = require('cors');
-const { MongoClient } = require('mongodb');
-
+const path = require('path');
 const app = express();
-app.use(cors());
+const PORT = process.env.PORT || 3000;
+
+// 解析 JSON 請求主體
 app.use(express.json());
 
-// 從 Render 的環境變數讀取 MongoDB 連線字串
-const uri = process.env.MONGODB_URI;
-const client = new MongoClient(uri);
+// 將 public 資料夾設定為靜態資源根目錄
+app.use(express.static(path.join(__dirname, 'public')));
 
-let db, statesCollection;
-
-async function startServer() {
-    try {
-        await client.connect();
-        db = client.db('competition_tycoon'); // 資料庫名稱
-        statesCollection = db.collection('states'); // 集合名稱
-        console.log("✅ You successfully connected to MongoDB!");
-    } catch (err) {
-        console.error("❌ MongoDB 連線失敗:", err);
-    }
-
-    const PORT = process.env.PORT || 10000;
-    app.listen(PORT, () => {
-        console.log(`🚀 競賽大亨後端伺服器已在 http://localhost:${PORT} 啟動`);
-    });
-}
-
-startServer();
+// 記憶體中暫存的動態設定（後續可改為從 tycoon.db 讀寫）
+let currentEventPeriod = { startDate: '', endDate: '' };
+let currentYoutubeUrl = '';
 
 // ==========================================
-// API 路由設定
+// API 路由
 // ==========================================
 
-// 1. 取得遊戲狀態 (GET)
-app.get('/api/state', async (req, res) => {
-    try {
-        const state = await statesCollection.findOne({ type: 'global_state' });
-        res.json(state ? state.data : { partners: [] });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+// 1. 取得使用者與遊戲狀態 API
+app.get('/v1/user/status', (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      fyc: 0,
+      availablePoints: 100,
+      diceCount: 3,
+      currentPosition: 1
     }
+  });
 });
 
-// 2. 儲存/更新遊戲狀態 (POST)
-app.post('/api/state', async (req, res) => {
-    try {
-        const newData = req.body;
-        await statesCollection.updateOne(
-            { type: 'global_state' },
-            { $set: { data: newData } },
-            { upsert: true }
-        );
-        res.json({ success: true, message: '資料已成功儲存至雲端' });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
+// 2. 同步遊戲狀態 API
+app.post('/v1/game/sync', (req, res) => {
+  const clientData = req.body;
+  console.log('收到前端同步資料:', clientData);
+
+  res.json({
+    success: true,
+    message: '雲端同步成功',
+    data: clientData
+  });
+});
+
+// 3. 儲存競賽期間設定 API
+app.post('/v1/settings/period', (req, res) => {
+  const { startDate, endDate } = req.body;
+  currentEventPeriod = { startDate, endDate };
+  console.log('更新競賽期間:', startDate, endDate);
+  
+  res.json({ 
+    success: true, 
+    message: '競賽期間更新成功',
+    data: currentEventPeriod
+  });
+});
+
+// 4. 取得激勵影片設定 API
+app.get('/v1/settings/youtube', (req, res) => {
+  res.json({ 
+    success: true, 
+    url: currentYoutubeUrl 
+  });
+});
+
+// 5. 儲存激勵影片設定 API
+app.post('/v1/settings/youtube', (req, res) => {
+  const { url } = req.body;
+  currentYoutubeUrl = url;
+  console.log('更新激勵影片網址:', url);
+
+  res.json({ 
+    success: true, 
+    message: '激勵影片設定儲存成功' 
+  });
+});
+
+// 啟動伺服器
+app.listen(PORT, () => {
+  console.log(`🚀 伺服器運行中：http://localhost:${PORT}`);
 });

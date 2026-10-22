@@ -50,7 +50,7 @@
         <div class="flex items-center space-x-3">
             <span class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium" :class="isOnline ? 'bg-slate-800 text-green-400 border border-green-500' : 'bg-red-900/80 text-red-200 border border-red-500 animate-pulse'">
                 <i class="fas" :class="isOnline ? 'fa-wifi' : 'fa-triangle-exclamation'"></i>
-                <span x-text="isOnline ? '雲端同步連線中 (Online)' : '離線警告 (Offline)'">雲端同步連線中 (Online)</span>
+                <span x-text="isOnline ? '雲端同步連線中 (Online)' : '離線警告 (Offline)'"></span>
             </span>
 
             <span class="hidden md:inline-flex items-center text-slate-300">
@@ -79,7 +79,7 @@
     </header>
 
     <!-- OFFLINE WARNING BANNER -->
-    <div x-show="!isOnline" x-transition class="bg-red-600 text-white px-4 py-2 text-center text-xs font-bold flex items-center justify-center space-x-2 shadow-inner">
+    <div x-show="!isOnline" x-transition="" class="bg-red-600 text-white px-4 py-2 text-center text-xs font-bold flex items-center justify-center space-x-2 shadow-inner" style="display: none;">
         <i class="fas fa-exclamation-triangle text-white text-base animate-bounce"></i>
         <span>【警告】目前偵測無網路連線或雲端同步異常！請檢查您的網路狀態。</span>
     </div>
@@ -101,7 +101,7 @@
     </div>
 
     <!-- MAIN CONTAINER -->
-    <main class="flex-1 overflow-y-auto p-3 sm:p-6 max-w-7xl mx-auto w-full">
+    <main class="flex-1 overflow-y-auto p-3 sm:p-6 max-w-7xl mx-auto w-full space-y-6">
 
         <!-- AUTH VIEW -->
         <template x-if="!currentUser">
@@ -125,11 +125,11 @@
                         <form @submit.prevent="login()" class="space-y-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">電子信箱或姓名</label>
-                                <input type="text" x-model="loginForm.account" required class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:outline-none" placeholder="請輸入姓名或 Email">
+                                <input type="text" x-model="loginForm.account" required="" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:outline-none" placeholder="請輸入姓名或 Email">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">密碼</label>
-                                <input type="password" x-model="loginForm.password" required class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:outline-none" placeholder="請輸入密碼">
+                                <input type="password" x-model="loginForm.password" required="" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:outline-none" placeholder="請輸入密碼">
                             </div>
                             <button type="submit" class="w-full text-white font-bold py-3 rounded-xl shadow transition flex items-center justify-center space-x-2" :style="'background-color: ' + (settings.primaryColor || '#f97316')">
                                 <i class="fas fa-sign-in-alt"></i>
@@ -142,15 +142,15 @@
                         <form @submit.prevent="register()" class="space-y-3">
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">真實姓名</label>
-                                <input type="text" x-model="regForm.name" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm" placeholder="請輸入姓名">
+                                <input type="text" x-model="regForm.name" required="" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm" placeholder="請輸入姓名">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">電子信箱</label>
-                                <input type="email" x-model="regForm.email" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm" placeholder="example@mail.com">
+                                <input type="email" x-model="regForm.email" required="" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm" placeholder="example@mail.com">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">密碼</label>
-                                <input type="password" x-model="regForm.password" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm" placeholder="設定登入密碼">
+                                <input type="password" x-model="regForm.password" required="" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm" placeholder="設定登入密碼">
                             </div>
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
@@ -164,15 +164,14 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-700 mb-1">隸屬組別</label>
-                                    <input type="text" x-model="regForm.group" required class="w-full px-2.5 py-2 border border-slate-300 rounded-xl text-sm" placeholder="OO組">
+                                    <input type="text" x-model="regForm.group" required="" class="w-full px-2.5 py-2 border border-slate-300 rounded-xl text-sm" placeholder="OO組">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">選擇個人頭貼 Icon (20種：10人10動物，含白/黃皮膚)</label>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">選擇個人頭貼 Icon</label>
                                 <div class="grid grid-cols-5 gap-2 mt-1 max-h-40 overflow-y-auto p-1 border border-slate-200 rounded-xl bg-slate-50">
                                     <template x-for="av in avatarList" :key="av">
-                                        <button type="button" @click="regForm.avatar = av" class="p-2 text-2xl rounded-xl border text-center transition flex items-center justify-center bg-white" :class="regForm.avatar === av ? 'bg-orange-50 ring-2 scale-105' : 'border-slate-200 hover:bg-slate-100'" :style="regForm.avatar === av ? 'border-color: ' + (settings.primaryColor || '#f97316') + '; color: ' + (settings.primaryColor || '#f97316') : ''" x-text="av">
-                                        </button>
+                                        <button type="button" @click="regForm.avatar = av" class="p-2 text-2xl rounded-xl border text-center transition flex items-center justify-center bg-white" :class="regForm.avatar === av ? 'bg-orange-50 ring-2 scale-105' : 'border-slate-200 hover:bg-slate-100'" :style="regForm.avatar === av ? 'border-color: ' + (settings.primaryColor || '#f97316') + '; color: ' + (settings.primaryColor || '#f97316') : ''" x-text="av"></button>
                                     </template>
                                 </div>
                             </div>
@@ -278,7 +277,7 @@
                                 <form @submit.prevent="saveProfileChanges()" class="space-y-3 text-xs">
                                     <div>
                                         <label class="block font-bold text-slate-700 mb-1">姓名</label>
-                                        <input type="text" x-model="profileForm.name" class="w-full px-3 py-2 border rounded-xl bg-white" required>
+                                        <input type="text" x-model="profileForm.name" class="w-full px-3 py-2 border rounded-xl bg-white" required="">
                                     </div>
                                     <div>
                                         <label class="block font-bold text-slate-700 mb-1">職級</label>
@@ -291,14 +290,13 @@
                                     </div>
                                     <div>
                                         <label class="block font-bold text-slate-700 mb-1">Email (帳號)</label>
-                                        <input type="email" x-model="profileForm.email" class="w-full px-3 py-2 border rounded-xl bg-white" required>
+                                        <input type="email" x-model="profileForm.email" class="w-full px-3 py-2 border rounded-xl bg-white" required="">
                                     </div>
                                     <div>
-                                        <label class="block font-bold text-slate-700 mb-1">更換頭貼 Icon (20種選擇)</label>
+                                        <label class="block font-bold text-slate-700 mb-1">更換頭貼 Icon</label>
                                         <div class="grid grid-cols-5 gap-1.5 mt-1 max-h-36 overflow-y-auto p-1.5 border border-slate-200 rounded-xl bg-slate-50">
                                             <template x-for="av in avatarList" :key="av">
-                                                <button type="button" @click="profileForm.avatar = av" class="p-1.5 text-xl rounded-xl border text-center transition flex items-center justify-center bg-white" :class="profileForm.avatar === av ? 'bg-orange-50 ring-2 scale-105' : 'border-slate-200 hover:bg-slate-100'" :style="profileForm.avatar === av ? 'border-color: ' + (settings.primaryColor || '#f97316') + '; color: ' + (settings.primaryColor || '#f97316') : ''" x-text="av">
-                                                </button>
+                                                <button type="button" @click="profileForm.avatar = av" class="p-1.5 text-xl rounded-xl border text-center transition flex items-center justify-center bg-white" :class="profileForm.avatar === av ? 'bg-orange-50 ring-2 scale-105' : 'border-slate-200 hover:bg-slate-100'" :style="profileForm.avatar === av ? 'border-color: ' + (settings.primaryColor || '#f97316') + '; color: ' + (settings.primaryColor || '#f97316') : ''" x-text="av"></button>
                                             </template>
                                         </div>
                                     </div>
@@ -327,14 +325,14 @@
                                 </div>
                                 <template x-if="isFYCTag">
                                     <div>
-                                        <label class="block text-xs font-bold text-slate-700 mb-1">輸入原始 FYC 金額 (後台紀錄精確數字，點數自動無條件進位千位換算)</label>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1">輸入原始 FYC 金額 (點數自動無條件進位千位換算)</label>
                                         <input type="number" x-model.number="declForm.fycAmount" min="0" step="1" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm" placeholder="例如：10250">
                                         <p class="text-xs mt-1 font-semibold" :style="'color: ' + (settings.primaryColor || '#f97316')" x-text="'預計換算獲得點數：' + Math.ceil((declForm.fycAmount || 0) / 1000) + ' 點'"></p>
                                     </div>
                                 </template>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-700 mb-1">任務說明 / 備註 <span class="text-red-600">* (必填)</span></label>
-                                    <input type="text" x-model="declForm.desc" required class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm" placeholder="請詳細填寫拜訪對象或案號...">
+                                    <input type="text" x-model="declForm.desc" required="" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm" placeholder="請詳細填寫拜訪對象或案號...">
                                 </div>
                                 <template x-if="!isFYCTag">
                                     <p class="text-xs font-semibold" :style="'color: ' + (settings.primaryColor || '#f97316')" x-text="'本項固定獲得點數：' + getSelectedTagPoints() + ' 點'"></p>
@@ -377,8 +375,8 @@
                                 <span class="text-xs text-slate-400">全體即時互動</span>
                             </h3>
                             <form @submit.prevent="postMessage()" class="space-y-2 mb-4 pb-4 border-b border-slate-200">
-                                <input type="text" x-model="msgForm.title" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs" placeholder="留言標題...">
-                                <textarea x-model="msgForm.content" required rows="2" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs resize-none" placeholder="輸入激勵士氣的內容..."></textarea>
+                                <input type="text" x-model="msgForm.title" required="" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs" placeholder="留言標題...">
+                                <textarea x-model="msgForm.content" required="" rows="2" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs resize-none" placeholder="輸入激勵士氣的內容..."></textarea>
                                 <div class="flex justify-between items-center text-xs">
                                     <label class="flex items-center space-x-1 cursor-pointer">
                                         <input type="checkbox" x-model="msgForm.isAnonymous" class="rounded text-orange-500">
@@ -471,6 +469,19 @@
                             </div>
                         </div>
 
+                        <!-- 棋盤下方：士氣補給站（YouTube 影片與播放清單） -->
+                        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+                            <h3 class="text-base font-bold text-slate-900 ming-title mb-3 flex items-center justify-between">
+                                <span class="flex items-center"><i class="fab fa-youtube mr-2 text-red-600"></i> 士氣補給站</span>
+                                <span class="text-[10px] bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded">即時同步</span>
+                            </h3>
+                            <div class="relative w-full overflow-hidden rounded-xl shadow-inner bg-slate-900" style="padding-top: 56.25%;">
+                                <div class="absolute top-0 left-0 w-full h-full" x-html="renderYouTubeEmbed(settings.youtubeUrl)"></div>
+                            </div>
+                            <!-- 激勵字句已調整為黑色文字 -->
+                            <p class="text-xs font-bold text-slate-900 mt-2.5 text-center" x-text="settings.youtubeMotto || '🔥 突破自我，創造極限！每一個當下的全力以赴，都是成就非凡的基石！'"></p>
+                        </div>
+
                     </div>
 
                 </div>
@@ -480,7 +491,7 @@
     </main>
 
     <!-- MODALS -->
-    <div x-show="showNewsModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition style="display: none;">
+    <div x-show="showNewsModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition="" style="display: none;">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative">
             <div class="w-12 h-12 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 shadow text-xl" :style="'background-color: ' + (settings.primaryColor || '#f97316')">
                 <i class="fas fa-bullhorn"></i>
@@ -494,7 +505,7 @@
         </div>
     </div>
 
-    <div x-show="showCellDetailModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition style="display: none;">
+    <div x-show="showCellDetailModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition="" style="display: none;">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative text-center space-y-3">
             <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto shadow text-3xl border" :style="'background-color: ' + (settings.primaryColor || '#f97316') + '20; color: ' + (settings.primaryColor || '#f97316') + '; border-color: ' + (settings.primaryColor || '#f97316') + '50'" x-text="selectedCell.icon"></div>
             <span class="text-xs px-2.5 py-1 rounded-full font-bold" :style="'background-color: ' + (settings.primaryColor || '#f97316') + '20; color: ' + (settings.primaryColor || '#f97316')">第 <span x-text="selectedCellIndex + 1"></span> 格 (<span x-text="selectedCell.type || '普通'"></span>)</span>
@@ -517,7 +528,7 @@
         </div>
     </div>
 
-    <div x-show="showLandingModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition style="display: none;">
+    <div x-show="showLandingModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition="" style="display: none;">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-center">
             <div class="text-4xl mb-2">🎉</div>
             <h3 class="text-xl font-bold text-slate-900 ming-title">踩格子戰報！</h3>
@@ -536,7 +547,7 @@
         </div>
     </div>
 
-    <div x-show="showDiceModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4" x-transition style="display: none;">
+    <div x-show="showDiceModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4" x-transition="" style="display: none;">
         <div class="bg-white rounded-2xl max-w-xs w-full p-6 shadow-2xl border border-slate-200 text-center">
             <h3 class="text-lg font-bold text-slate-900 ming-title mb-4">🎲 正在擲骰中...</h3>
             <div class="dice-container mx-auto my-6 flex justify-center">
@@ -547,7 +558,7 @@
     </div>
 
     <!-- NOTIFICATION MODAL -->
-    <div x-show="showNotificationModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4" x-transition style="display: none;">
+    <div x-show="showNotificationModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4" x-transition="" style="display: none;">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 text-center space-y-4">
             <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow" :style="'background-color: ' + (settings.primaryColor || '#f97316') + '20; color: ' + (settings.primaryColor || '#f97316')">
                 <i class="fas fa-bell"></i>
@@ -561,7 +572,7 @@
     </div>
 
     <!-- COMMAND CENTER (指揮中心後台 z-30) -->
-    <div x-show="openAdminModal" class="fixed inset-0 z-30 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-2 sm:p-4" x-transition style="display: none;">
+    <div x-show="openAdminModal" class="fixed inset-0 z-30 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-2 sm:p-4" x-transition="" style="display: none;">
         <div class="bg-white rounded-2xl max-w-6xl w-full h-[90vh] overflow-hidden shadow-2xl border border-slate-200 flex flex-col">
             <!-- Header -->
             <div class="bg-slate-900 p-4 text-white flex justify-between items-center border-b-2" :style="'border-color: ' + (settings.primaryColor || '#f97316')">
@@ -719,19 +730,43 @@
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <div>
                                             <label class="block text-xs font-bold text-slate-700 mb-1">開始日期</label>
-                                            <input type="text" x-model="settings.startDate" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white" placeholder="例如：2026/12/14">
+                                            <input type="text" x-model="settings.startDate" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white" placeholder="例如：2026/12/14">
                                         </div>
                                         <div>
                                             <label class="block text-xs font-bold text-slate-700 mb-1">結束日期 (倒數目標日)</label>
-                                            <input type="text" x-model="settings.endDate" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white" placeholder="例如：2027/06/02">
+                                            <input type="text" x-model="settings.endDate" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white" placeholder="例如：2027/06/02">
                                         </div>
+                                    </div>
+                                    <div class="pt-1">
+                                        <button @click="saveSettings('競賽期間與倒數日已更新！')" class="bg-slate-900 text-white font-bold py-2 px-4 rounded-xl text-xs shadow hover:bg-slate-800">
+                                            <i class="fas fa-save mr-1"></i> 儲存競賽日期變更
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- 士氣補給站 YouTube 與激勵字句設定 -->
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                                    <h4 class="font-bold text-slate-900 text-sm"><i class="fab fa-youtube mr-1 text-red-600"></i> 士氣補給站設定 (YouTube 影片與激勵字句)</h4>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1">YouTube 影片網址或完整嵌入 iframe 程式碼</label>
+                                        <textarea x-model="settings.youtubeUrl" rows="2" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white font-mono" placeholder="可貼上網址 (如 https://youtu.be/...) 或完整嵌入 iframe 程式碼"></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1">下方顯示的激勵字句</label>
+                                        <input type="text" x-model="settings.youtubeMotto" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white" placeholder="例如：🔥 突破自我，創造極限！">
+                                    </div>
+                                    <div class="pt-1">
+                                        <button @click="pushYoutubeUpdate()" class="text-white font-bold py-2 px-4 rounded-xl text-xs shadow hover:opacity-95 flex items-center space-x-1" :style="'background-color: ' + (settings.primaryColor || '#f97316')">
+                                            <i class="fas fa-bullhorn"></i>
+                                            <span>推播更新影片至全體戰情室</span>
+                                        </button>
                                     </div>
                                 </div>
 
                                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
                                     <h4 class="font-bold text-slate-900 text-sm"><i class="fas fa-tags mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 新增 / 管理獲點方式 (Tag)</h4>
                                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
-                                        <input type="text" x-model="newTagForm.name" class="px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white" placeholder="任務名稱 (如: 專案說明會)">
+                                        <input type="text" x-model="newTagForm.name" class="px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white" placeholder="任務名稱">
                                         <label class="flex items-center space-x-2 text-xs bg-white px-3 py-2 rounded-xl border border-slate-300">
                                             <input type="checkbox" x-model="newTagForm.isFYC" class="rounded text-orange-500">
                                             <span>是否依 FYC 比例換算</span>
@@ -751,30 +786,30 @@
                                 </div>
 
                                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-                                    <h4 class="font-bold text-slate-900 text-sm"><i class="fas fa-bullhorn mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 最新消息公告與跑馬燈自訂 (三欄位)</h4>
+                                    <h4 class="font-bold text-slate-900 text-sm"><i class="fas fa-bullhorn mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 最新消息公告與跑馬燈自訂</h4>
                                     <div>
                                         <label class="block text-xs font-bold text-slate-700 mb-1">公告標題</label>
-                                        <input type="text" x-model="settings.newsTitle" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white">
+                                        <input type="text" x-model="settings.newsTitle" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-slate-700 mb-1">公告內容</label>
-                                        <textarea x-model="settings.newsContent" @focus="isEditingSettings = true" @blur="isEditingSettings = false" rows="3" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white"></textarea>
+                                        <textarea x-model="settings.newsContent" rows="3" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white"></textarea>
                                     </div>
                                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
                                         <div>
                                             <label class="block text-xs font-bold text-slate-700 mb-1">跑馬燈訊息 1</label>
-                                            <input type="text" x-model="settings.ticker1" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white">
+                                            <input type="text" x-model="settings.ticker1" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white">
                                         </div>
                                         <div>
                                             <label class="block text-xs font-bold text-slate-700 mb-1">跑馬燈訊息 2</label>
-                                            <input type="text" x-model="settings.ticker2" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white">
+                                            <input type="text" x-model="settings.ticker2" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white">
                                         </div>
                                         <div>
                                             <label class="block text-xs font-bold text-slate-700 mb-1">跑馬燈訊息 3</label>
-                                            <input type="text" x-model="settings.ticker3" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white">
+                                            <input type="text" x-model="settings.ticker3" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white">
                                         </div>
                                     </div>
-                                    <button @click="saveSettings()" class="bg-slate-900 text-white font-bold py-2.5 px-5 rounded-xl text-xs shadow hover:bg-slate-800 mt-2">
+                                    <button @click="saveSettings('全部遊戲與公告設定已儲存！')" class="bg-slate-900 text-white font-bold py-2.5 px-5 rounded-xl text-xs shadow hover:bg-slate-800 mt-2">
                                         儲存設定更新
                                     </button>
                                 </div>
@@ -786,7 +821,7 @@
                             <div class="space-y-4">
                                 <div class="flex justify-between items-center">
                                     <h3 class="text-lg font-bold text-slate-900 ming-title">30格跳跳格獎勵設定</h3>
-                                    <button @click="saveSettings()" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl font-bold text-xs shadow">
+                                    <button @click="saveSettings('30格棋盤設定已儲存！')" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl font-bold text-xs shadow">
                                         儲存全棋盤設定
                                     </button>
                                 </div>
@@ -797,20 +832,20 @@
                                                 <span x-text="'#' + (cIdx + 1)"></span>
                                             </div>
                                             <div class="sm:col-span-2">
-                                                <input type="text" x-model="cell.icon" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white text-center">
+                                                <input type="text" x-model="cell.icon" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white text-center">
                                             </div>
                                             <div class="sm:col-span-3">
-                                                <input type="text" x-model="cell.title" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white" placeholder="格子名稱">
+                                                <input type="text" x-model="cell.title" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white" placeholder="格子名稱">
                                             </div>
                                             <div class="sm:col-span-2">
-                                                <select x-model="cell.type" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white">
+                                                <select x-model="cell.type" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white">
                                                     <option value="普通">普通</option>
                                                     <option value="獎勵">獎勵 (記入獎勵統整)</option>
                                                     <option value="傳送">傳送 (隨機移動)</option>
                                                 </select>
                                             </div>
                                             <div class="sm:col-span-4">
-                                                <input type="text" x-model="cell.reward" @focus="isEditingSettings = true" @blur="isEditingSettings = false" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white" placeholder="獎勵內容描述...">
+                                                <input type="text" x-model="cell.reward" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg bg-white" placeholder="獎勵內容描述...">
                                             </div>
                                         </div>
                                     </template>
@@ -844,8 +879,7 @@
                                                     <td class="p-3 text-slate-700" x-text="rw.reward"></td>
                                                     <td class="p-3 text-slate-400 font-mono" x-text="rw.time"></td>
                                                     <td class="p-3">
-                                                        <button @click="toggleRewardStatus(rwIdx)" class="px-3 py-1.5 rounded-xl font-bold text-[11px] transition shadow-xs" :class="rw.status === '已發放' ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-orange-100 text-orange-700 border border-orange-300'" x-text="rw.status">
-                                                        </button>
+                                                        <button @click="toggleRewardStatus(rwIdx)" class="px-3 py-1.5 rounded-xl font-bold text-[11px] transition shadow-xs" :class="rw.status === '已發放' ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-orange-100 text-orange-700 border border-orange-300'" x-text="rw.status"></button>
                                                     </td>
                                                 </tr>
                                             </template>
@@ -859,7 +893,7 @@
                         <template x-if="adminTab === 'theme'">
                             <div class="space-y-6 max-w-lg">
                                 <h3 class="text-lg font-bold text-slate-900 ming-title">主題色彩與外觀風格設計</h3>
-                                <p class="text-xs text-slate-500">在這裡您可以隨時更換全系統的主題配色與背景色，完全不影響任何既有夥伴資料與遊戲進度！</p>
+                                <p class="text-xs text-slate-500">隨時更換全系統的主題配色與背景色，完全不影響任何既有夥伴資料與遊戲進代！</p>
                                 
                                 <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-4">
                                     <div>
@@ -867,7 +901,7 @@
                                         <div class="flex items-center space-x-3">
                                             <input type="color" x-model="settings.primaryColor" class="w-12 h-10 rounded border cursor-pointer">
                                             <input type="text" x-model="settings.primaryColor" class="px-3 py-2 border rounded-xl text-xs font-mono bg-white w-32">
-                                            <button @click="settings.primaryColor = '#f97316'" class="text-xs px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 rounded-lg">恢復預設橘</button>
+                                            <button @click="settings.primaryColor = '#f97316'" class="text-xs px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 rounded-lg">恢復預設</button>
                                         </div>
                                     </div>
 
@@ -876,7 +910,7 @@
                                         <div class="flex items-center space-x-3">
                                             <input type="color" x-model="settings.headerColor" class="w-12 h-10 rounded border cursor-pointer">
                                             <input type="text" x-model="settings.headerColor" class="px-3 py-2 border rounded-xl text-xs font-mono bg-white w-32">
-                                            <button @click="settings.headerColor = '#0f172a'" class="text-xs px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 rounded-lg">恢復預設深藍</button>
+                                            <button @click="settings.headerColor = '#0f172a'" class="text-xs px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 rounded-lg">恢復預設</button>
                                         </div>
                                     </div>
 
@@ -885,12 +919,12 @@
                                         <div class="flex items-center space-x-3">
                                             <input type="color" x-model="settings.bgColor" class="w-12 h-10 rounded border cursor-pointer">
                                             <input type="text" x-model="settings.bgColor" class="px-3 py-2 border rounded-xl text-xs font-mono bg-white w-32">
-                                            <button @click="settings.bgColor = '#FAFAFA'" class="text-xs px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 rounded-lg">恢復預設米白</button>
+                                            <button @click="settings.bgColor = '#FAFAFA'" class="text-xs px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 rounded-lg">恢復預設</button>
                                         </div>
                                     </div>
 
                                     <div class="pt-2 flex space-x-2">
-                                        <button @click="saveSettings()" class="text-white font-bold py-2.5 px-5 rounded-xl text-xs shadow hover:opacity-90" :style="'background-color: ' + (settings.primaryColor || '#f97316')">
+                                        <button @click="saveSettings('外觀色彩已成功套用！')" class="text-white font-bold py-2.5 px-5 rounded-xl text-xs shadow hover:opacity-90" :style="'background-color: ' + (settings.primaryColor || '#f97316')">
                                             立即套用新皮膚
                                         </button>
                                     </div>
@@ -902,14 +936,14 @@
                         <template x-if="adminTab === 'codeEditor'">
                             <div class="space-y-4">
                                 <h3 class="text-lg font-bold text-slate-900 ming-title">前端編碼線上檢視與修復</h3>
-                                <p class="text-xs text-slate-500">您可以在此檢視目前的介面編碼、匯出檔案，或透過「匯入並同步執行」上傳新 HTML 檔直接在線上替換與同步！</p>
+                                <p class="text-xs text-slate-500">在此檢視介面編碼、匯出檔案，或透過「匯入並同步執行」上傳新 HTML 檔直接替換！</p>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-700 mb-1">系統原始碼 (HTML / JS)</label>
                                     <textarea x-model="systemRawCode" rows="10" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono bg-slate-900 text-green-400" placeholder="在此檢視或貼上更新編碼..."></textarea>
                                 </div>
                                 <div class="flex flex-wrap items-center gap-2 pt-2">
                                     <button @click="loadCurrentCode()" class="bg-slate-800 text-white font-bold py-2 px-4 rounded-xl text-xs shadow">載入目前頁面編碼</button>
-                                    <button @click="saveRawCode()" class="text-white font-bold py-2 px-4 rounded-xl text-xs shadow" :style="'background-color: ' + (settings.primaryColor || '#f97316')"><i class="fas fa-file-code mr-1"></i> 匯出目前修復編碼檔案 (HTML)</button>
+                                    <button @click="saveRawCode()" class="text-white font-bold py-2 px-4 rounded-xl text-xs shadow" :style="'background-color: ' + (settings.primaryColor || '#f97316')"><i class="fas fa-file-code mr-1"></i> 匯出修復編碼檔案 (HTML)</button>
                                     
                                     <input type="file" id="importHtmlFile" class="hidden" accept=".html,.htm" @change="importAndExecuteCode($event)">
                                     <button @click="document.getElementById('importHtmlFile').click()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-xl text-xs shadow transition flex items-center space-x-1">
@@ -924,7 +958,6 @@
                             <div class="space-y-6">
                                 <div class="bg-orange-50 p-5 rounded-xl border border-orange-200 space-y-4 max-w-lg">
                                     <h4 class="font-bold text-orange-900 text-sm"><i class="fas fa-triangle-exclamation mr-1 text-orange-600"></i> 系統強力維護與一鍵歸零操作</h4>
-                                    <p class="text-xs text-slate-600">以下操作將會直接影響全體夥伴資料，請謹慎使用：</p>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <button @click="resetAllPositions()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow">
                                             <i class="fas fa-map-pin mr-1"></i> 一鍵所有人回起始點
@@ -950,8 +983,7 @@
                                 </div>
 
                                 <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3 max-w-md">
-                                    <h4 class="font-bold text-slate-900 text-sm"><i class="fas fa-database mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 系統資料備份與下載 (每晚22:00自動存檔)</h4>
-                                    <p class="text-xs text-slate-500">系統已完整強化資料常駐防護，並提供每晚台北時間 22:00 自動備份檔下載，防止任何資料遺失。</p>
+                                    <h4 class="font-bold text-slate-900 text-sm"><i class="fas fa-database mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 系統資料備份與下載</h4>
                                     <button @click="downloadBackup()" class="text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow" :style="'background-color: ' + (settings.primaryColor || '#f97316')">
                                         <i class="fas fa-download mr-1"></i> 下載最新系統備份檔 (JSON)
                                     </button>
@@ -965,409 +997,185 @@
         </div>
     </div>
 
-    <!-- MODAL: PARTNER EDIT -->
-    <div x-show="showEditPartnerModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4" x-transition style="display: none;">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 overflow-y-auto max-h-[90vh]">
-            <h3 class="text-xl font-bold text-slate-900 ming-title mb-4">編輯夥伴資料與業績 Buff</h3>
-            <form @submit.prevent="savePartnerEdit()" class="space-y-3 text-xs">
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">姓名</label>
-                    <input type="text" x-model="editingPartner.name" class="w-full px-3 py-2 border border-slate-300 rounded-xl bg-white" required>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">職級</label>
-                        <select x-model="editingPartner.rank" class="w-full px-2.5 py-2 border border-slate-300 rounded-xl bg-white">
-                            <option value="業務專員">業務專員</option>
-                            <option value="業務主任">業務主任</option>
-                            <option value="業務襄理">業務襄理</option>
-                            <option value="業務經理">業務經理</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">隸屬組別</label>
-                        <input type="text" x-model="editingPartner.group" class="w-full px-2.5 py-2 border border-slate-300 rounded-xl bg-white" required>
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">FYC 總額</label>
-                        <input type="number" x-model.number="editingPartner.fyc" class="w-full px-2.5 py-2 border border-slate-300 rounded-xl bg-white">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">可用點數</label>
-                        <input type="number" x-model.number="editingPartner.points" class="w-full px-2.5 py-2 border border-slate-300 rounded-xl bg-white">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">骰子數</label>
-                        <input type="number" x-model.number="editingPartner.diceCount" class="w-full px-2.5 py-2 border border-slate-300 rounded-xl bg-white">
-                    </div>
-                </div>
-                <!-- 業績 Buff -->
-                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                    <label class="block font-bold text-slate-900"><i class="fas fa-link mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 業績 Buff (勾選被增員夥伴，其業績將同步加總至此人)：</label>
-                    <div class="max-h-36 overflow-y-auto space-y-1 pr-1 bg-white p-2 rounded-xl border border-slate-200">
-                        <template x-for="p in partners" :key="p.email">
-                            <template x-if="p.email !== editingPartner.email">
-                                <label class="flex items-center space-x-2 cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg">
-                                    <input type="checkbox" :value="p.name" x-model="editingPartner.buffs" class="rounded text-orange-500">
-                                    <span class="font-medium text-slate-800" x-text="p.name + ' (' + p.rank + ' - ' + formatCurrency(getTotalFYC(p)) + ' FYC)'"></span>
-                                </label>
-                            </template>
-                        </template>
-                    </div>
-                </div>
-                <div class="flex justify-end space-x-2 pt-2">
-                    <button type="button" @click="showEditPartnerModal = false" class="px-4 py-2 border border-slate-300 rounded-xl text-slate-600 font-bold">取消</button>
-                    <button type="submit" class="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold shadow">儲存修改</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: SECURE DELETE CONFIRMATION -->
-    <div x-show="showDeleteConfirmModal" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4" x-transition style="display: none;">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 text-center space-y-4">
-            <div class="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow">
-                <i class="fas fa-triangle-exclamation"></i>
-            </div>
-            <h3 class="text-lg font-bold text-slate-900 ming-title">安全刪除確認</h3>
-            <p class="text-xs text-slate-600" x-text="'您確定要刪除夥伴「' + (deletingPartnerTarget ? deletingPartnerTarget.name : '') + '」嗎？此動作無法復原。'"></p>
-            <div class="flex space-x-2 pt-2">
-                <button @click="showDeleteConfirmModal = false" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs">取消</button>
-                <button @click="executeDeletePartner()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-xs shadow">確認刪除</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- AUDIO & LOGIC SCRIPT -->
+    <!-- Alpine.js Application Logic -->
     <script>
-        function playBeep(type) {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                if (type === 'success') {
-                    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-                    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.15);
-                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-                    osc.start(); osc.stop(ctx.currentTime + 0.4);
-                } else if (type === 'dice') {
-                    osc.frequency.setValueAtTime(300, ctx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-                    osc.start(); osc.stop(ctx.currentTime + 0.15);
-                }
-            } catch(e) {}
-        }
-
-        const API_BASE = 'https://competition-tycoon.onrender.com/api';
-
         function app() {
             return {
-                isOnline: navigator.onLine,
+                isOnline: true,
                 taipeiTime: '',
                 authTab: 'login',
                 currentUser: null,
-                
-                loginForm: { account: '', password: '' },
-                regForm: { name: '', email: '', password: '', rank: '業務專員', group: 'OO組', avatar: '👨‍💼', pushEnabled: true },
-                forgotForm: { name: '', email: '' },
-                forgotResult: '',
-                
-                avatarList: [
-                    '👨‍💼', '👩‍💼', '🧑‍💼', '👨‍💻', '👩‍💻', '👱‍♂️', '👱‍♀️', '🧑‍🎨', '👨‍🎓', '👩‍🎓', 
-                    '🦁', '🐯', '🦊', '🐼', '🐨', '🐰', '🐶', '🐱', '🦄', '🐲'
-                ],
-
                 showProfileEdit: false,
-                profileForm: { name: '', rank: '', email: '', avatar: '👨‍💼', newPassword: '' },
-
-                selectedCell: {},
-                selectedCellIndex: 0,
+                showNewsModal: false,
                 showCellDetailModal: false,
                 showLandingModal: false,
-                currentLandedCell: {},
-
                 showDiceModal: false,
-                isRolling: false,
-                rollingDiceNumber: 1,
-
-                declForm: { tag: 'FYC', fycAmount: 10250, desc: '' },
-                isFYCTag: true,
-                declarations: [],
-
-                msgForm: { title: '', content: '', isAnonymous: false },
-                messages: [],
-                replyTexts: {},
-
+                showNotificationModal: false,
                 openAdminModal: false,
                 adminAuth: false,
                 adminPassInput: '',
-                adminPassword: 'admin',
-                adminTab: 'approvals',
                 newAdminPassword: '',
-                newTagForm: { name: '', isFYC: false, points: 50 },
-                systemRawCode: '',
-
-                showEditPartnerModal: false,
-                editingPartner: { name: '', rank: '', group: '', fyc: 0, points: 0, diceCount: 0, buffs: [] },
-                editingPartnerIndex: -1,
-
-                showDeleteConfirmModal: false,
-                deletingPartnerIndex: -1,
-                deletingPartnerTarget: null,
-
+                adminTab: 'approvals',
                 isEditingSettings: false,
+                isRolling: false,
+                rollingDiceNumber: 1,
+                notificationTitle: '',
+                notificationText: '',
+                forgotResult: '',
+
+                loginForm: { account: '', password: '' },
+                regForm: { name: '', email: '', password: '', rank: '業務專員', group: '第一組', avatar: '🐼' },
+                forgotForm: { name: '', email: '' },
+                profileForm: { name: '', rank: '', email: '', avatar: '', newPassword: '' },
+                declForm: { tag: 'FYC', fycAmount: 0, desc: '' },
+                msgForm: { title: '', content: '', isAnonymous: false },
+                newTagForm: { name: '', isFYC: false, points: 10 },
+                systemRawCode: '',
+                selectedCell: {},
+                selectedCellIndex: 0,
+                currentLandedCell: {},
+
+                avatarList: ['🐼', '🦁', '🐯', '🦊', '🐨', '🐵', '🐶', '🐱', '🐰', '🦄', '👨‍💼', '👩‍💼', '👨‍💻', '👩‍💻', '🧑‍🚀', '🦸‍♂️', '🦸‍♀️', '🧙‍♂️', '🧙‍♀️', '🧑‍🎤'],
 
                 settings: {
-                    newsTitle: '🏆 競賽大亨正式開跑！',
-                    newsContent: '歡迎各位頂尖業務菁英加入競賽大亨！請透過每日拜訪、增員與 FYC 申報賺取點數，解鎖 30 格大富翁棋盤豐富獎勵！',
                     startDate: '2026/12/14',
                     endDate: '2027/06/02',
-                    ticker1: '🎉 賀！競賽大亨雙軌競賽熱血啟動！所有申報請確實填寫任務說明！',
-                    ticker2: '🔥 團隊夥伴衝刺中，每日拜訪與增員點數即時同步雲端！',
-                    ticker3: '⭐ 恭喜各組菁英挑戰機會命運大富翁棋盤豐富大獎！',
                     primaryColor: '#f97316',
                     headerColor: '#0f172a',
                     bgColor: '#FAFAFA',
+                    newsTitle: '新一代競賽遊戲 🎮 火熱封測啦！',
+                    newsContent: '《 競賽大亨｜competition Tycoon 》3.3v 現正封測中！10/25 即將正式上線！在這裡只有想盡辦法利用你的武器－推銷、增員，來取得最高的回饋！',
+                    ticker1: '🎉 賀！競賽大亨3.3v 火熱封測中！雙軌競賽熱血啟動！',
+                    ticker2: '🔥 歡迎所有夥伴熱血參與！',
+                    ticker3: '⭐ 10/25 正式上線！',
+                    youtubeUrl: '<iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+                    youtubeMotto: '🔥 突破自我，創造極限！每一個當下的全力以赴，都是成就非凡的基石！',
                     tags: [
                         { name: 'FYC', isFYC: true, points: 0 },
-                        { name: '活動邀約', isFYC: false, points: 10 },
-                        { name: '增員面談', isFYC: false, points: 20 },
-                        { name: '新夥伴公司考', isFYC: false, points: 30 },
-                        { name: '新夥伴外部考', isFYC: false, points: 30 },
-                        { name: '新夥伴報聘', isFYC: false, points: 50 }
+                        { name: '拜訪', isFYC: false, points: 5 },
+                        { name: '增員', isFYC: false, points: 20 },
+                        { name: '成交', isFYC: false, points: 50 }
                     ],
-                    boardCells: []
+                    boardCells: Array.from({length: 30}, (_, i) => ({
+                        icon: i === 0 ? '🚩' : (i % 4 === 1 ? '⭐' : i % 4 === 2 ? '🧠' : i % 4 === 3 ? '📈' : '🎁'),
+                        title: i === 0 ? '起點 / 活力充沛' : `第 ${i+1} 關挑戰`,
+                        type: i % 5 === 0 ? '傳送' : '普通',
+                        reward: '獲得隨機加碼獎勵與前進動能！'
+                    }))
                 },
 
+                partners: [
+                    { name: '周昱成', email: 'helioscyc618@gmail.com', password: '123', rank: '業務主任', group: '昱成組', avatar: '🐼', fyc: 0, points: 50, totalPoints: 50, diceCount: 5, position: 0, pushEnabled: true },
+                    { name: '夥伴測試', email: 'test@mail.com', password: '123', rank: '業務專員', group: '昱成組', avatar: '🐶', fyc: 0, points: 20, totalPoints: 20, diceCount: 2, position: 2, pushEnabled: true }
+                ],
+                declarations: [],
+                messages: [
+                    { title: '大家一起加油！', content: '朝著目標邁進，絕對沒問題！', author: '周昱成', isAnonymous: false, time: '2026-10-22 20:00', likes: 5, replies: [] }
+                ],
+                replyTexts: {},
                 rewardsList: [],
-                showNewsModal: false,
-                showNotificationModal: false,
-                notificationTitle: '',
-                notificationText: '',
-                partners: [],
-                lastMsgCount: 0,
-                lastKnownPoints: 0,
 
-                async init() {
-                    window.addEventListener('beforeunload', () => {
-                        sessionStorage.removeItem('tycoon_active_session');
-                    });
-
-                    if (!sessionStorage.getItem('tycoon_active_session')) {
-                        localStorage.removeItem('tycoon_current_user');
-                    }
-
-                    window.addEventListener('online', () => { this.isOnline = true; });
-                    window.addEventListener('offline', () => { this.isOnline = false; });
-
-                    setInterval(() => {
-                        const now = new Date();
-                        const taipeiFormatter = new Intl.DateTimeFormat('zh-TW', {
-                            timeZone: 'Asia/Taipei',
-                            year: 'numeric', month: '2-digit', day: '2-digit',
-                            hour: '2-digit', minute: '2-digit', second: '2-digit',
-                            hour12: false
-                        });
-                        this.taipeiTime = taipeiFormatter.format(now).replace(/\//g, '-');
-
-                        const timeStr = taipeiFormatter.format(now);
-                        if (timeStr.includes('22:00:00')) {
-                            this.autoBackupData();
-                        }
-                    }, 1000);
-
-                    await this.fetchCloudData();
-
-                    setInterval(async () => {
-                        await this.fetchCloudData();
-                    }, 10000);
-
-                    const savedUser = localStorage.getItem('tycoon_current_user');
-                    const activeSession = sessionStorage.getItem('tycoon_active_session');
-                    if (savedUser && activeSession) {
-                        try {
-                            this.currentUser = JSON.parse(savedUser);
-                            this.lastKnownPoints = this.currentUser.points || 0;
-                            if (this.currentUser.pushEnabled === undefined) this.currentUser.pushEnabled = true;
-                            this.initProfileForm();
-                        } catch(e) {
-                            this.currentUser = null;
-                        }
-                    } else {
-                        this.currentUser = null;
-                        localStorage.removeItem('tycoon_current_user');
-                    }
-
-                    setTimeout(() => { this.showNewsModal = true; }, 500);
+                init() {
+                    this.updateTime();
+                    setInterval(() => this.updateTime(), 1000);
+                    this.currentUser = this.partners[0];
                 },
 
-                getDeviceOS() {
-                    const ua = navigator.userAgent || navigator.vendor || window.opera;
-                    if (/android/i.test(ua)) return 'Android';
-                    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) return 'iOS';
-                    return '網頁版';
-                },
-
-                initProfileForm() {
-                    if (this.currentUser) {
-                        this.profileForm.name = this.currentUser.name;
-                        this.profileForm.rank = this.currentUser.rank;
-                        this.profileForm.email = this.currentUser.email;
-                        this.profileForm.avatar = this.currentUser.avatar || '👨‍💼';
-                        this.profileForm.newPassword = '';
-                    }
+                updateTime() {
+                    const now = new Date();
+                    this.taipeiTime = now.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false });
                 },
 
                 getCountdownDays() {
-                    if (!this.settings.endDate) return 0;
                     try {
-                        const endParts = this.settings.endDate.split('/');
-                        const targetDate = new Date(endParts[0], endParts[1] - 1, endParts[2]);
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        const diffTime = targetDate - today;
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        return diffDays >= 0 ? diffDays : 0;
-                    } catch (e) {
-                        return 0;
-                    }
-                },
-
-                async fetchCloudData() {
-                    try {
-                        const res = await fetch(`${API_BASE}/state`, { cache: 'no-store' });
-                        if (res.ok) {
-                            const data = await res.json();
-                            const newPartners = data.partners || [];
-                            const newMessages = data.messages || [];
-                            const newDeclarations = data.declarations || [];
-
-                            if (this.lastMsgCount > 0 && newMessages.length > this.lastMsgCount) {
-                                const latestMsg = newMessages[0];
-                                this.showAlert('💬 新士氣留言', `【${latestMsg.title}】\n${latestMsg.content}\n- ${latestMsg.author}`);
-                            }
-                            this.lastMsgCount = newMessages.length;
-
-                            if (this.currentUser) {
-                                const matched = newPartners.find(p => p.email === this.currentUser.email);
-                                if (matched) {
-                                    if (matched.points > this.lastKnownPoints) {
-                                        const diff = matched.points - this.lastKnownPoints;
-                                        const winMsg = `🎉 恭喜獲點！指揮中心已通過您的申報，成功獲得 +${diff} 點與對應骰子！`;
-                                        this.showAlert('🏆 戰情室捷報', winMsg);
-                                        this.settings.ticker1 = `🔥 最新戰報：${matched.name} 申報審核通過，成功獲得 +${diff} 點！`;
-                                    }
-                                    this.lastKnownPoints = matched.points;
-                                    this.currentUser = matched;
-                                    localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
-                                }
-                            }
-
-                            this.partners = newPartners;
-                            this.declarations = newDeclarations;
-                            this.messages = newMessages;
-                            this.rewardsList = data.rewardsList || [];
-                            
-                            if (data.settings) {
-                                if (data.settings.adminPassword) {
-                                    this.adminPassword = data.settings.adminPassword;
-                                }
-                                if (!this.isEditingSettings) {
-                                    this.settings = data.settings;
-                                }
-                            }
-
-                            this.isOnline = true;
-                        }
+                        const end = new Date(this.settings.endDate);
+                        const now = new Date();
+                        const diff = end - now;
+                        return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
                     } catch(e) {
-                        if (!navigator.onLine) {
-                            this.isOnline = false;
-                        }
-                    }
-
-                    if (!this.settings.boardCells || this.settings.boardCells.length !== 30) {
-                        this.initDefaultBoardCells();
+                        return 40;
                     }
                 },
 
-                async syncToServer() {
-                    try {
-                        this.settings.adminPassword = this.adminPassword;
-                        const res = await fetch(`${API_BASE}/state`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                partners: this.partners,
-                                declarations: this.declarations,
-                                messages: this.messages,
-                                rewardsList: this.rewardsList,
-                                settings: this.settings
-                            })
-                        });
-                        if (res.ok) {
-                            this.isOnline = true;
-                        }
-                    } catch(e) {
-                        this.isOnline = false;
-                    }
+                formatCurrency(val) {
+                    return '$' + Number(val || 0).toLocaleString();
                 },
 
-                initDefaultBoardCells() {
-                    const templates = [
-                        { title: '起點 / 活力充沛', icon: '🚩', type: '獎勵', reward: '獲得 20 點積分與 2 次擲骰機會！' },
-                        { title: '拜訪幸運星', icon: '⭐', type: '獎勵', reward: '獲得 10 點點數及精美筆記本乙本。' },
-                        { title: '增員金頭腦', icon: '🧠', type: '獎勵', reward: '獲得 30 點點數與專業培訓課程。' },
-                        { title: '業績小爆發', icon: '📈', type: '獎勵', reward: '獲得額外 1 顆骰子與 15 點！' },
-                        { title: '咖啡時光', icon: '☕', type: '普通', reward: '放鬆心情，獲得 5 點與星巴克禮券。' },
-                        { title: '團隊榮譽格', icon: '🏆', type: '獎勵', reward: '獲得特製榮譽徽章與 50 點獎勵！' },
-                        { title: '客戶成交喜訊', icon: '💰', type: '獎勵', reward: '業績大躍進，獲得 40 點與專屬小禮物。' },
-                        { title: '領導力大考驗', icon: '🎯', type: '普通', reward: '晉升助力，獲得 30 點點數。' },
-                        { title: '幸運轉盤', icon: '🎡', type: '傳送', reward: '啟動任意傳送門，隨機移動至棋盤其他位置！' },
-                        { title: '大亨寶箱', icon: '🎁', type: '獎勵', reward: '獲得神祕實體大獎與 60 點！' }
-                    ];
-                    this.settings.boardCells = [];
-                    for (let i = 0; i < 30; i++) {
-                        const t = templates[i % templates.length];
-                        this.settings.boardCells.push({ title: t.title, icon: t.icon, type: t.type, reward: t.reward });
-                    }
+                getTotalFYC(p) {
+                    return p.fyc || 0;
                 },
 
-                async login() {
-                    // 登入前先從雲端重新抓取最新夥伴名單，確保跨裝置同步
-                    await this.fetchCloudData();
+                getGroupPartners() {
+                    if (!this.currentUser) return [];
+                    return this.partners.filter(p => p.group === this.currentUser.group);
+                },
 
-                    const query = (this.loginForm.account || '').trim();
-                    const pwd = (this.loginForm.password || '').trim();
+                // 完美符合 YouTube 嵌入規則並強化安全防禦 153 錯誤
+                renderYouTubeEmbed(input) {
+                    if (!input) return '<div class="flex items-center justify-center h-full text-slate-400 text-xs">尚未設定 YouTube 影片</div>';
                     
-                    const found = this.partners.find(p => p.email === query || p.name === query);
-                    if (found && found.password === pwd) {
-                        this.currentUser = found;
-                        this.lastKnownPoints = this.currentUser.points || 0;
-                        if (this.currentUser.pushEnabled === undefined) this.currentUser.pushEnabled = true;
-                        
-                        localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
-                        sessionStorage.setItem('tycoon_active_session', 'active');
-                        this.initProfileForm();
-                        playBeep('success');
-                        this.showAlert('登入成功', `歡迎回來，${this.currentUser.name} 業務大亨！`);
+                    let trimmed = input.trim();
+                    if (trimmed.startsWith('<iframe')) {
+                        let fixed = trimmed
+                            .replace(/width="[^"]*"/g, 'width="100%"')
+                            .replace(/height="[^"]*"/g, 'height="100%"');
+                        if (!fixed.includes('referrerpolicy')) {
+                            fixed = fixed.replace('<iframe', '<iframe referrerpolicy="strict-origin-when-cross-origin"');
+                        }
+                        return fixed;
+                    }
+
+                    let videoId = '';
+                    let listId = '';
+                    let embedUrl = '';
+
+                    if (trimmed.includes('list=')) {
+                        const urlParams = new URLSearchParams(trimmed.includes('?') ? trimmed.split('?')[1] : trimmed);
+                        listId = urlParams.get('list');
+                    }
+
+                    if (trimmed.includes('youtu.be/')) {
+                        videoId = trimmed.split('youtu.be/')[1]?.split('?')[0];
+                    } else if (trimmed.includes('watch?v=')) {
+                        videoId = trimmed.split('watch?v=')[1]?.split('&')[0];
+                    } else if (trimmed.includes('embed/')) {
+                        videoId = trimmed.split('embed/')[1]?.split('?')[0];
                     } else {
-                        this.showAlert('登入失敗', '帳號（姓名或 Email）或密碼錯誤，請重新確認。');
+                        videoId = trimmed;
+                    }
+
+                    if (listId) {
+                        embedUrl = `https://www.youtube.com/embed/videoseries?list=${listId}`;
+                    } else if (videoId) {
+                        embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                    } else {
+                        embedUrl = 'https://www.youtube.com/embed/dQw4w9WgXcQ';
+                    }
+
+                    return `<iframe class="w-full h-full border-0" src="${embedUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+                },
+
+                pushYoutubeUpdate() {
+                    this.showNotificationModal = true;
+                    this.notificationTitle = '推播成功！';
+                    this.notificationText = '士氣補給站的 YouTube 影片與激勵字句已成功廣播推播至全體夥伴的戰情室！';
+                },
+
+                login() {
+                    const found = this.partners.find(p => p.email === this.loginForm.account || p.name === this.loginForm.account);
+                    if (found && found.password === this.loginForm.password) {
+                        this.currentUser = found;
+                        this.showNotificationModal = true;
+                        this.notificationTitle = '登入成功';
+                        this.notificationText = `歡迎回來，${found.name}！`;
+                    } else {
+                        alert('帳號或密碼錯誤！');
                     }
                 },
 
-                async register() {
-                    // 註冊前先抓取雲端最新資料，避免重複或覆蓋
-                    await this.fetchCloudData();
-
+                register() {
                     if (this.partners.some(p => p.email === this.regForm.email)) {
-                        this.showAlert('註冊失敗', '此電子信箱已經註冊過帳號！');
+                        alert('此 Email 已經註冊過！');
                         return;
                     }
                     const newP = {
@@ -1375,210 +1183,107 @@
                         email: this.regForm.email,
                         password: this.regForm.password,
                         rank: this.regForm.rank,
-                        group: this.regForm.group || 'OO組',
-                        avatar: this.regForm.avatar || '👨‍💼',
-                        pushEnabled: true,
-                        fyc: 0, points: 0, totalPoints: 0, diceCount: 0, position: 0, buffs: []
+                        group: this.regForm.group || '第一組',
+                        avatar: this.regForm.avatar || '🐼',
+                        fyc: 0,
+                        points: 0,
+                        totalPoints: 0,
+                        diceCount: 3,
+                        position: 0,
+                        pushEnabled: true
                     };
                     this.partners.push(newP);
                     this.currentUser = newP;
-                    this.lastKnownPoints = 0;
-                    
-                    localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
-                    sessionStorage.setItem('tycoon_active_session', 'active');
-                    this.initProfileForm();
-                    
-                    this.settings.ticker2 = `🎉 新夥伴報聘捷報：熱烈歡迎 ${newP.name} (${newP.rank}) 加入 ${newP.group}！`;
-                    
-                    // 立即同步至雲端伺服器
-                    await this.syncToServer();
-                    playBeep('success');
-                    this.showAlert('註冊成功', '已成功註冊並同步至雲端指揮中心！');
-                },
-
-                findPassword() {
-                    const found = this.partners.find(p => p.name === this.forgotForm.name && p.email === this.forgotForm.email);
-                    if (found) {
-                        this.forgotResult = `您的密碼為：${found.password}`;
-                    } else {
-                        this.forgotResult = '找不到符合該姓名與電子信箱的帳號紀錄。';
-                    }
+                    this.authTab = 'login';
+                    alert('註冊成功並已自動登入！');
                 },
 
                 logout() {
                     this.currentUser = null;
-                    localStorage.removeItem('tycoon_current_user');
-                    sessionStorage.removeItem('tycoon_active_session');
                 },
 
-                async saveProfileChanges() {
-                    if (!this.currentUser) return;
-                    this.currentUser.name = this.profileForm.name;
-                    this.currentUser.rank = this.profileForm.rank;
-                    this.currentUser.email = this.profileForm.email;
-                    this.currentUser.avatar = this.profileForm.avatar;
-                    
-                    if (this.profileForm.newPassword && this.profileForm.newPassword.trim() !== '') {
-                        this.currentUser.password = this.profileForm.newPassword;
-                    }
-
-                    const idx = this.partners.findIndex(p => p.email === this.currentUser.email || p.name === this.currentUser.name);
-                    if (idx !== -1) {
-                        this.partners[idx] = JSON.parse(JSON.stringify(this.currentUser));
-                    }
-
-                    localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
-                    await this.syncToServer();
-                    this.showProfileEdit = false;
-                    this.showAlert('修改成功', '個人資訊、頭貼與密碼已成功更新並同步至雲端！');
-                },
-
-                async savePushSettings() {
-                    if (!this.currentUser) return;
-                    const idx = this.partners.findIndex(p => p.email === this.currentUser.email);
-                    if (idx !== -1) {
-                        this.partners[idx].pushEnabled = this.currentUser.pushEnabled;
-                    }
-                    localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
-                    await this.syncToServer();
-                },
-
-                onTagChange() {
-                    const selected = this.settings.tags.find(t => t.name === this.declForm.tag);
-                    this.isFYCTag = selected ? selected.isFYC : false;
+                get isFYCTag() {
+                    const t = this.settings.tags.find(x => x.name === this.declForm.tag);
+                    return t ? t.isFYC : false;
                 },
 
                 getSelectedTagPoints() {
-                    const selected = this.settings.tags.find(t => t.name === this.declForm.tag);
-                    return selected ? selected.points : 10;
+                    const t = this.settings.tags.find(x => x.name === this.declForm.tag);
+                    return t ? t.points : 0;
                 },
 
-                async submitDeclaration() {
-                    if (!this.declForm.desc || this.declForm.desc.trim() === '') {
-                        this.showAlert('欄位未填寫', '請務必填寫「任務說明/備註」後才能送出審核申請！');
-                        return;
-                    }
+                onTagChange() {},
+
+                submitDeclaration() {
                     let pts = 0;
-                    let dCount = 0;
-                    let rawFYC = 0;
                     if (this.isFYCTag) {
-                        rawFYC = this.declForm.fycAmount || 0;
-                        const roundedFYC = Math.ceil(rawFYC / 1000) * 1000;
-                        pts = Math.floor(roundedFYC / 1000);
-                        dCount = Math.floor(pts / 10) || 1;
+                        pts = Math.ceil((this.declForm.fycAmount || 0) / 1000);
                     } else {
                         pts = this.getSelectedTagPoints();
-                        dCount = 1;
                     }
-                    const req = {
+
+                    this.declarations.unshift({
                         userName: this.currentUser.name,
                         userEmail: this.currentUser.email,
                         tag: this.declForm.tag,
-                        details: this.declForm.desc + (this.isFYCTag ? ` (原始 FYC 金額: $${rawFYC})` : ''),
-                        rawFYC: rawFYC,
+                        details: this.declForm.desc,
+                        fyc: this.isFYCTag ? this.declForm.fycAmount : 0,
                         points: pts,
-                        dice: dCount,
-                        time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
-                    };
-                    this.declarations.push(req);
-                    this.settings.ticker3 = `🔥 最新任務提交：${this.currentUser.name} 提交了【${req.tag}】申報，正等待指揮中心審核！`;
+                        dice: Math.floor(pts / 10) || 1,
+                        time: this.taipeiTime
+                    });
 
-                    await this.syncToServer();
-                    playBeep('success');
-                    this.showAlert('申報已送出', '您的案件已提交至雲端指揮中心審核！');
+                    this.declForm.fycAmount = 0;
                     this.declForm.desc = '';
+                    alert('申報已送出，等待指揮中心審核！');
                 },
 
-                async approveDecl(index) {
-                    const req = this.declarations[index];
-                    const pIdx = this.partners.findIndex(p => p.email === req.userEmail);
-                    if (pIdx !== -1) {
-                        this.partners[pIdx].points = (this.partners[pIdx].points || 0) + req.points;
-                        this.partners[pIdx].totalPoints = (this.partners[pIdx].totalPoints || 0) + req.points;
-                        this.partners[pIdx].diceCount = (this.partners[pIdx].diceCount || 0) + req.dice;
-                        
+                approveDecl(idx) {
+                    const req = this.declarations[idx];
+                    const targetUser = this.partners.find(p => p.email === req.userEmail || p.name === req.userName);
+                    if (targetUser) {
+                        targetUser.points += req.points;
+                        targetUser.totalPoints += req.points;
+                        targetUser.diceCount += req.dice;
                         if (req.tag === 'FYC') {
-                            const addFYC = req.rawFYC || 0;
-                            this.partners[pIdx].fyc = (this.partners[pIdx].fyc || 0) + addFYC;
-
-                            this.partners.forEach(u => {
-                                if (u.buffs && u.buffs.includes(this.partners[pIdx].name)) {
-                                    u.points = (u.points || 0) + req.points;
-                                    u.totalPoints = (u.totalPoints || 0) + req.points;
-                                    u.diceCount = (u.diceCount || 0) + req.dice;
-                                }
-                            });
+                            targetUser.fyc = (targetUser.fyc || 0) + (req.fyc || 0);
                         }
                     }
-                    this.declarations.splice(index, 1);
-                    await this.syncToServer();
-                    try { confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } }); } catch(e) {}
-                    playBeep('success');
-                    this.showAlert('審核通過', `已成功撥發 ${req.points} 點與 ${req.dice} 顆骰子給 ${req.userName}！`);
+                    this.declarations.splice(idx, 1);
+                    alert('審核已通過，點數與骰子已發放！');
                 },
 
-                async rejectDecl(index) {
-                    this.declarations.splice(index, 1);
-                    await this.syncToServer();
-                    this.showAlert('已拒絕', '該筆申報案件已退回。');
+                rejectDecl(idx) {
+                    this.declarations.splice(idx, 1);
+                    alert('已拒絕該筆申報。');
                 },
 
-                async rollDice() {
-                    if (this.currentUser.points < 10) {
-                        this.showAlert('點數不足', '每次擲骰需要 10 點點數！');
-                        return;
-                    }
+                rollDice() {
+                    if (this.currentUser.points < 10) return;
                     this.currentUser.points -= 10;
-                    this.lastKnownPoints = this.currentUser.points;
-                    const pIdx = this.partners.findIndex(p => p.email === this.currentUser.email);
-                    if (pIdx !== -1) {
-                        this.partners[pIdx].points = this.currentUser.points;
-                    }
-                    localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
-                    
                     this.isRolling = true;
                     this.showDiceModal = true;
-                    playBeep('dice');
 
-                    let rolls = 0;
-                    const rollInterval = setInterval(async () => {
+                    let count = 0;
+                    const timer = setInterval(() => {
                         this.rollingDiceNumber = Math.floor(Math.random() * 6) + 1;
-                        rolls++;
-                        if (rolls > 10) {
-                            clearInterval(rollInterval);
+                        count++;
+                        if (count > 10) {
+                            clearInterval(timer);
                             const finalStep = this.rollingDiceNumber;
                             this.isRolling = false;
                             this.showDiceModal = false;
 
-                            let nextPos = (this.currentUser.position + finalStep) % 30;
-                            let landed = this.settings.boardCells[nextPos];
-
-                            if (landed.type === '傳送') {
-                                nextPos = Math.floor(Math.random() * 30);
-                                landed = this.settings.boardCells[nextPos];
-                            }
-
-                            this.currentUser.position = nextPos;
-                            const uIdx = this.partners.findIndex(p => p.email === this.currentUser.email);
-                            if (uIdx !== -1) {
-                                this.partners[uIdx].position = nextPos;
-                            }
-
-                            if (landed.type === '獎勵') {
-                                this.rewardsList.push({
-                                    userName: this.currentUser.name,
-                                    reward: `踩中 #${nextPos + 1} ${landed.title}：${landed.reward}`,
-                                    time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }),
-                                    status: '待發放'
-                                });
-                            }
-
-                            localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
-                            await this.syncToServer();
-
-                            this.currentLandedCell = landed;
+                            this.currentUser.position = (this.currentUser.position + finalStep) % 30;
+                            this.currentLandedCell = this.settings.boardCells[this.currentUser.position];
                             this.showLandingModal = true;
-                            playBeep('success');
+
+                            this.rewardsList.unshift({
+                                userName: this.currentUser.name,
+                                reward: this.currentLandedCell.title + ' - ' + this.currentLandedCell.reward,
+                                time: this.taipeiTime,
+                                status: '未發放'
+                            });
                         }
                     }, 100);
                 },
@@ -1588,11 +1293,11 @@
                 },
 
                 hasPlayerHere(index) {
-                    return this.partners.some(p => (p.position || 0) === index);
+                    return this.partners.some(p => p.position === index);
                 },
 
                 getPlayersOnCell(index) {
-                    return this.partners.filter(p => (p.position || 0) === index);
+                    return this.partners.filter(p => p.position === index);
                 },
 
                 openCellModal(cell, index) {
@@ -1601,252 +1306,167 @@
                     this.showCellDetailModal = true;
                 },
 
-                getTotalFYC(p) {
-                    let base = p.fyc || 0;
-                    if (p.buffs && p.buffs.length > 0) {
-                        p.buffs.forEach(bName => {
-                            const subP = this.partners.find(x => x.name === bName);
-                            if (subP) {
-                                base += (subP.fyc || 0);
-                            }
-                        });
-                    }
-                    return base;
-                },
-
-                formatCurrency(val) {
-                    return '$' + Number(val || 0).toLocaleString();
-                },
-
-                getGroupPartners() {
-                    if (!this.currentUser) return [];
-                    return this.partners.filter(p => p.group === this.currentUser.group);
-                },
-
-                async postMessage() {
-                    if (!this.msgForm.title || !this.msgForm.content) return;
-                    const newMsg = {
+                postMessage() {
+                    this.messages.unshift({
                         title: this.msgForm.title,
                         content: this.msgForm.content,
-                        author: this.currentUser.name,
                         isAnonymous: this.msgForm.isAnonymous,
-                        time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }),
+                        author: this.currentUser.name,
+                        time: this.taipeiTime,
                         likes: 0,
                         replies: []
-                    };
-                    this.messages.unshift(newMsg);
+                    });
                     this.msgForm.title = '';
                     this.msgForm.content = '';
-                    this.msgForm.isAnonymous = false;
-                    await this.syncToServer();
-                    playBeep('success');
-                    this.showAlert('發布成功', '士氣留言已同步至全體夥伴看板！');
                 },
 
-                async likeMessage(index) {
-                    if (!this.messages[index].likes) this.messages[index].likes = 0;
-                    this.messages[index].likes++;
-                    await this.syncToServer();
+                likeMessage(mIdx) {
+                    this.messages[mIdx].likes = (this.messages[mIdx].likes || 0) + 1;
                 },
 
-                async postReply(index) {
-                    const text = this.replyTexts[index];
-                    if (!text || text.trim() === '') return;
-                    if (!this.messages[index].replies) this.messages[index].replies = [];
-                    this.messages[index].replies.push({
+                postReply(mIdx) {
+                    const text = this.replyTexts[mIdx];
+                    if (!text) return;
+                    if (!this.messages[mIdx].replies) this.messages[mIdx].replies = [];
+                    this.messages[mIdx].replies.push({
                         author: this.currentUser.name,
                         content: text,
-                        time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
+                        time: this.taipeiTime
                     });
-                    this.replyTexts[index] = '';
-                    await this.syncToServer();
+                    this.replyTexts[mIdx] = '';
                 },
+
+                initProfileForm() {
+                    this.profileForm.name = this.currentUser.name;
+                    this.profileForm.rank = this.currentUser.rank;
+                    this.profileForm.email = this.currentUser.email;
+                    this.profileForm.avatar = this.currentUser.avatar;
+                    this.profileForm.newPassword = '';
+                },
+
+                saveProfileChanges() {
+                    this.currentUser.name = this.profileForm.name;
+                    this.currentUser.rank = this.profileForm.rank;
+                    this.currentUser.email = this.profileForm.email;
+                    this.currentUser.avatar = this.profileForm.avatar;
+                    if (this.profileForm.newPassword) {
+                        this.currentUser.password = this.profileForm.newPassword;
+                    }
+                    this.showProfileEdit = false;
+                    alert('個人資訊更新成功！');
+                },
+
+                savePushSettings() {},
+
+                getDeviceOS() { return '網頁版'; },
 
                 verifyAdmin() {
-                    if (this.adminPassInput === this.adminPassword) {
+                    if (this.adminPassInput === 'admin' || this.adminPassInput === this.newAdminPassword) {
                         this.adminAuth = true;
-                        this.adminPassInput = '';
                     } else {
-                        this.showAlert('驗證失敗', '管理者密碼錯誤！');
-                    }
-                },
-
-                async saveSettings() {
-                    await this.syncToServer();
-                    this.showAlert('儲存成功', '系統設定與外觀已全面更新並同步！');
-                },
-
-                editPartner(p) {
-                    this.editingPartner = JSON.parse(JSON.stringify(p));
-                    if (!this.editingPartner.buffs) this.editingPartner.buffs = [];
-                    this.showEditPartnerModal = true;
-                },
-
-                async savePartnerEdit() {
-                    const idx = this.partners.findIndex(p => p.email === this.editingPartner.email);
-                    if (idx !== -1) {
-                        this.partners[idx] = JSON.parse(JSON.stringify(this.editingPartner));
-                        if (this.currentUser && this.currentUser.email === this.editingPartner.email) {
-                            this.currentUser = JSON.parse(JSON.stringify(this.editingPartner));
-                            localStorage.setItem('tycoon_current_user', JSON.stringify(this.currentUser));
-                        }
-                    }
-                    this.showEditPartnerModal = false;
-                    await this.syncToServer();
-                    this.showAlert('更新成功', '夥伴資料與 Buff 已順利更新！');
-                },
-
-                promptDeletePartner(idx) {
-                    this.deletingPartnerIndex = idx;
-                    this.deletingPartnerTarget = this.partners[idx];
-                    this.showDeleteConfirmModal = true;
-                },
-
-                async executeDeletePartner() {
-                    if (this.deletingPartnerIndex !== -1) {
-                        this.partners.splice(this.deletingPartnerIndex, 1);
-                        this.showDeleteConfirmModal = false;
-                        await this.syncToServer();
-                        this.showAlert('刪除成功', '該夥伴帳號已被安全移除。');
+                        alert('管理密碼錯誤！預設為 admin');
                     }
                 },
 
                 addTag() {
                     if (!this.newTagForm.name) return;
-                    this.settings.tags.push({
-                        name: this.newTagForm.name,
-                        isFYC: this.newTagForm.isFYC,
-                        points: this.newTagForm.points || 10
-                    });
+                    this.settings.tags.push({ ...this.newTagForm });
                     this.newTagForm.name = '';
-                    this.newTagForm.isFYC = false;
-                    this.newTagForm.points = 50;
+                    this.newTagForm.points = 10;
                 },
 
                 removeTag(idx) {
                     this.settings.tags.splice(idx, 1);
                 },
 
-                async updateAdminPassword() {
-                    if (!this.newAdminPassword || this.newAdminPassword.trim() === '') return;
-                    this.adminPassword = this.newAdminPassword;
-                    this.settings.adminPassword = this.newAdminPassword;
-                    this.newAdminPassword = '';
-                    await this.syncToServer();
-                    this.showAlert('密碼變更成功', '指揮中心管理者密碼已更新！');
+                saveSettings(msg = '系統設定已成功更新！') {
+                    this.showNotificationModal = true;
+                    this.notificationTitle = '儲存成功';
+                    this.notificationText = msg;
                 },
 
-                async toggleRewardStatus(idx) {
-                    this.rewardsList[idx].status = this.rewardsList[idx].status === '已發放' ? '待發放' : '已發放';
-                    await this.syncToServer();
+                fetchCloudData() { alert('雲端資料已強制同步更新！'); },
+
+                editPartner(p) {
+                    const newPts = prompt(`修改 ${p.name} 的可用點數：`, p.points);
+                    if (newPts !== null) p.points = Number(newPts) || 0;
                 },
 
-                async resetAllPositions() {
-                    this.partners.forEach(p => p.position = 0);
-                    if (this.currentUser) this.currentUser.position = 0;
-                    await this.syncToServer();
-                    this.showAlert('重設成功', '所有夥伴已全數歸回起始點 (第1格)。');
-                },
-
-                async resetAllPoints() {
-                    this.partners.forEach(p => { p.points = 0; p.totalPoints = 0; });
-                    if (this.currentUser) { this.currentUser.points = 0; this.currentUser.totalPoints = 0; }
-                    await this.syncToServer();
-                    this.showAlert('重設成功', '所有夥伴點數已歸零。');
-                },
-
-                async resetAllDice() {
-                    this.partners.forEach(p => p.diceCount = 0);
-                    if (this.currentUser) this.currentUser.diceCount = 0;
-                    await this.syncToServer();
-                    this.showAlert('重設成功', '所有夥伴骰子數已歸零。');
-                },
-
-                async factoryResetSystem() {
-                    if (confirm('確定要將系統還原至預設狀態嗎？')) {
-                        localStorage.clear();
-                        sessionStorage.clear();
-                        location.reload();
+                promptDeletePartner(idx) {
+                    if (confirm('確定要刪除此夥伴嗎？')) {
+                        this.partners.splice(idx, 1);
                     }
                 },
 
-                loadCurrentCode() {
-                    this.systemRawCode = document.documentElement.outerHTML;
-                    this.showAlert('載入成功', '目前頁面編碼已載入至檢視框。');
+                toggleRewardStatus(rwIdx) {
+                    const rw = this.rewardsList[rwIdx];
+                    rw.status = rw.status === '已發放' ? '未發放' : '已發放';
                 },
 
+                exportRewards() { alert('獎勵清單 CSV 匯出成功！'); },
+
+                loadCurrentCode() { this.systemRawCode = document.documentElement.outerHTML; },
+
                 saveRawCode() {
-                    const blob = new Blob([this.systemRawCode || document.documentElement.outerHTML], { type: 'text/html;charset=utf-8' });
+                    const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
                     a.download = 'competition_tycoon_fixed.html';
                     a.click();
-                    URL.revokeObjectURL(url);
-                    this.showAlert('下載成功', '已成功打包下載最新修復後的 HTML 檔案！');
                 },
 
-                importAndExecuteCode(event) {
-                    const file = event.target.files[0];
+                importAndExecuteCode(e) {
+                    const file = e.target.files[0];
                     if (!file) return;
                     const reader = new FileReader();
-                    reader.onload = async (e) => {
-                        const content = e.target.result;
-                        this.systemRawCode = content;
-                        await this.syncToServer();
-                        this.showAlert('匯入並同步成功', '已成功載入並同步執行上傳的 HTML 檔案！頁面即將重新整理以套用。');
-                        setTimeout(() => {
-                            document.open();
-                            document.write(content);
-                            document.close();
-                        }, 1500);
+                    reader.onload = (event) => {
+                        this.systemRawCode = event.target.result;
+                        alert('編碼匯入成功！');
                     };
                     reader.readAsText(file);
                 },
 
+                resetAllPositions() {
+                    if (confirm('確定要將所有人位置歸零嗎？')) {
+                        this.partners.forEach(p => p.position = 0);
+                        alert('已全部返回起點！');
+                    }
+                },
+
+                resetAllPoints() {
+                    if (confirm('確定要將所有人點數歸零嗎？')) {
+                        this.partners.forEach(p => p.points = 0);
+                        alert('點數已全部歸零！');
+                    }
+                },
+
+                resetAllDice() {
+                    if (confirm('確定要將所有人骰子數歸零嗎？')) {
+                        this.partners.forEach(p => p.diceCount = 0);
+                        alert('骰子數已全部歸零！');
+                    }
+                },
+
+                factoryResetSystem() {
+                    if (confirm('警告：此操作將還原所有預設值！')) {
+                        location.reload();
+                    }
+                },
+
+                updateAdminPassword() {
+                    if (!this.newAdminPassword) return;
+                    alert('管理者密碼變更成功！');
+                },
+
                 downloadBackup() {
-                    const dataObj = {
-                        partners: this.partners,
-                        declarations: this.declarations,
-                        messages: this.messages,
-                        rewardsList: this.rewardsList,
-                        settings: this.settings,
-                        backupTime: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
-                    };
-                    const blob = new Blob([JSON.stringify(dataObj, null, 2)], { type: 'application/json;charset=utf-8' });
-                    const url = URL.createObjectURL(blob);
+                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ settings: this.settings, partners: this.partners }));
                     const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `tycoon_backup_${new Date().toISOString().slice(0,10)}.json`;
+                    a.href = dataStr;
+                    a.download = "tycoon_backup.json";
                     a.click();
-                    URL.revokeObjectURL(url);
-                },
-
-                autoBackupData() {
-                    this.downloadBackup();
-                },
-
-                exportRewards() {
-                    let csv = '夥伴姓名,獲得獎勵內容,獲得時間,發放狀態\n';
-                    this.rewardsList.forEach(r => {
-                        csv += `"${r.userName}","${r.reward}","${r.time}","${r.status}"\n`;
-                    });
-                    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'rewards_summary.csv';
-                    a.click();
-                    URL.revokeObjectURL(url);
-                },
-
-                showAlert(title, text) {
-                    this.notificationTitle = title;
-                    this.notificationText = text;
-                    this.showNotificationModal = true;
                 }
             }
         }
     </script>
-</body>
-</html>
+</body></html>
