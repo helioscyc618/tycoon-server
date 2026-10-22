@@ -714,6 +714,11 @@
                                                     </td>
                                                 </tr>
                                             </template>
+                                            <template x-if="partners.length === 0">
+                                                <tr>
+                                                    <td colspan="6" class="p-6 text-center text-slate-400">目前尚無任何註冊夥伴。新夥伴註冊後將即時同步顯示於此。</td>
+                                                </tr>
+                                            </template>
                                         </tbody>
                                     </table>
                                 </div>
@@ -1039,7 +1044,7 @@
                     headerColor: '#0f172a',
                     bgColor: '#FAFAFA',
                     newsTitle: '新一代競賽遊戲 🎮 火熱封測啦！',
-                    newsContent: '《 競賽大亨｜competition Tycoon 》3.3v 現正封測中！10/25 即將正式上線！在這裡只有想盡辦法利用你的武器－推銷、增員，來取得最高的回饋！',
+                    newsContent: '《 競賽大亨｜competition Tycoon 》3.3v 現正封測中！10/25 即將正式上線！在這裡只有想盡辦法利用你的武器－推銷, 增員，來取得最高的回饋！',
                     ticker1: '🎉 賀！競賽大亨3.3v 火熱封測中！雙軌競賽熱血啟動！',
                     ticker2: '🔥 歡迎所有夥伴熱血參與！',
                     ticker3: '⭐ 10/25 正式上線！',
@@ -1059,14 +1064,9 @@
                     }))
                 },
 
-                partners: [
-                    { name: '周昱成', email: 'helioscyc618@gmail.com', password: '123', rank: '業務主任', group: '昱成組', avatar: '🐼', fyc: 0, points: 50, totalPoints: 50, diceCount: 5, position: 0, pushEnabled: true },
-                    { name: '夥伴測試', email: 'test@mail.com', password: '123', rank: '業務專員', group: '昱成組', avatar: '🐶', fyc: 0, points: 20, totalPoints: 20, diceCount: 2, position: 2, pushEnabled: true }
-                ],
+                partners: [],
                 declarations: [],
-                messages: [
-                    { title: '大家一起加油！', content: '朝著目標邁進，絕對沒問題！', author: '周昱成', isAnonymous: false, time: '2026-10-22 20:00', likes: 5, replies: [] }
-                ],
+                messages: [],
                 replyTexts: {},
                 rewardsList: [],
 
@@ -1177,7 +1177,7 @@
                         email: this.regForm.email,
                         password: this.regForm.password,
                         rank: this.regForm.rank,
-                        group: this.regForm.group || '第一組',
+                        group: this.regForm.group || 'OO組',
                         avatar: this.regForm.avatar || '🐼',
                         fyc: 0,
                         points: 0,
@@ -1189,7 +1189,20 @@
                     this.partners.push(newP);
                     this.currentUser = newP;
                     this.authTab = 'login';
-                    alert('註冊成功並已自動登入！');
+                    alert('註冊成功並已同步至指揮中心！');
+                },
+
+                findPassword() {
+                    if (!this.forgotForm.name || !this.forgotForm.email) {
+                        this.forgotResult = '請完整輸入註冊姓名與電子信箱！';
+                        return;
+                    }
+                    const found = this.partners.find(p => p.name === this.forgotForm.name && p.email === this.forgotForm.email);
+                    if (found) {
+                        this.forgotResult = `您的密碼為：${found.password}`;
+                    } else {
+                        this.forgotResult = '找不到符合該姓名與 Email 的註冊資料！';
+                    }
                 },
 
                 logout() {
