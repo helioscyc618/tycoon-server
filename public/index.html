@@ -66,7 +66,7 @@
         <div class="flex items-center space-x-3">
             <span class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium" :class="isOnline ? 'bg-slate-800 text-green-400 border border-green-500' : 'bg-red-900/80 text-red-200 border border-red-500 animate-pulse'">
                 <i class="fas" :class="isOnline ? 'fa-wifi' : 'fa-triangle-exclamation'"></i>
-                <span x-text="isOnline ? '雲端同步連線中 (Online)' : '離線警告 (Offline)'"></span>
+                <span x-text="isOnline ? '多裝置即時同步連線中 (Online)' : '離線警告 (Offline)'"></span>
             </span>
             <span class="hidden md:inline-flex items-center text-slate-300">
                 <i class="fas fa-clock mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 台北時間: <span class="font-mono ml-1 font-bold text-white" x-text="taipeiTime"></span>
@@ -227,7 +227,7 @@
                                 <span class="px-2.5 py-0.5 text-white text-xs rounded-full font-semibold" :style="'background-color: ' + (settings.primaryColor || '#f97316')" x-text="currentUser.rank"></span>
                                 <span class="px-2.5 py-0.5 bg-slate-800 text-white text-xs rounded-full font-semibold" x-text="currentUser.group"></span>
                             </div>
-                            <p class="text-xs text-slate-500 mt-1">歡迎來到【戰情室】！多裝置資料已自動雲端同步。</p>
+                            <p class="text-xs text-slate-500 mt-1">歡迎來到【戰情室】！跨裝置即時狀態與資料已全面同步。</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-4 gap-3 text-center w-full md:w-auto">
@@ -469,15 +469,15 @@
                             </div>
                         </div>
 
-                        <!-- 5. 士氣補給站 -->
+                        <!-- 5. 士氣補給站 (YouTube 影片自適應大小顯示視窗) -->
                         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-3">
                             <h3 class="text-base font-bold text-slate-900 ming-title flex items-center justify-between">
                                 <span class="flex items-center"><i class="fab fa-youtube mr-2 text-red-600"></i> 士氣補給站 (YouTube 影片)</span>
                                 <span class="text-xs text-slate-400">戰力充電</span>
                             </h3>
-                            <div class="aspect-video w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-900">
+                            <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-slate-200 bg-slate-900 shadow-inner">
                                 <template x-if="settings.youtubeEmbed">
-                                    <div class="w-full h-full" x-html="settings.youtubeEmbed"></div>
+                                    <div class="absolute inset-0 w-full h-full [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:absolute [&>iframe]:inset-0" x-html="settings.youtubeEmbed"></div>
                                 </template>
                                 <template x-if="!settings.youtubeEmbed">
                                     <div class="flex items-center justify-center h-full text-xs text-slate-400">
@@ -947,7 +947,7 @@
                                 </h3>
                                 <div class="bg-slate-900 text-green-400 p-4 rounded-xl font-mono text-xs space-y-3 shadow-inner">
                                     <div class="flex justify-between items-center border-b border-slate-700 pb-2">
-                                        <span>SYSTEM TERMINAL v3.0 // TARGETED PUSH</span>
+                                        <span>SYSTEM TERMINAL v3.2 // REAL-TIME SYNC</span>
                                         <span class="text-slate-400" x-text="taipeiTime"></span>
                                     </div>
                                     <div class="space-y-2">
@@ -1083,6 +1083,7 @@
                 
                 terminalForm: { target: 'ALL', title: '', content: '' },
                 pushLogs: [],
+                channel: null,
 
                 avatarList: ['👨‍💼', '👩‍💼', '👨‍💻', '👩‍💻', '🧑‍🚀', '🦸‍♂️', '🦸‍♀️', '🧙‍♂️', '🦁', '🐯', '🦊', '🐼', '🐨', '🦄', '🐲', '🧑‍🎨', '🧑‍🔬', '👨‍🎓', '👩‍🎓', '🤖'],
                 
@@ -1096,7 +1097,7 @@
                     announcementTitle: '📢 競賽大亨重要公告',
                     announcementContent: '歡迎各位夥伴登入戰情室！請務必確實填寫每日拜訪、增員與 FYC 申報，解鎖 30 格大富翁棋盤豐富大獎！',
                     motivationalQuote: '今日不努力，明天找工作！全力衝刺達標！',
-                    ticker1: '🎉 賀！競賽大亨雙軌競賽熱血啟動！',
+                    ticker1: '🎉 賀! 競賽大亨雙軌競賽熱血啟動！',
                     ticker2: '🎉 新夥伴報聘捷報：歡迎新菁英加入挑戰！',
                     ticker3: '⭐ 恭喜各組菁英挑戰機會命運大富翁棋盤豐富大獎！',
                     youtubeEmbed: '<iframe width="100%" height="100%" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
@@ -1132,7 +1133,36 @@
                         }
                     }, 1000);
 
-                    const saved = localStorage.getItem('competition_tycoon_data_v10');
+                    // 1. 初始化讀取資料
+                    this.loadDataFromStorage();
+
+                    // 2. 建立 BroadcastChannel 以實現同裝置多視窗即時廣播
+                    if (window.BroadcastChannel) {
+                        this.channel = new BroadcastChannel('competition_tycoon_sync_channel');
+                        this.channel.onmessage = (event) => {
+                            if (event.data && event.data.type === 'SYNC_DATA') {
+                                this.loadDataFromStorage();
+                            }
+                        };
+                    }
+
+                    // 3. 跨裝置儲存同步監聽機制
+                    window.addEventListener('storage', (e) => {
+                        if (e.key === 'competition_tycoon_data_v12') {
+                            this.loadDataFromStorage();
+                        }
+                    });
+
+                    // 4. 當切換回頁面（Visibility Change）時自動重新載入最新狀態
+                    document.addEventListener('visibilitychange', () => {
+                        if (!document.hidden) {
+                            this.loadDataFromStorage();
+                        }
+                    });
+                },
+
+                loadDataFromStorage() {
+                    const saved = localStorage.getItem('competition_tycoon_data_v12');
                     if (saved) {
                         try {
                             const data = JSON.parse(saved);
@@ -1143,6 +1173,22 @@
                             if (data.rewardsList) this.rewardsList = data.rewardsList;
                             if (data.pushLogs) this.pushLogs = data.pushLogs;
                             if (data.adminPassword) this.adminPassword = data.adminPassword;
+                            
+                            // 若目前有登入用戶，即時同步該用戶的最新數值與狀態
+                            if (this.currentUser) {
+                                const latestUser = this.partners.find(p => p.email === this.currentUser.email);
+                                if (latestUser) {
+                                    this.currentUser = latestUser;
+                                    // 檢查是否有新的終端機推播
+                                    if (latestUser.pendingPush && !this.showTerminalPushModal) {
+                                        this.currentPushTitle = latestUser.pendingPush.title;
+                                        this.currentPushContent = latestUser.pendingPush.content;
+                                        if (!this.showAnnouncementModal) {
+                                            this.showTerminalPushModal = true;
+                                        }
+                                    }
+                                }
+                            }
                         } catch(e) {}
                     }
                 },
@@ -1158,7 +1204,12 @@
                         adminPassword: this.adminPassword,
                         currentUserEmail: this.currentUser ? this.currentUser.email : null
                     };
-                    localStorage.setItem('competition_tycoon_data_v10', JSON.stringify(data));
+                    localStorage.setItem('competition_tycoon_data_v12', JSON.stringify(data));
+
+                    // 透過 BroadcastChannel 即時通知其他視窗/裝置
+                    if (this.channel) {
+                        this.channel.postMessage({ type: 'SYNC_DATA' });
+                    }
                 },
 
                 updateTime() {
@@ -1377,7 +1428,6 @@
                     alert('已拒絕此申報。');
                 },
 
-                // 終端機發送推播至特定使用者或全部夥伴
                 sendTerminalPush() {
                     if (!this.terminalForm.title || !this.terminalForm.content) {
                         alert('請填寫推播主旨與內容！');
@@ -1408,7 +1458,6 @@
                     this.terminalForm.content = '';
                 },
 
-                // 關閉公告視窗後，檢查該使用者是否有等待中的推播訊息
                 closeAnnouncementAndCheckPush() {
                     this.showAnnouncementModal = false;
                     if (this.currentUser && this.currentUser.pendingPush) {
