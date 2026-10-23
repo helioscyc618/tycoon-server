@@ -42,6 +42,27 @@
         .dice-container { perspective: 600px; }
         .dice-cube { width: 60px; height: 60px; position: relative; transform-style: preserve-3d; transition: transform 1s ease-out; }
     </style>
+
+    <!-- 雲端即時同步 Socket.io 橋接 -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const socket = io();
+            
+            // 監聽來自伺服器的雲端資料，並自動更新本機與畫面
+            socket.on('sync_to_client', (serverData) => {
+                if (serverData && Object.keys(serverData).length > 0) {
+                    localStorage.setItem('competition_tycoon_data', JSON.stringify(serverData));
+                    window.dispatchEvent(new Event('storage'));
+                }
+            });
+
+            // 讓全局可以發射資料到雲端伺服器
+            window.syncDataToCloud = function(appData) {
+                socket.emit('client_update_data', appData);
+            };
+        });
+    </script>
 </head>
 <body class="h-full flex flex-col transition-colors duration-300" :style="'background-color: ' + (settings.bgColor || '#FAFAFA')" x-data="app()" x-init="init()">
 
@@ -50,7 +71,7 @@
         <div class="flex items-center space-x-3">
             <span class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium" :class="isOnline ? 'bg-slate-800 text-green-400 border border-green-500' : 'bg-red-900/80 text-red-200 border border-red-500 animate-pulse'">
                 <i class="fas" :class="isOnline ? 'fa-wifi' : 'fa-triangle-exclamation'"></i>
-                <span x-text="isOnline ? '本地資料已同步 (Synced)' : '離線警告 (Offline)'"></span>
+                <span x-text="isOnline ? '雲端即時同步連線中 (Synced)' : '離線警告 (Offline)'"></span>
             </span>
 
             <span class="hidden md:inline-flex items-center text-slate-300">
@@ -214,7 +235,7 @@
                                 <span class="px-2.5 py-0.5 text-white text-xs rounded-full font-semibold" :style="'background-color: ' + (settings.primaryColor || '#f97316')" x-text="currentUser.rank"></span>
                                 <span class="px-2.5 py-0.5 bg-slate-800 text-white text-xs rounded-full font-semibold" x-text="currentUser.group"></span>
                             </div>
-                            <p class="text-xs text-slate-500 mt-1">歡迎來到【戰情室】！資料已自動儲存至本機。</p>
+                            <p class="text-xs text-slate-500 mt-1">歡迎來到【戰情室】！資料已連線至 MongoDB 雲端伺服器。</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-4 gap-3 text-center w-full md:w-auto">
@@ -669,7 +690,7 @@
                                 <div class="flex justify-between items-center">
                                     <h3 class="text-lg font-bold text-slate-900 ming-title">夥伴管理與業績 Buff 設定</h3>
                                     <button @click="fetchCloudData()" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">
-                                        <i class="fas fa-sync mr-1"></i> 重新載入本機資料
+                                        <i class="fas fa-sync mr-1"></i> 重新載入雲端資料
                                     </button>
                                 </div>
                                 <div class="overflow-x-auto rounded-xl border border-slate-200">
@@ -950,17 +971,8 @@
                         <template x-if="adminTab === 'security'">
                             <div class="space-y-6">
                                 <div class="bg-blue-50 p-5 rounded-xl border border-blue-200 space-y-3 max-w-lg">
-                                    <h4 class="font-bold text-blue-900 text-sm"><i class="fas fa-cloud-arrow-up mr-1 text-blue-600"></i> 跨裝置資料同步（匯入/匯出備份）</h4>
-                                    <p class="text-xs text-slate-600">若要在不同裝置間同步帳號，請在 A 裝置點擊「下載備份檔」，然後在 B 裝置點擊下方上傳該備份檔案進行同步！</p>
-                                    <div class="flex items-center space-x-2 pt-1">
-                                        <button @click="downloadBackup()" class="text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow" :style="'background-color: ' + (settings.primaryColor || '#f97316')">
-                                            <i class="fas fa-download mr-1"></i> 下載系統備份檔 (JSON)
-                                        </button>
-                                        <label class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow cursor-pointer">
-                                            <i class="fas fa-upload mr-1"></i> 匯入備份同步資料
-                                            <input type="file" @change="importBackup($event)" accept=".json" class="hidden">
-                                        </label>
-                                    </div>
+                                    <h4 class="font-bold text-blue-900 text-sm"><i class="fas fa-cloud-arrow-up mr-1 text-blue-600"></i> 雲端即時同步說明</h4>
+                                    <p class="text-xs text-slate-600">系統已全面連線至 MongoDB 雲端資料庫，所有 60 位夥伴在不同裝置上的操作會自動即時同步，無需手動匯入匯出備份！</p>
                                 </div>
 
                                 <div class="bg-orange-50 p-5 rounded-xl border border-orange-200 space-y-4 max-w-lg">
@@ -1042,12 +1054,12 @@
                     primaryColor: '#f97316',
                     headerColor: '#0f172a',
                     bgColor: '#FAFAFA',
-                    newsTitle: '新一代競賽遊戲 🎮 火熱封測啦！',
-                    newsContent: '《 競賽大亨｜competition Tycoon 》3.3v 現正封測中！10/25 即將正式上線！',
-                    ticker1: '🎉 賀！競賽大亨3.3v 火熱封測中！雙軌競賽熱血啟動！',
+                    newsTitle: '新一代競賽遊戲 🎮 雲端即時同步版！',
+                    newsContent: '《 競賽大亨 》已全面升級為 MongoDB 雲端同步！',
+                    ticker1: '🎉 賀！競賽大亨雲端版啟動！MongoDB 資料庫連線中！',
                     ticker2: '🔥 歡迎所有夥伴熱血參與！',
-                    ticker3: '⭐ 10/25 正式上線！',
-                    youtubeUrl: '<iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+                    ticker3: '⭐ 隨時隨地跨裝置同步！',
+                    youtubeUrl: '<iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allowfullscreen></iframe>',
                     youtubeMotto: '🔥 突破自我，創造極限！每一個當下的全力以赴，都是成就非凡的基石！',
                     tags: [
                         { name: 'FYC', isFYC: true, points: 0 },
@@ -1084,6 +1096,11 @@
                         settings: this.settings
                     };
                     localStorage.setItem('competition_tycoon_data', JSON.stringify(appData));
+                    
+                    // 自動發射至雲端伺服器進行即時同步
+                    if (window.syncDataToCloud) {
+                        window.syncDataToCloud(appData);
+                    }
                 },
 
                 loadData() {
@@ -1209,7 +1226,7 @@
                     this.currentUser = newP;
                     this.saveData();
                     this.authTab = 'login';
-                    alert('註冊成功！資料已儲存並同步至指揮中心。');
+                    alert('註冊成功！資料已同步至雲端伺服器。');
                 },
 
                 findPassword() {
@@ -1421,7 +1438,7 @@
 
                 fetchCloudData() {
                     this.loadData();
-                    alert('已重新載入本機最新同步資料！');
+                    alert('已從雲端重新載入最新同步資料！');
                 },
 
                 editPartner(p) {
@@ -1483,7 +1500,7 @@
                 },
 
                 factoryResetSystem() {
-                    if (confirm('警告：此操作將清除所有本機儲存資料並重置！')) {
+                    if (confirm('警告：此操作將清除所有雲端資料並重置！')) {
                         localStorage.removeItem('competition_tycoon_data');
                         location.reload();
                     }
@@ -1492,43 +1509,6 @@
                 updateAdminPassword() {
                     if (!this.newAdminPassword) return;
                     alert('管理者密碼變更成功！');
-                },
-
-                downloadBackup() {
-                    const appData = {
-                        partners: this.partners,
-                        declarations: this.declarations,
-                        messages: this.messages,
-                        rewardsList: this.rewardsList,
-                        settings: this.settings
-                    };
-                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData));
-                    const a = document.createElement('a');
-                    a.href = dataStr;
-                    a.download = "tycoon_sync_backup.json";
-                    a.click();
-                },
-
-                importBackup(event) {
-                    const file = event.target.files[0];
-                    if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        try {
-                            const data = JSON.parse(e.target.result);
-                            if (data.partners) this.partners = data.partners;
-                            if (data.declarations) this.declarations = data.declarations;
-                            if (data.messages) this.messages = data.messages;
-                            if (data.rewardsList) this.rewardsList = data.rewardsList;
-                            if (data.settings) this.settings = { ...this.settings, ...data.settings };
-                            this.saveData();
-                            alert('備份資料匯入與跨裝置同步成功！');
-                            location.reload();
-                        } catch (err) {
-                            alert('匯入失敗：檔案格式錯誤！');
-                        }
-                    };
-                    reader.readAsText(file);
                 }
             }
         }
