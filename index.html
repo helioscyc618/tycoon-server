@@ -1442,11 +1442,21 @@
                 },
 
                 editPartner(p) {
-                    const newPts = prompt(`修改 ${p.name} 的可用點數：`, p.points);
-                    if (newPts !== null) {
-                        p.points = Number(newPts) || 0;
-                        this.saveData();
-                    }
+                    const newName = prompt(`修改夥伴姓名：`, p.name);
+                    if (newName === null) return;
+                    const newRank = prompt(`修改夥伴職級 (業務專員/業務主任/業務襄理/業務經理)：`, p.rank);
+                    if (newRank === null) return;
+                    const newGroup = prompt(`修改夥伴組別：`, p.group);
+                    if (newGroup === null) return;
+                    const newPoints = prompt(`修改可用點數：`, p.points);
+                    if (newPoints === null) return;
+
+                    p.name = newName || p.name;
+                    p.rank = newRank || p.rank;
+                    p.group = newGroup || p.group;
+                    p.points = Number(newPoints) || 0;
+                    this.saveData();
+                    alert('夥伴資料已更新並同步至雲端！');
                 },
 
                 promptDeletePartner(idx) {
