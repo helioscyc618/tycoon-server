@@ -1179,7 +1179,8 @@
                         
                         if (data.partners) this.partners = data.partners;
                         if (data.settings) this.settings = Object.assign(this.settings, data.settings);
-                        if (data.declarations) this.declarations = data.declarations;
+                        // 確保接收時 declarations 即使為空也能正確同步清空或更新陣列
+                        this.declarations = data.declarations ? Array.from(data.declarations) : [];
                         if (data.messages) this.messages = data.messages;
                         if (data.rewardsList) this.rewardsList = data.rewardsList;
                         if (data.pushLogs) this.pushLogs = data.pushLogs;
@@ -1235,7 +1236,7 @@
                         timestamp: nowTS,
                         partners: this.partners,
                         settings: this.settings,
-                        declarations: this.declarations,
+                        declarations: this.declarations ? Array.from(this.declarations) : [],
                         messages: this.messages,
                         rewardsList: this.rewardsList,
                         pushLogs: this.pushLogs,
@@ -1489,8 +1490,8 @@
                         targetUser.diceCount += Math.floor(req.points / 10);
                     }
                     
-                    // 從清單中移除該筆申報，並立即全網同步
-                    this.declarations.splice(rIdx, 1);
+                    // 使用 filter 確保索引 0 被刪除時，Firebase 能正確覆蓋整份陣列索引
+                    this.declarations = this.declarations.filter((_, idx) => idx !== rIdx);
 
                     const pushTitle = '🎉 任務審核通過捷報！';
                     const pushContent = targetUser ? `恭喜 ${targetUser.name} 申報【${req.tag}】審核通過！獲得 ${req.points} 點與 ${Math.floor(req.points / 10)} 顆骰子！` : `審核通過一筆申報！`;
@@ -1500,8 +1501,8 @@
                 },
 
                 rejectDecl(rIdx) {
-                    // 從清單中移除該筆申報，並立即全網同步
-                    this.declarations.splice(rIdx, 1);
+                    // 使用 filter 確保索引 0 被拒絕刪除時，Firebase 能正確覆蓋整份陣列索引
+                    this.declarations = this.declarations.filter((_, idx) => idx !== rIdx);
                     this.saveData();
                     alert('已拒絕此申報並將其移出清單。');
                 },
