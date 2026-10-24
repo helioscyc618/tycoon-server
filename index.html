@@ -322,7 +322,7 @@
                                     <label class="block text-xs font-bold text-slate-700 mb-1">選擇任務 / Tag 類型</label>
                                     <select x-model="declForm.tag" @change="onTagChange()" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm bg-white">
                                         <template x-for="t in settings.tags" :key="t.name">
-                                            <option :value="t.name" x-text="t.name + (t.isFYC ? ' (FYC原始輸入與千位進位換算)' : ' (固定點数: ' + t.points + '點)')"></option>
+                                            <option :value="t.name" x-text="t.name + (t.isFYC ? ' (FYC原始輸入與千位進位換算)' : ' (固定点数: ' + t.points + '點)')"></option>
                                         </template>
                                     </select>
                                 </div>
