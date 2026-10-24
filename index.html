@@ -72,7 +72,7 @@
                 <span x-text="isOnline ? 'firebase雲端全網同步中 (Online)' : '離線警告 (Offline)'"></span>
             </span>
             <span class="hidden md:inline-flex items-center text-slate-300">
-                <i class="fas fa-clock mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 台北時間: <span class="font-mono ml-1 font-bold text-white" x-text="taipeiTime"></span>
+                <i class="fas fa-clock mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 台北時間 (UTC+8 網路校時): <span class="font-mono ml-1 font-bold text-white" x-text="taipeiTime"></span>
             </span>
         </div>
         <div class="flex items-center space-x-3 mt-1 sm:mt-0">
@@ -1053,6 +1053,7 @@
             return {
                 isOnline: true,
                 taipeiTime: '',
+                timeOffset: 0, // 網路時間與本地時間的誤差毫秒數
                 currentUser: null,
                 authTab: 'login',
                 openAdminModal: false,
@@ -1134,8 +1135,11 @@
                 rewardsList: [],
 
                 init() {
+                    this.syncNetworkTime();
                     this.updateTime();
                     setInterval(() => this.updateTime(), 1000);
+                    // 每 10 分鐘自動向網路校時一次
+                    setInterval(() => this.syncNetworkTime(), 600000);
 
                     // Firebase Realtime Database 雲端即時同步監聽
                     dbRef.on('value', (snapshot) => {
@@ -1147,6 +1151,22 @@
                     }, (error) => {
                         this.isOnline = false;
                     });
+                },
+
+                // 向網路時間 API (World Time API) 校準時間
+                async syncNetworkTime() {
+                    try {
+                        const response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Taipei');
+                        if (response.ok) {
+                            const data = await response.json();
+                            const netTime = new Date(data.datetime).getTime();
+                            const localTime = Date.now();
+                            this.timeOffset = netTime - localTime;
+                        }
+                    } catch (e) {
+                        // 若網路校時失敗，使用本地系統時間
+                        this.timeOffset = 0;
+                    }
                 },
 
                 handleIncomingSync(data) {
@@ -1191,7 +1211,7 @@
 
                 saveData(alertTitle = null, alertContent = null) {
                     if (this.isSyncingFromCloud) return;
-                    const nowTS = Date.now();
+                    const nowTS = Date.now() + this.timeOffset;
                     this.lastSyncTimestamp = nowTS;
                     
                     let globalAlert = null;
@@ -1221,7 +1241,6 @@
                         currentUserEmail: this.currentUser ? this.currentUser.email : null
                     };
 
-                    // 寫入 Firebase 雲端資料庫
                     dbRef.set(data).then(() => {
                         this.isOnline = true;
                     }).catch((error) => {
@@ -1230,13 +1249,31 @@
                 },
 
                 updateTime() {
-                    const now = new Date();
-                    this.taipeiTime = now.toISOString().replace('T', ' ').substring(0, 19);
+                    // 根據網路校時誤差修正後的精準毫秒數
+                    const synchronizedTime = new Date(Date.now() + this.timeOffset);
+                    // 強制以 Asia/Taipei (UTC+8) 格式化輸出
+                    try {
+                        const options = {
+                            timeZone: 'Asia/Taipei',
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: false
+                        };
+                        const formatter = new Intl.DateTimeFormat('sv-SE', options); // sv-SE 格式會輸出 YYYY-MM-DD HH:mm:ss
+                        this.taipeiTime = formatter.format(synchronizedTime);
+                    } catch (e) {
+                        // 降級備用方案
+                        this.taipeiTime = synchronizedTime.toISOString().replace('T', ' ').substring(0, 19);
+                    }
                 },
 
                 getCountdownDays() {
                     const end = new Date(this.settings.endDate);
-                    const now = new Date();
+                    const now = new Date(Date.now() + this.timeOffset);
                     const diff = end - now;
                     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
                 },
@@ -1307,7 +1344,7 @@
                     };
                     this.partners.push(newP);
                     this.currentUser = newP;
-                    this.saveData('新夥伴加入', `熱烈歡迎 ${newP.name} 登入競賽大亨戰情室！`);
+                    this.saveData();
                     this.showAnnouncementModal = true;
                 },
 
@@ -1430,13 +1467,15 @@
                         targetUser.points += req.points;
                         targetUser.totalPoints += req.points;
                         targetUser.diceCount += Math.floor(req.points / 10);
-                        
-                        this.saveData('🎉 業績審核捷報！', `恭喜 ${targetUser.name} 報 ${req.tag} 成功獲得 ${req.points} 點與 ${Math.floor(req.points / 10)} 顆骰子！`);
-                    } else {
-                        this.declarations.splice(rIdx, 1);
-                        this.saveData();
                     }
-                    alert('審核通過！點數與 FYC 已經成功計入並透過 firebase 同步至全體夥伴裝置。');
+                    
+                    this.declarations.splice(rIdx, 1);
+
+                    const pushTitle = '🎉 任務審核通過捷報！';
+                    const pushContent = targetUser ? `恭喜 ${targetUser.name} 申報【${req.tag}】審核通過！獲得 ${req.points} 點與 ${Math.floor(req.points / 10)} 顆骰子！` : `審核通過一筆申報！`;
+                    
+                    this.saveData(pushTitle, pushContent);
+                    alert('審核通過！該申報項目已移出清單，點數與 FYC 已經成功計入並同步至全體夥伴。');
                 },
 
                 rejectDecl(rIdx) {
@@ -1522,7 +1561,10 @@
                             this.currentUser.position = newPos;
                             
                             let rewardMsg = '';
+                            let pushTitle = null;
+                            let pushContent = null;
                             const landedCell = this.settings.boardCells[newPos];
+                            
                             if (landedCell.type === '獎勵') {
                                 this.rewardsList.unshift({
                                     userName: this.currentUser.name,
@@ -1531,9 +1573,14 @@
                                     status: '未發放'
                                 });
                                 rewardMsg = ` 且踩中獎勵格「${landedCell.title}」已回擊至指揮中心！`;
+                                pushTitle = '🎁 大富翁幸運獎勵捷報！';
+                                pushContent = `${this.currentUser.name} 擲出 ${step} 點踩中【${landedCell.title}】！獲得豐富獎勵回擊指揮中心！`;
+                            } else {
+                                pushTitle = '🎲 大富翁前進捷報！';
+                                pushContent = `${this.currentUser.name} 擲出了 ${step} 點，前進了 ${step} 格，目前停留在第 ${newPos + 1} 格 (${landedCell.title})！`;
                             }
 
-                            this.saveData('🎲 大富翁前進捷報！', `${this.currentUser.name} 擲出了 ${step} 點，前進了 ${step} 格，目前停留在第 ${newPos + 1} 格 (${landedCell.title})！${rewardMsg}`);
+                            this.saveData(pushTitle, pushContent);
                             
                         }, 800);
                     }, 1200);
@@ -1684,7 +1731,7 @@
                     this.messages.unshift(newMsg);
                     this.msgForm.title = '';
                     this.msgForm.content = '';
-                    this.saveData('💬 新士氣留言', `【${newMsg.author}】發布了新留言：「${newMsg.title}」`);
+                    this.saveData();
                 },
 
                 postReply(mIdx) {
@@ -1697,7 +1744,7 @@
                         time: this.taipeiTime
                     });
                     this.replyTexts[mIdx] = '';
-                    this.saveData('💬 留言有新回覆', `【${this.currentUser.name}】回覆了留言：「${repText}」`);
+                    this.saveData();
                 },
 
                 likeMessage(mIdx) {
@@ -1720,7 +1767,7 @@
                 },
 
                 saveSettings() {
-                    this.saveData('⚙️ 系統設定更新', '指揮中心已更新戰情室最新規則與設定！');
+                    this.saveData();
                     alert('全部設定儲存成功並同步至全體夥伴！');
                 }
             }
