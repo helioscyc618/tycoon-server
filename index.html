@@ -12,6 +12,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK (v9 Modular Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
     <script>
         tailwind.config = {
@@ -66,13 +69,10 @@
         <div class="flex items-center space-x-3">
             <span class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium" :class="isOnline ? 'bg-slate-800 text-green-400 border border-green-500' : 'bg-red-900/80 text-red-200 border border-red-500 animate-pulse'">
                 <i class="fas" :class="isOnline ? 'fa-wifi' : 'fa-triangle-exclamation'"></i>
-                <span x-text="isOnline ? '60人全網即時同步中 (Online)' : '離線警告 (Offline)'"></span>
+                <span x-text="isOnline ? 'firebase雲端全網同步中 (Online)' : '離線警告 (Offline)'"></span>
             </span>
             <span class="hidden md:inline-flex items-center text-slate-300">
                 <i class="fas fa-clock mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 台北時間: <span class="font-mono ml-1 font-bold text-white" x-text="taipeiTime"></span>
-            </span>
-            <span class="text-xs text-orange-300 bg-orange-500/20 px-2 py-0.5 rounded border border-orange-500/40 hidden lg:inline">
-                <i class="fas fa-clock-rotate-left mr-1"></i> 每晚 22:00 自動備份排程中
             </span>
         </div>
         <div class="flex items-center space-x-3 mt-1 sm:mt-0">
@@ -187,7 +187,7 @@
                             </div>
                             <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl shadow transition flex items-center justify-center space-x-2 mt-2">
                                 <i class="fas fa-user-plus" :style="'color: ' + (settings.primaryColor || '#f97316')"></i>
-                                <span>立即註冊 (60人全網連線同步)</span>
+                                <span>立即註冊 (firebase雲端同步)</span>
                             </button>
                         </form>
                     </template>
@@ -227,7 +227,7 @@
                                 <span class="px-2.5 py-0.5 text-white text-xs rounded-full font-semibold" :style="'background-color: ' + (settings.primaryColor || '#f97316')" x-text="currentUser.rank"></span>
                                 <span class="px-2.5 py-0.5 bg-slate-800 text-white text-xs rounded-full font-semibold" x-text="currentUser.group"></span>
                             </div>
-                            <p class="text-xs text-slate-500 mt-1">歡迎來到【戰情室】！所有夥伴的即時狀態與棋盤位置隨時全網同步更新。</p>
+                            <p class="text-xs text-slate-500 mt-1">歡迎來到【戰情室】！所有夥伴的即時狀態與棋盤位置隨時透過 firebase 雲端全網同步更新。</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-4 gap-3 text-center w-full md:w-auto">
@@ -520,7 +520,7 @@
         </div>
     </div>
 
-    <!-- 訊息廣播即時彈出視窗 (讓60個人同步收到彈出提示) -->
+    <!-- 訊息廣播即時彈出視窗 -->
     <div x-show="showBroadcastAlertModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition="" style="display: none;">
         <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 text-center space-y-3">
             <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto text-xl">
@@ -928,7 +928,7 @@
                                     </div>
                                 </div>
                                 <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3">
-                                    <h4 class="font-bold text-slate-900 text-sm">💾 系統資料備份與還原 (每晚 22:00 自動備份)</h4>
+                                    <h4 class="font-bold text-slate-900 text-sm">💾 系統資料備份與還原</h4>
                                     <div class="flex space-x-3">
                                         <button @click="exportBackupFile()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs shadow"><i class="fas fa-download mr-1"></i> 下載備份 JSON</button>
                                         <label class="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-bold py-2.5 rounded-xl text-xs shadow text-center cursor-pointer">
@@ -947,7 +947,7 @@
                                 </h3>
                                 <div class="bg-slate-900 text-green-400 p-4 rounded-xl font-mono text-xs space-y-3 shadow-inner">
                                     <div class="flex justify-between items-center border-b border-slate-700 pb-2">
-                                        <span>SYSTEM TERMINAL v3.3 // 60-USER GLOBAL SYNC</span>
+                                        <span>SYSTEM TERMINAL v3.3 // FIREBASE REALTIME SYNC</span>
                                         <span class="text-slate-400" x-text="taipeiTime"></span>
                                     </div>
                                     <div class="space-y-2">
@@ -1040,6 +1040,15 @@
 
     <!-- MAIN SCRIPT -->
     <script>
+        // 初始化 Firebase 連線配置
+        const firebaseConfig = {
+            databaseURL: "https://competition-tycoon-default-rtdb.firebaseio.com/"
+        };
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const dbRef = firebase.database().ref('competition_tycoon_data');
+
         function app() {
             return {
                 isOnline: true,
@@ -1076,9 +1085,6 @@
                 broadcastAlertTitle: '',
                 broadcastAlertContent: '',
                 
-                showNewMsgNotificationModal: false,
-                newMsgNotificationText: '',
-                
                 showDiceModal: false,
                 isRolling: false,
                 rolledDiceResult: 1,
@@ -1087,9 +1093,8 @@
                 
                 terminalForm: { target: 'ALL', title: '', content: '' },
                 pushLogs: [],
-                channel: null,
-                syncTimer: null,
                 lastSyncTimestamp: 0,
+                isSyncingFromCloud: false,
 
                 avatarList: ['👨‍💼', '👩‍💼', '👨‍💻', '👩‍💻', '🧑‍🚀', '🦸‍♂️', '🦸‍♀️', '🧙‍♂️', '🦁', '🐯', '🦊', '🐼', '🐨', '🦄', '🐲', '🧑‍🎨', '🧑‍🔬', '👨‍🎓', '👩‍🎓', '🤖'],
                 
@@ -1131,139 +1136,24 @@
                 init() {
                     this.updateTime();
                     setInterval(() => this.updateTime(), 1000);
-                    
-                    setInterval(() => {
-                        const now = new Date();
-                        if (now.getHours() === 22 && now.getMinutes() === 0 && now.getSeconds() === 0) {
-                            this.exportBackupFile(true);
+
+                    // Firebase Realtime Database 雲端即時同步監聽
+                    dbRef.on('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data) {
+                            this.isOnline = true;
+                            this.handleIncomingSync(data);
                         }
-                    }, 1000);
-
-                    // 1. 初始化讀取
-                    this.loadDataFromStorage(true);
-
-                    // 2. 建立 BroadcastChannel (同裝置多視窗即時廣播)
-                    if (window.BroadcastChannel) {
-                        this.channel = new BroadcastChannel('competition_tycoon_global_sync_v13');
-                        this.channel.onmessage = (event) => {
-                            if (event.data) {
-                                this.handleIncomingSync(event.data);
-                            }
-                        };
-                    }
-
-                    // 3. 跨裝置儲存同步監聽機制
-                    window.addEventListener('storage', (e) => {
-                        if (e.key === 'competition_tycoon_data_v13') {
-                            this.loadDataFromStorage(false);
-                        }
+                    }, (error) => {
+                        this.isOnline = false;
                     });
-
-                    // 4. 背景高頻率自動輪詢引擎 (每 1.5 秒自動同步全網 60 人最新狀態)
-                    this.syncTimer = setInterval(() => {
-                        this.loadDataFromStorage(false);
-                    }, 1500);
-
-                    // 5. 頁面可見度監聽
-                    document.addEventListener('visibilitychange', () => {
-                        if (!document.hidden) {
-                            this.loadDataFromStorage(false);
-                        }
-                    });
-                },
-
-                loadDataFromStorage(isInit = false) {
-                    const saved = localStorage.getItem('competition_tycoon_data_v13');
-                    if (saved) {
-                        try {
-                            const data = JSON.parse(saved);
-                            
-                            // 檢查時間戳記或版本以確保資料為最新
-                            if (data.timestamp && data.timestamp > this.lastSyncTimestamp) {
-                                this.lastSyncTimestamp = data.timestamp;
-                                
-                                if (data.partners) this.partners = data.partners;
-                                if (data.settings) this.settings = Object.assign(this.settings, data.settings);
-                                if (data.declarations) this.declarations = data.declarations;
-                                if (data.messages) this.messages = data.messages;
-                                if (data.rewardsList) this.rewardsList = data.rewardsList;
-                                if (data.pushLogs) this.pushLogs = data.pushLogs;
-                                if (data.adminPassword) this.adminPassword = data.adminPassword;
-                                if (data.latestGlobalAlert && !isInit) {
-                                    // 檢查是否有新的全網廣播提醒
-                                    if (data.latestGlobalAlert.id !== this.lastAlertId) {
-                                        this.lastAlertId = data.latestGlobalAlert.id;
-                                        this.broadcastAlertTitle = data.latestGlobalAlert.title;
-                                        this.broadcastAlertContent = data.latestGlobalAlert.content;
-                                        this.showBroadcastAlertModal = true;
-                                        
-                                        // 同步更新動態跑馬燈
-                                        this.dynamicTickerMessage = data.latestGlobalAlert.title + ": " + data.latestGlobalAlert.content;
-                                    }
-                                }
-                            }
-
-                            // 如果當前有登入用戶，同步更新其在線狀態與數值
-                            if (this.currentUser) {
-                                const latestUser = this.partners.find(p => p.email === this.currentUser.email);
-                                if (latestUser) {
-                                    this.currentUser = latestUser;
-                                    if (latestUser.pendingPush && !this.showTerminalPushModal) {
-                                        this.currentPushTitle = latestUser.pendingPush.title;
-                                        this.currentPushContent = latestUser.pendingPush.content;
-                                        if (!this.showAnnouncementModal) {
-                                            this.showTerminalPushModal = true;
-                                        }
-                                    }
-                                }
-                            }
-                        } catch(e) {}
-                    }
-                },
-
-                saveData(alertTitle = null, alertContent = null) {
-                    const nowTS = Date.now();
-                    this.lastSyncTimestamp = nowTS;
-                    
-                    let globalAlert = null;
-                    if (alertTitle && alertContent) {
-                        globalAlert = {
-                            id: 'alert_' + nowTS,
-                            title: alertTitle,
-                            content: alertContent
-                        };
-                        this.lastAlertId = globalAlert.id;
-                        this.broadcastAlertTitle = alertTitle;
-                        this.broadcastAlertContent = alertContent;
-                        this.showBroadcastAlertModal = true;
-                        this.dynamicTickerMessage = alertTitle + ": " + alertContent;
-                    }
-
-                    const data = {
-                        timestamp: nowTS,
-                        partners: this.partners,
-                        settings: this.settings,
-                        declarations: this.declarations,
-                        messages: this.messages,
-                        rewardsList: this.rewardsList,
-                        pushLogs: this.pushLogs,
-                        adminPassword: this.adminPassword,
-                        latestGlobalAlert: globalAlert,
-                        currentUserEmail: this.currentUser ? this.currentUser.email : null
-                    };
-
-                    const jsonStr = JSON.stringify(data);
-                    localStorage.setItem('competition_tycoon_data_v13', jsonStr);
-
-                    // 透過 BroadcastChannel 瞬間推播給同裝置其他視窗
-                    if (this.channel) {
-                        this.channel.postMessage(data);
-                    }
                 },
 
                 handleIncomingSync(data) {
                     if (data && data.timestamp && data.timestamp > this.lastSyncTimestamp) {
+                        this.isSyncingFromCloud = true;
                         this.lastSyncTimestamp = data.timestamp;
+                        
                         if (data.partners) this.partners = data.partners;
                         if (data.settings) this.settings = Object.assign(this.settings, data.settings);
                         if (data.declarations) this.declarations = data.declarations;
@@ -1295,7 +1185,48 @@
                                 }
                             }
                         }
+                        this.isSyncingFromCloud = false;
                     }
+                },
+
+                saveData(alertTitle = null, alertContent = null) {
+                    if (this.isSyncingFromCloud) return;
+                    const nowTS = Date.now();
+                    this.lastSyncTimestamp = nowTS;
+                    
+                    let globalAlert = null;
+                    if (alertTitle && alertContent) {
+                        globalAlert = {
+                            id: 'alert_' + nowTS,
+                            title: alertTitle,
+                            content: alertContent
+                        };
+                        this.lastAlertId = globalAlert.id;
+                        this.broadcastAlertTitle = alertTitle;
+                        this.broadcastAlertContent = alertContent;
+                        this.showBroadcastAlertModal = true;
+                        this.dynamicTickerMessage = alertTitle + ": " + alertContent;
+                    }
+
+                    const data = {
+                        timestamp: nowTS,
+                        partners: this.partners,
+                        settings: this.settings,
+                        declarations: this.declarations,
+                        messages: this.messages,
+                        rewardsList: this.rewardsList,
+                        pushLogs: this.pushLogs,
+                        adminPassword: this.adminPassword,
+                        latestGlobalAlert: globalAlert,
+                        currentUserEmail: this.currentUser ? this.currentUser.email : null
+                    };
+
+                    // 寫入 Firebase 雲端資料庫
+                    dbRef.set(data).then(() => {
+                        this.isOnline = true;
+                    }).catch((error) => {
+                        this.isOnline = false;
+                    });
                 },
 
                 updateTime() {
@@ -1500,13 +1431,12 @@
                         targetUser.totalPoints += req.points;
                         targetUser.diceCount += Math.floor(req.points / 10);
                         
-                        // 關鍵：發送全網即時同步廣播與彈出訊息給所有 60 個人！
                         this.saveData('🎉 業績審核捷報！', `恭喜 ${targetUser.name} 報 ${req.tag} 成功獲得 ${req.points} 點與 ${Math.floor(req.points / 10)} 顆骰子！`);
                     } else {
                         this.declarations.splice(rIdx, 1);
                         this.saveData();
                     }
-                    alert('審核通過！點數與 FYC 已經成功計入並同步至全體夥伴裝置。');
+                    alert('審核通過！點數與 FYC 已經成功計入並透過 firebase 同步至全體夥伴裝置。');
                 },
 
                 rejectDecl(rIdx) {
@@ -1603,7 +1533,6 @@
                                 rewardMsg = ` 且踩中獎勵格「${landedCell.title}」已回擊至指揮中心！`;
                             }
 
-                            // 關鍵：將 B 前進幾格、目前位置同步廣播給所有 60 個人！
                             this.saveData('🎲 大富翁前進捷報！', `${this.currentUser.name} 擲出了 ${step} 點，前進了 ${step} 格，目前停留在第 ${newPos + 1} 格 (${landedCell.title})！${rewardMsg}`);
                             
                         }, 800);
