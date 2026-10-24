@@ -72,7 +72,7 @@
                 <span x-text="isOnline ? 'firebase雲端全網同步中 (Online)' : '離線警告 (Offline)'"></span>
             </span>
             <span class="hidden md:inline-flex items-center text-slate-300">
-                <i class="fas fa-clock mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 台北時間 (UTC+8 網路校時): <span class="font-mono ml-1 font-bold text-white" x-text="taipeiTime"></span>
+                <i class="fas fa-clock mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> <span class="font-mono ml-1 font-bold text-white" x-text="taipeiTime"></span>
             </span>
         </div>
         <div class="flex items-center space-x-3 mt-1 sm:mt-0">
