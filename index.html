@@ -1000,7 +1000,7 @@
                     </div>
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">組別</label>
-                        <input type="text" x-model="editingPartner.group" class="w-full px-2.5 py-2 border rounded-xl bg-white" required="">
+                        <input type="text" x-model="editingPartner.group" class="w-full px-3 py-2 border rounded-xl bg-white" required="">
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-2">
@@ -1471,6 +1471,7 @@
                     
                     this.declarations.splice(rIdx, 1);
 
+                    // 條件 1：只有有人完成任務 tag 點數審核完才群推通知
                     const pushTitle = '🎉 任務審核通過捷報！';
                     const pushContent = targetUser ? `恭喜 ${targetUser.name} 申報【${req.tag}】審核通過！獲得 ${req.points} 點與 ${Math.floor(req.points / 10)} 顆骰子！` : `審核通過一筆申報！`;
                     
@@ -1560,11 +1561,11 @@
                             
                             this.currentUser.position = newPos;
                             
-                            let rewardMsg = '';
                             let pushTitle = null;
                             let pushContent = null;
                             const landedCell = this.settings.boardCells[newPos];
                             
+                            // 條件 2：只有跳跳格踩中「獎勵」情況才要群推恭喜通知，其他擲骰結果就不必了
                             if (landedCell.type === '獎勵') {
                                 this.rewardsList.unshift({
                                     userName: this.currentUser.name,
@@ -1572,15 +1573,13 @@
                                     time: this.taipeiTime,
                                     status: '未發放'
                                 });
-                                rewardMsg = ` 且踩中獎勵格「${landedCell.title}」已回擊至指揮中心！`;
                                 pushTitle = '🎁 大富翁幸運獎勵捷報！';
                                 pushContent = `${this.currentUser.name} 擲出 ${step} 點踩中【${landedCell.title}】！獲得豐富獎勵回擊指揮中心！`;
+                                this.saveData(pushTitle, pushContent);
                             } else {
-                                pushTitle = '🎲 大富翁前進捷報！';
-                                pushContent = `${this.currentUser.name} 擲出了 ${step} 點，前進了 ${step} 格，目前停留在第 ${newPos + 1} 格 (${landedCell.title})！`;
+                                // 其他普通格子或傳送格僅儲存狀態，不發送全局推播與戰報
+                                this.saveData();
                             }
-
-                            this.saveData(pushTitle, pushContent);
                             
                         }, 800);
                     }, 1200);
