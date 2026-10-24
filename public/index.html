@@ -1062,7 +1062,7 @@
                 openAdminModal: false,
                 adminAuth: false,
                 adminPassword: 'admin',
-                adminPassInput: '',
+                adminPassInput: '', // 已修正：不再預填密碼，保持空白
                 newAdminPasswordInput: '',
                 adminTab: 'approvals',
                 showProfileEdit: false,
@@ -1438,6 +1438,7 @@
                 verifyAdmin() {
                     if (this.adminPassInput === this.adminPassword) {
                         this.adminAuth = true;
+                        this.adminPassInput = ''; // 驗證成功後清空輸入框
                     } else {
                         alert('管理者密碼錯誤！');
                     }
@@ -1488,7 +1489,7 @@
                         targetUser.diceCount += Math.floor(req.points / 10);
                     }
                     
-                    // 從申報陣列移除，確保任何裝置皆不再顯示
+                    // 從清單中移除該筆申報，並立即全網同步
                     this.declarations.splice(rIdx, 1);
 
                     const pushTitle = '🎉 任務審核通過捷報！';
@@ -1499,7 +1500,7 @@
                 },
 
                 rejectDecl(rIdx) {
-                    // 從申報陣列移除，確保任何裝置皆不再顯示
+                    // 從清單中移除該筆申報，並立即全網同步
                     this.declarations.splice(rIdx, 1);
                     this.saveData();
                     alert('已拒絕此申報並將其移出清單。');
