@@ -950,7 +950,7 @@
                                 </h3>
                                 <div class="bg-slate-900 text-green-400 p-4 rounded-xl font-mono text-xs space-y-3 shadow-inner">
                                     <div class="flex justify-between items-center border-b border-slate-700 pb-2">
-                                        <span>SYSTEM TERMINAL v3.3 // FIREBASE REALTIME SYNC</span>
+                                        <span>Pop-up Push Notification // REALTIME SYNC</span>
                                         <span class="text-slate-400" x-text="taipeiTime"></span>
                                     </div>
                                     <div class="space-y-2">
@@ -1213,13 +1213,13 @@
                     }
                 },
 
-                saveData(alertTitle = null, alertContent = null) {
+                saveData(alertTitle = null, alertContent = null, isGlobalBroadcast = false) {
                     if (this.isSyncingFromCloud) return;
                     const nowTS = Date.now() + this.timeOffset;
                     this.lastSyncTimestamp = nowTS;
                     
                     let globalAlert = null;
-                    if (alertTitle && alertContent) {
+                    if (isGlobalBroadcast && alertTitle && alertContent) {
                         globalAlert = {
                             id: 'alert_' + nowTS,
                             title: alertTitle,
@@ -1491,11 +1491,10 @@
                     
                     this.declarations.splice(rIdx, 1);
 
-                    // 條件 1：只有有人完成任務 tag 點數審核完才群推通知
                     const pushTitle = '🎉 任務審核通過捷報！';
                     const pushContent = targetUser ? `恭喜 ${targetUser.name} 申報【${req.tag}】審核通過！獲得 ${req.points} 點與 ${Math.floor(req.points / 10)} 顆骰子！` : `審核通過一筆申報！`;
                     
-                    this.saveData(pushTitle, pushContent);
+                    this.saveData(pushTitle, pushContent, true);
                     alert('審核通過！該申報項目已移出清單，點數與 FYC 已經成功計入並同步至全體夥伴。');
                 },
 
@@ -1515,13 +1514,17 @@
                             p.pendingPush = { title: this.terminalForm.title, content: this.terminalForm.content };
                         });
                         alert('[終端機] 成功廣播推播至全部夥伴！');
+                        this.saveData(this.terminalForm.title, this.terminalForm.content, true);
                     } else {
                         const targetUser = this.partners.find(p => p.email === this.terminalForm.target);
                         if (targetUser) {
+                            // 僅指定個人帳號寫入 pendingPush，不廣播全局 alert
                             targetUser.pendingPush = { title: this.terminalForm.title, content: this.terminalForm.content };
                             alert(`[終端機] 成功發送推播至：${targetUser.name}`);
+                            this.saveData(null, null, false);
                         } else {
                             alert('找不到指定的目標夥伴！');
+                            return;
                         }
                     }
                     this.pushLogs.unshift({
@@ -1530,7 +1533,6 @@
                         content: this.terminalForm.content,
                         time: this.taipeiTime
                     });
-                    this.saveData(this.terminalForm.title, this.terminalForm.content);
                     this.terminalForm.title = '';
                     this.terminalForm.content = '';
                 },
@@ -1585,7 +1587,6 @@
                             let pushContent = null;
                             const landedCell = this.settings.boardCells[newPos];
                             
-                            // 條件 2：只有跳跳格踩中「獎勵」情況才要群推恭喜通知，其他擲骰結果就不必了
                             if (landedCell.type === '獎勵') {
                                 this.rewardsList.unshift({
                                     userName: this.currentUser.name,
@@ -1595,9 +1596,8 @@
                                 });
                                 pushTitle = '🎁 大富翁幸運獎勵捷報！';
                                 pushContent = `${this.currentUser.name} 擲出 ${step} 點踩中【${landedCell.title}】！獲得豐富獎勵回擊指揮中心！`;
-                                this.saveData(pushTitle, pushContent);
+                                this.saveData(pushTitle, pushContent, true);
                             } else {
-                                // 其他普通格子或傳送格僅儲存狀態，不發送全局推播與戰報
                                 this.saveData();
                             }
                             
