@@ -66,7 +66,7 @@
         <div class="flex items-center space-x-3">
             <span class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium" :class="isOnline ? 'bg-slate-800 text-green-400 border border-green-500' : 'bg-red-900/80 text-red-200 border border-red-500 animate-pulse'">
                 <i class="fas" :class="isOnline ? 'fa-wifi' : 'fa-triangle-exclamation'"></i>
-                <span x-text="isOnline ? '多裝置即時同步連線中 (Online)' : '離線警告 (Offline)'"></span>
+                <span x-text="isOnline ? '60人全網即時同步中 (Online)' : '離線警告 (Offline)'"></span>
             </span>
             <span class="hidden md:inline-flex items-center text-slate-300">
                 <i class="fas fa-clock mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 台北時間: <span class="font-mono ml-1 font-bold text-white" x-text="taipeiTime"></span>
@@ -187,7 +187,7 @@
                             </div>
                             <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl shadow transition flex items-center justify-center space-x-2 mt-2">
                                 <i class="fas fa-user-plus" :style="'color: ' + (settings.primaryColor || '#f97316')"></i>
-                                <span>立即註冊 (起始點數與骰子數皆為 0)</span>
+                                <span>立即註冊 (60人全網連線同步)</span>
                             </button>
                         </form>
                     </template>
@@ -227,7 +227,7 @@
                                 <span class="px-2.5 py-0.5 text-white text-xs rounded-full font-semibold" :style="'background-color: ' + (settings.primaryColor || '#f97316')" x-text="currentUser.rank"></span>
                                 <span class="px-2.5 py-0.5 bg-slate-800 text-white text-xs rounded-full font-semibold" x-text="currentUser.group"></span>
                             </div>
-                            <p class="text-xs text-slate-500 mt-1">歡迎來到【戰情室】！跨裝置即時狀態與資料已全面同步。</p>
+                            <p class="text-xs text-slate-500 mt-1">歡迎來到【戰情室】！所有夥伴的即時狀態與棋盤位置隨時全網同步更新。</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-4 gap-3 text-center w-full md:w-auto">
@@ -520,15 +520,15 @@
         </div>
     </div>
 
-    <!-- 留言發布全體通知跳出 Modal -->
-    <div x-show="showNewMsgNotificationModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition="" style="display: none;">
+    <!-- 訊息廣播即時彈出視窗 (讓60個人同步收到彈出提示) -->
+    <div x-show="showBroadcastAlertModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" x-transition="" style="display: none;">
         <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 text-center space-y-3">
             <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto text-xl">
-                <i class="fas fa-bell animate-bounce"></i>
+                <i class="fas fa-bullhorn animate-bounce"></i>
             </div>
-            <h4 class="font-bold text-slate-900 text-base">新留言通知</h4>
-            <p class="text-xs text-slate-600" x-text="newMsgNotificationText"></p>
-            <button @click="showNewMsgNotificationModal = false" class="w-full bg-slate-900 text-white font-bold py-2 rounded-xl text-xs">關閉通知</button>
+            <h4 class="font-bold text-slate-900 text-base" x-text="broadcastAlertTitle"></h4>
+            <p class="text-xs text-slate-600 whitespace-pre-line" x-text="broadcastAlertContent"></p>
+            <button @click="showBroadcastAlertModal = false" class="w-full bg-slate-900 text-white font-bold py-2 rounded-xl text-xs">知道了</button>
         </div>
     </div>
 
@@ -947,7 +947,7 @@
                                 </h3>
                                 <div class="bg-slate-900 text-green-400 p-4 rounded-xl font-mono text-xs space-y-3 shadow-inner">
                                     <div class="flex justify-between items-center border-b border-slate-700 pb-2">
-                                        <span>SYSTEM TERMINAL v3.2 // REAL-TIME SYNC</span>
+                                        <span>SYSTEM TERMINAL v3.3 // 60-USER GLOBAL SYNC</span>
                                         <span class="text-slate-400" x-text="taipeiTime"></span>
                                     </div>
                                     <div class="space-y-2">
@@ -1072,6 +1072,10 @@
                 currentPushTitle: '',
                 currentPushContent: '',
                 
+                showBroadcastAlertModal: false,
+                broadcastAlertTitle: '',
+                broadcastAlertContent: '',
+                
                 showNewMsgNotificationModal: false,
                 newMsgNotificationText: '',
                 
@@ -1084,6 +1088,8 @@
                 terminalForm: { target: 'ALL', title: '', content: '' },
                 pushLogs: [],
                 channel: null,
+                syncTimer: null,
+                lastSyncTimestamp: 0,
 
                 avatarList: ['👨‍💼', '👩‍💼', '👨‍💻', '👩‍💻', '🧑‍🚀', '🦸‍♂️', '🦸‍♀️', '🧙‍♂️', '🦁', '🐯', '🦊', '🐼', '🐨', '🦄', '🐲', '🧑‍🎨', '🧑‍🔬', '👨‍🎓', '👩‍🎓', '🤖'],
                 
@@ -1097,7 +1103,7 @@
                     announcementTitle: '📢 競賽大亨重要公告',
                     announcementContent: '歡迎各位夥伴登入戰情室！請務必確實填寫每日拜訪、增員與 FYC 申報，解鎖 30 格大富翁棋盤豐富大獎！',
                     motivationalQuote: '今日不努力，明天找工作！全力衝刺達標！',
-                    ticker1: '🎉 賀! 競賽大亨雙軌競賽熱血啟動！',
+                    ticker1: '🎉 賀！競賽大亨雙軌競賽熱血啟動！',
                     ticker2: '🎉 新夥伴報聘捷報：歡迎新菁英加入挑戰！',
                     ticker3: '⭐ 恭喜各組菁英挑戰機會命運大富翁棋盤豐富大獎！',
                     youtubeEmbed: '<iframe width="100%" height="100%" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
@@ -1133,53 +1139,75 @@
                         }
                     }, 1000);
 
-                    // 1. 初始化讀取資料
-                    this.loadDataFromStorage();
+                    // 1. 初始化讀取
+                    this.loadDataFromStorage(true);
 
-                    // 2. 建立 BroadcastChannel 以實現同裝置多視窗即時廣播
+                    // 2. 建立 BroadcastChannel (同裝置多視窗即時廣播)
                     if (window.BroadcastChannel) {
-                        this.channel = new BroadcastChannel('competition_tycoon_sync_channel');
+                        this.channel = new BroadcastChannel('competition_tycoon_global_sync_v13');
                         this.channel.onmessage = (event) => {
-                            if (event.data && event.data.type === 'SYNC_DATA') {
-                                this.loadDataFromStorage();
+                            if (event.data) {
+                                this.handleIncomingSync(event.data);
                             }
                         };
                     }
 
                     // 3. 跨裝置儲存同步監聽機制
                     window.addEventListener('storage', (e) => {
-                        if (e.key === 'competition_tycoon_data_v12') {
-                            this.loadDataFromStorage();
+                        if (e.key === 'competition_tycoon_data_v13') {
+                            this.loadDataFromStorage(false);
                         }
                     });
 
-                    // 4. 當切換回頁面（Visibility Change）時自動重新載入最新狀態
+                    // 4. 背景高頻率自動輪詢引擎 (每 1.5 秒自動同步全網 60 人最新狀態)
+                    this.syncTimer = setInterval(() => {
+                        this.loadDataFromStorage(false);
+                    }, 1500);
+
+                    // 5. 頁面可見度監聽
                     document.addEventListener('visibilitychange', () => {
                         if (!document.hidden) {
-                            this.loadDataFromStorage();
+                            this.loadDataFromStorage(false);
                         }
                     });
                 },
 
-                loadDataFromStorage() {
-                    const saved = localStorage.getItem('competition_tycoon_data_v12');
+                loadDataFromStorage(isInit = false) {
+                    const saved = localStorage.getItem('competition_tycoon_data_v13');
                     if (saved) {
                         try {
                             const data = JSON.parse(saved);
-                            if (data.partners) this.partners = data.partners;
-                            if (data.settings) this.settings = Object.assign(this.settings, data.settings);
-                            if (data.declarations) this.declarations = data.declarations;
-                            if (data.messages) this.messages = data.messages;
-                            if (data.rewardsList) this.rewardsList = data.rewardsList;
-                            if (data.pushLogs) this.pushLogs = data.pushLogs;
-                            if (data.adminPassword) this.adminPassword = data.adminPassword;
                             
-                            // 若目前有登入用戶，即時同步該用戶的最新數值與狀態
+                            // 檢查時間戳記或版本以確保資料為最新
+                            if (data.timestamp && data.timestamp > this.lastSyncTimestamp) {
+                                this.lastSyncTimestamp = data.timestamp;
+                                
+                                if (data.partners) this.partners = data.partners;
+                                if (data.settings) this.settings = Object.assign(this.settings, data.settings);
+                                if (data.declarations) this.declarations = data.declarations;
+                                if (data.messages) this.messages = data.messages;
+                                if (data.rewardsList) this.rewardsList = data.rewardsList;
+                                if (data.pushLogs) this.pushLogs = data.pushLogs;
+                                if (data.adminPassword) this.adminPassword = data.adminPassword;
+                                if (data.latestGlobalAlert && !isInit) {
+                                    // 檢查是否有新的全網廣播提醒
+                                    if (data.latestGlobalAlert.id !== this.lastAlertId) {
+                                        this.lastAlertId = data.latestGlobalAlert.id;
+                                        this.broadcastAlertTitle = data.latestGlobalAlert.title;
+                                        this.broadcastAlertContent = data.latestGlobalAlert.content;
+                                        this.showBroadcastAlertModal = true;
+                                        
+                                        // 同步更新動態跑馬燈
+                                        this.dynamicTickerMessage = data.latestGlobalAlert.title + ": " + data.latestGlobalAlert.content;
+                                    }
+                                }
+                            }
+
+                            // 如果當前有登入用戶，同步更新其在線狀態與數值
                             if (this.currentUser) {
                                 const latestUser = this.partners.find(p => p.email === this.currentUser.email);
                                 if (latestUser) {
                                     this.currentUser = latestUser;
-                                    // 檢查是否有新的終端機推播
                                     if (latestUser.pendingPush && !this.showTerminalPushModal) {
                                         this.currentPushTitle = latestUser.pendingPush.title;
                                         this.currentPushContent = latestUser.pendingPush.content;
@@ -1193,8 +1221,26 @@
                     }
                 },
 
-                saveData() {
+                saveData(alertTitle = null, alertContent = null) {
+                    const nowTS = Date.now();
+                    this.lastSyncTimestamp = nowTS;
+                    
+                    let globalAlert = null;
+                    if (alertTitle && alertContent) {
+                        globalAlert = {
+                            id: 'alert_' + nowTS,
+                            title: alertTitle,
+                            content: alertContent
+                        };
+                        this.lastAlertId = globalAlert.id;
+                        this.broadcastAlertTitle = alertTitle;
+                        this.broadcastAlertContent = alertContent;
+                        this.showBroadcastAlertModal = true;
+                        this.dynamicTickerMessage = alertTitle + ": " + alertContent;
+                    }
+
                     const data = {
+                        timestamp: nowTS,
                         partners: this.partners,
                         settings: this.settings,
                         declarations: this.declarations,
@@ -1202,13 +1248,53 @@
                         rewardsList: this.rewardsList,
                         pushLogs: this.pushLogs,
                         adminPassword: this.adminPassword,
+                        latestGlobalAlert: globalAlert,
                         currentUserEmail: this.currentUser ? this.currentUser.email : null
                     };
-                    localStorage.setItem('competition_tycoon_data_v12', JSON.stringify(data));
 
-                    // 透過 BroadcastChannel 即時通知其他視窗/裝置
+                    const jsonStr = JSON.stringify(data);
+                    localStorage.setItem('competition_tycoon_data_v13', jsonStr);
+
+                    // 透過 BroadcastChannel 瞬間推播給同裝置其他視窗
                     if (this.channel) {
-                        this.channel.postMessage({ type: 'SYNC_DATA' });
+                        this.channel.postMessage(data);
+                    }
+                },
+
+                handleIncomingSync(data) {
+                    if (data && data.timestamp && data.timestamp > this.lastSyncTimestamp) {
+                        this.lastSyncTimestamp = data.timestamp;
+                        if (data.partners) this.partners = data.partners;
+                        if (data.settings) this.settings = Object.assign(this.settings, data.settings);
+                        if (data.declarations) this.declarations = data.declarations;
+                        if (data.messages) this.messages = data.messages;
+                        if (data.rewardsList) this.rewardsList = data.rewardsList;
+                        if (data.pushLogs) this.pushLogs = data.pushLogs;
+                        if (data.adminPassword) this.adminPassword = data.adminPassword;
+                        
+                        if (data.latestGlobalAlert) {
+                            if (data.latestGlobalAlert.id !== this.lastAlertId) {
+                                this.lastAlertId = data.latestGlobalAlert.id;
+                                this.broadcastAlertTitle = data.latestGlobalAlert.title;
+                                this.broadcastAlertContent = data.latestGlobalAlert.content;
+                                this.showBroadcastAlertModal = true;
+                                this.dynamicTickerMessage = data.latestGlobalAlert.title + ": " + data.latestGlobalAlert.content;
+                            }
+                        }
+
+                        if (this.currentUser) {
+                            const latestUser = this.partners.find(p => p.email === this.currentUser.email);
+                            if (latestUser) {
+                                this.currentUser = latestUser;
+                                if (latestUser.pendingPush && !this.showTerminalPushModal) {
+                                    this.currentPushTitle = latestUser.pendingPush.title;
+                                    this.currentPushContent = latestUser.pendingPush.content;
+                                    if (!this.showAnnouncementModal) {
+                                        this.showTerminalPushModal = true;
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
 
@@ -1290,9 +1376,8 @@
                     };
                     this.partners.push(newP);
                     this.currentUser = newP;
-                    this.saveData();
+                    this.saveData('新夥伴加入', `熱烈歡迎 ${newP.name} 登入競賽大亨戰情室！`);
                     this.showAnnouncementModal = true;
-                    alert('註冊成功並已自動登入！');
                 },
 
                 logout() {
@@ -1415,11 +1500,13 @@
                         targetUser.totalPoints += req.points;
                         targetUser.diceCount += Math.floor(req.points / 10);
                         
-                        this.dynamicTickerMessage = `賀！${targetUser.name} 通過【${req.tag}】任務審核，獲得 ${req.points} 點！`;
+                        // 關鍵：發送全網即時同步廣播與彈出訊息給所有 60 個人！
+                        this.saveData('🎉 業績審核捷報！', `恭喜 ${targetUser.name} 報 ${req.tag} 成功獲得 ${req.points} 點與 ${Math.floor(req.points / 10)} 顆骰子！`);
+                    } else {
+                        this.declarations.splice(rIdx, 1);
+                        this.saveData();
                     }
-                    this.declarations.splice(rIdx, 1);
-                    this.saveData();
-                    alert('審核通過！點數與 FYC 已經成功計入。');
+                    alert('審核通過！點數與 FYC 已經成功計入並同步至全體夥伴裝置。');
                 },
 
                 rejectDecl(rIdx) {
@@ -1453,7 +1540,7 @@
                         content: this.terminalForm.content,
                         time: this.taipeiTime
                     });
-                    this.saveData();
+                    this.saveData(this.terminalForm.title, this.terminalForm.content);
                     this.terminalForm.title = '';
                     this.terminalForm.content = '';
                 },
@@ -1500,13 +1587,11 @@
                             
                             if (cell.type === '傳送') {
                                 newPos = Math.floor(Math.random() * 30);
-                                alert(`您擲出了 ${step} 點！觸發時空傳送，瞬間移動至第 ${newPos + 1} 格！`);
-                            } else {
-                                alert(`您擲出了 ${step} 點！前進至第 ${newPos + 1} 格：${cell.title}`);
                             }
                             
                             this.currentUser.position = newPos;
                             
+                            let rewardMsg = '';
                             const landedCell = this.settings.boardCells[newPos];
                             if (landedCell.type === '獎勵') {
                                 this.rewardsList.unshift({
@@ -1515,12 +1600,12 @@
                                     time: this.taipeiTime,
                                     status: '未發放'
                                 });
-                                
-                                this.dynamicTickerMessage = `🎉 捷報！${this.currentUser.name} 踩中獎勵格【${landedCell.title}】已回擊至指揮中心！`;
-                                alert(`🎉 太幸運了！踩中獎勵格「${landedCell.title}」，已自動回擊至指揮中心獎勵統整區！`);
+                                rewardMsg = ` 且踩中獎勵格「${landedCell.title}」已回擊至指揮中心！`;
                             }
+
+                            // 關鍵：將 B 前進幾格、目前位置同步廣播給所有 60 個人！
+                            this.saveData('🎲 大富翁前進捷報！', `${this.currentUser.name} 擲出了 ${step} 點，前進了 ${step} 格，目前停留在第 ${newPos + 1} 格 (${landedCell.title})！${rewardMsg}`);
                             
-                            this.saveData();
                         }, 800);
                     }, 1200);
                 },
@@ -1670,10 +1755,7 @@
                     this.messages.unshift(newMsg);
                     this.msgForm.title = '';
                     this.msgForm.content = '';
-                    this.saveData();
-
-                    this.newMsgNotificationText = `【${newMsg.author}】發表了新留言：「${newMsg.title}」`;
-                    this.showNewMsgNotificationModal = true;
+                    this.saveData('💬 新士氣留言', `【${newMsg.author}】發布了新留言：「${newMsg.title}」`);
                 },
 
                 postReply(mIdx) {
@@ -1686,10 +1768,7 @@
                         time: this.taipeiTime
                     });
                     this.replyTexts[mIdx] = '';
-                    this.saveData();
-
-                    this.newMsgNotificationText = `【${this.currentUser.name}】回覆了留言：「${repText}」`;
-                    this.showNewMsgNotificationModal = true;
+                    this.saveData('💬 留言有新回覆', `【${this.currentUser.name}】回覆了留言：「${repText}」`);
                 },
 
                 likeMessage(mIdx) {
@@ -1712,8 +1791,8 @@
                 },
 
                 saveSettings() {
-                    this.saveData();
-                    alert('全部設定儲存成功！');
+                    this.saveData('⚙️ 系統設定更新', '指揮中心已更新戰情室最新規則與設定！');
+                    alert('全部設定儲存成功並同步至全體夥伴！');
                 }
             }
         }
