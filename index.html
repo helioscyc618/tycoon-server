@@ -833,7 +833,10 @@
                             <div class="space-y-4">
                                 <div class="flex justify-between items-center">
                                     <h3 class="text-lg font-bold text-slate-900 ming-title">使用者獎勵與實體禮物統整</h3>
-                                    <button @click="exportRewardsCSV()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl font-bold text-xs shadow"><i class="fas fa-file-excel mr-1"></i> 匯出獎勵清單 CSV</button>
+                                    <div class="flex space-x-2">
+                                        <button @click="exportRewardsCSV()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-xl font-bold text-xs shadow"><i class="fas fa-file-excel mr-1"></i> 匯出 CSV</button>
+                                        <button @click="clearAllRewards()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-xl font-bold text-xs shadow"><i class="fas fa-trash-alt mr-1"></i> 清空所有紀錄</button>
+                                    </div>
                                 </div>
                                 <div class="overflow-x-auto rounded-xl border border-slate-200">
                                     <table class="w-full text-left text-xs border-collapse">
@@ -1605,6 +1608,14 @@
                 toggleRewardStatus(idx) {
                     this.rewardsList[idx].status = this.rewardsList[idx].status === '已發放' ? '未發放' : '已發放';
                     this.saveData();
+                },
+
+                clearAllRewards() {
+                    if (confirm('確定要清空所有獎勵紀錄嗎？清空後將無法復原，可有效減少雲端記憶體容量。')) {
+                        this.rewardsList = [];
+                        this.saveData();
+                        alert('所有獎勵紀錄已成功清空！');
+                    }
                 },
 
                 exportRewardsCSV() {
