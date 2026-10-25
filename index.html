@@ -264,9 +264,9 @@
                                     <div class="flex justify-between"><span class="text-slate-400">個人 FYC 業績:</span><span class="font-bold text-slate-900" x-text="formatCurrency(currentUser.fyc || 0)"></span></div>
                                     <div class="flex justify-between"><span class="text-slate-400">整組總業績 (含Buff):</span><span class="font-bold" :style="'color: ' + (settings.primaryColor || '#f97316')" x-text="formatCurrency(getTotalFYC(currentUser))"></span></div>
                                     <div class="flex justify-between items-center pt-2 border-t border-slate-200">
-                                        <span class="font-bold text-slate-800"><i class="fas fa-bell mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 裝置通知開關：</span>
+                                        <span class="font-bold text-slate-800"><i class="fas fa-bell mr-1" :style="'color: ' + (settings.primaryColor || '#f97316')"></i> 推播通知開關：</span>
                                         <label class="flex items-center space-x-1.5 cursor-pointer">
-                                            <input type="checkbox" x-model="currentUser.pushEnabled" @change="togglePushPermission()" class="rounded text-orange-500 w-4 h-4">
+                                            <input type="checkbox" x-model="currentUser.pushEnabled" @change="saveData()" class="rounded text-orange-500 w-4 h-4">
                                             <span class="font-bold" x-text="currentUser.pushEnabled ? '已開啟' : '已關閉'"></span>
                                         </label>
                                     </div>
@@ -1155,42 +1155,6 @@
                     });
                 },
 
-                // 處理裝置原生通知發送
-                sendNativeNotification(title, body) {
-                    if (!this.currentUser || !this.currentUser.pushEnabled) return;
-                    
-                    // 檢查瀏覽器是否支援 Notification API
-                    if (!("Notification" in window)) {
-                        return;
-                    }
-
-                    if (Notification.permission === "granted") {
-                        new Notification(title, {
-                            body: body,
-                            icon: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/dice.svg'
-                        });
-                    }
-                },
-
-                // 當使用者切換通知開關時，向瀏覽器請求推播授權
-                async togglePushPermission() {
-                    if (this.currentUser.pushEnabled) {
-                        if ("Notification" in window) {
-                            const permission = await Notification.requestPermission();
-                            if (permission !== "granted") {
-                                alert("瀏覽器通知權限已被拒絕或未授權，請至瀏覽器網址列設定中開啟通知權限！");
-                                this.currentUser.pushEnabled = false;
-                            } else {
-                                this.sendNativeNotification("競賽大亨通知已啟用", "您將會透過裝置即時接收到重要戰報與推播通知！");
-                            }
-                        } else {
-                            alert("您的瀏覽器不支援桌面通知功能。");
-                            this.currentUser.pushEnabled = false;
-                        }
-                    }
-                    this.saveData();
-                },
-
                 // 向網路時間 API (World Time API) 校準時間
                 async syncNetworkTime() {
                     try {
@@ -1228,9 +1192,6 @@
                                 this.broadcastAlertContent = data.latestGlobalAlert.content;
                                 this.showBroadcastAlertModal = true;
                                 this.dynamicTickerMessage = data.latestGlobalAlert.title + ": " + data.latestGlobalAlert.content;
-                                
-                                // 觸發裝置原生推播彈出
-                                this.sendNativeNotification(data.latestGlobalAlert.title, data.latestGlobalAlert.content);
                             }
                         }
 
@@ -1244,8 +1205,6 @@
                                     if (!this.showAnnouncementModal) {
                                         this.showTerminalPushModal = true;
                                     }
-                                    // 觸發裝置原生推播彈出
-                                    this.sendNativeNotification(latestUser.pendingPush.title, latestUser.pendingPush.content);
                                 }
                             }
                         }
@@ -1270,9 +1229,6 @@
                         this.broadcastAlertContent = alertContent;
                         this.showBroadcastAlertModal = true;
                         this.dynamicTickerMessage = alertTitle + ": " + alertContent;
-                        
-                        // 發送者本身也觸發裝置原生推播
-                        this.sendNativeNotification(alertTitle, alertContent);
                     }
 
                     const data = {
